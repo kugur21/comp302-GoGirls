@@ -1,31 +1,41 @@
 package org.RokueLike.ui;
 
-import org.RokueLike.domain.Enemy;
 import org.RokueLike.domain.Hero;
 
+
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.Random;
 
 public class GameScreen extends JPanel implements KeyListener {
     private final Hero hero;
-    private final Enemy enemy;
     private final int tileSize = 40; // Size of each tile
-    private final int gridWidth = 10, gridHeight = 10; // Grid size
+    private final int gridWidth = 10, gridHeight = 10; // Grid dimensions
     private boolean[][] obstacles = new boolean[gridWidth][gridHeight];
+    private BufferedImage heroSprite; // Hero sprite
     private int maxHealth = 5; // Maximum health for the hero
 
     public GameScreen() {
         this.setFocusable(true);
         this.addKeyListener(this);
 
-        // Initialize the hero and enemy
-        hero = new Hero(5, 5, maxHealth, 10);
-        enemy = new Enemy(2, 2);
+        // Initialize hero
+        hero = new Hero(5, 5, maxHealth);
 
-        // Initialize obstacles
+        // Load hero sprite
+        try {
+            heroSprite = ImageIO.read(getClass().getResource("/images/player.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Generate random obstacles
         generateObstacles();
     }
 
@@ -65,16 +75,18 @@ public class GameScreen extends JPanel implements KeyListener {
             }
         }
 
-        // Draw the hero
-        g.setColor(Color.BLUE);
-        g.fillOval(hero.getX() * tileSize, hero.getY() * tileSize, tileSize, tileSize);
+        // Draw hero sprite
+        if (heroSprite != null) {
+            g.drawImage(heroSprite, hero.getX() * tileSize, hero.getY() * tileSize, tileSize, tileSize, null);
+        }
 
-        // Draw the enemy
-        g.setColor(Color.YELLOW);
-        g.fillRect(enemy.getX() * tileSize, enemy.getY() * tileSize, tileSize, tileSize);
-
-        // Draw hero's health bar
-        UI.drawHealthBar(g, 10, 10, hero.getHealth(), maxHealth);
+        // Draw hero health bar
+        g.setColor(Color.RED);
+        g.fillRect(10, 10, 100, 10);
+        g.setColor(Color.GREEN);
+        g.fillRect(10, 10, (int) ((hero.getHealth() / (double) maxHealth) * 100), 10);
+        g.setColor(Color.WHITE);
+        g.drawRect(10, 10, 100, 10);
     }
 
     @Override
@@ -88,19 +100,10 @@ public class GameScreen extends JPanel implements KeyListener {
             case KeyEvent.VK_RIGHT -> newX++;
         }
 
-        // Check collisions with obstacles and boundaries
+        // Check for collisions with obstacles and boundaries
         if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight && !obstacles[newX][newY]) {
             hero.setPosition(newX, newY);
         }
-
-        // Check for enemy interaction
-        if (newX == enemy.getX() && newY == enemy.getY()) {
-            hero.decreaseHealth(1);
-            System.out.println("Enemy encountered! Health: " + hero.getHealth());
-        }
-
-        // Move enemy towards the hero
-        enemy.moveTowards(hero.getX(), hero.getY());
 
         repaint();
     }
