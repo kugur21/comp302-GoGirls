@@ -1,9 +1,5 @@
 package org.RokueLike.ui;
 
-import org.RokueLike.domain.Hero;
-
-
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -14,85 +10,100 @@ import java.io.IOException;
 import java.util.Random;
 
 public class GameScreen extends JPanel implements KeyListener {
-    private final Hero hero;
-    private final int tileSize = 40; // Size of each tile
-    private final int gridWidth = 10, gridHeight = 10; // Grid dimensions
-    private boolean[][] obstacles = new boolean[gridWidth][gridHeight];
-    private BufferedImage heroSprite; // Hero sprite
-    private int maxHealth = 5; // Maximum health for the hero
+    private BufferedImage heroSprite;
+    private BufferedImage wizardSprite;
+    private int heroX = 5, heroY = 5;
+    private int[][] hall;
+    private final int tileSize = 32;
+    private final int gridWidth = 20; // Ensure positive value
+    private final int gridHeight = 20; // Ensure positive value
+    private int heroHealth = 10;
+    private int wizardX, wizardY;
+    private Random random = new Random();
 
     public GameScreen() {
         this.setFocusable(true);
         this.addKeyListener(this);
 
-        // Initialize hero
-        hero = new Hero(5, 5, maxHealth);
+        if (gridWidth <= 0 || gridHeight <= 0) {
+            throw new IllegalArgumentException("Grid dimensions must be positive.");
+        }
 
-        // Load hero sprite
+        hall = new int[gridWidth][gridHeight]; // Initialize the hall array
+
+        // Load sprites
         try {
             heroSprite = ImageIO.read(getClass().getResource("/images/player.png"));
+            wizardSprite = ImageIO.read(getClass().getResource("/images/wizard.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        // Generate random obstacles
-        generateObstacles();
+        setUpHall();
     }
 
-    private void generateObstacles() {
-        Random random = new Random();
-        for (int i = 0; i < 15; i++) { // Add 15 random obstacles
-            int x = random.nextInt(gridWidth);
-            int y = random.nextInt(gridHeight);
-            obstacles[x][y] = true;
+    private void setUpHall() {
+        // Populate hall with obstacles
+        for (int i = 0; i < gridWidth; i++) {
+            for (int j = 0; j < gridHeight; j++) {
+                hall[i][j] = random.nextInt(10) < 2 ? 1 : 0; // 20% chance for obstacle
+            }
         }
+
+        // Ensure hero's starting position is empty
+        hall[heroX][heroY] = 0;
+
+        // Place the wizard
+        placeWizard();
+    }
+
+    private void placeWizard() {
+        int x, y;
+
+        // Find a random empty spot for the wizard
+        do {
+            x = random.nextInt(gridWidth);
+            y = random.nextInt(gridHeight);
+        } while (hall[x][y] != 0); // Ensure the spot is empty
+
+        wizardX = x;
+        wizardY = y;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Draw background
-        g.setColor(new Color(30, 30, 30));
-        g.fillRect(0, 0, getWidth(), getHeight());
-
-        // Draw grid
-        g.setColor(new Color(50, 50, 50));
-        for (int i = 0; i <= gridWidth; i++) {
-            g.drawLine(i * tileSize, 0, i * tileSize, gridHeight * tileSize);
-        }
-        for (int i = 0; i <= gridHeight; i++) {
-            g.drawLine(0, i * tileSize, gridWidth * tileSize, i * tileSize);
-        }
-
-        // Draw obstacles
-        g.setColor(Color.RED);
-        for (int x = 0; x < gridWidth; x++) {
-            for (int y = 0; y < gridHeight; y++) {
-                if (obstacles[x][y]) {
-                    g.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
-                }
+        // Draw the grid
+        for (int i = 0; i < gridWidth; i++) {
+            for (int j = 0; j < gridHeight; j++) {
+                g.setColor(hall[i][j] == 1 ? Color.DARK_GRAY : Color.LIGHT_GRAY);
+                g.fillRect(i * tileSize, j * tileSize, tileSize, tileSize);
+                g.setColor(Color.BLACK);
+                g.drawRect(i * tileSize, j * tileSize, tileSize, tileSize);
             }
         }
 
-        // Draw hero sprite
+        // Draw the hero
         if (heroSprite != null) {
-            g.drawImage(heroSprite, hero.getX() * tileSize, hero.getY() * tileSize, tileSize, tileSize, null);
+            g.drawImage(heroSprite, heroX * tileSize, heroY * tileSize, tileSize, tileSize, null);
         }
 
-        // Draw hero health bar
+        // Draw the wizard
+        if (wizardSprite != null) {
+            g.drawImage(wizardSprite, wizardX * tileSize, wizardY * tileSize, tileSize, tileSize, null);
+        }
+
+        // Display hero's health
         g.setColor(Color.RED);
-        g.fillRect(10, 10, 100, 10);
-        g.setColor(Color.GREEN);
-        g.fillRect(10, 10, (int) ((hero.getHealth() / (double) maxHealth) * 100), 10);
-        g.setColor(Color.WHITE);
-        g.drawRect(10, 10, 100, 10);
+        g.drawString("Health: " + heroHealth, 10, 20);
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
-        int newX = hero.getX(), newY = hero.getY();
+        int newX = heroX, newY = heroY;
 
+        // Move hero based on key press
         switch (e.getKeyCode()) {
             case KeyEvent.VK_UP -> newY--;
             case KeyEvent.VK_DOWN -> newY++;
@@ -100,9 +111,10 @@ public class GameScreen extends JPanel implements KeyListener {
             case KeyEvent.VK_RIGHT -> newX++;
         }
 
-        // Check for collisions with obstacles and boundaries
-        if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight && !obstacles[newX][newY]) {
-            hero.setPosition(newX, newY);
+        // Ensure movement within bounds
+        if (newX >= 0 && newX < gridWidth && newY >= 0 && newY < gridHeight) {
+            heroX = newX;
+            heroY = newY;
         }
 
         repaint();
