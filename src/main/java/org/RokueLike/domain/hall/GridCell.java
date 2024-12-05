@@ -10,6 +10,9 @@ public class GridCell {
     protected int positionX;
     protected int positionY;
 
+    // GameGrid class'ının yapıtaşı olan GridCell sınıfı, oyun alanındaki her bir hücreyi temsil eder.
+    // Bu hücrelerin özelliklerini ve konumlarını tutar. Hücrelerin isimleri, konumları ve hareket edilebilirlik durumları gibi özelliklerini tutar.
+    // Aynı zamanda oyundaki tüm nesnelerin extend olacağı bir sınıftır.
     public GridCell(String name, int positionX, int positionY) {
         this.name = name;
         this.positionX = positionX;
