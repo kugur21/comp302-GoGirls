@@ -4,15 +4,11 @@ public class HallGrid {
 
     private int startX;
     private int startY;
+    private String name;
 
     private GridCell[][] grid;
-    //private MonsterManager monsManager;
-    //private EnchManager enchManager;
-
-    public HallGrid(String[] gridData) {
-        //monsManager = new MonsterManager();
-        //enchManager = new EnchManager();
-
+    public HallGrid(String[] gridData, String name) {
+        this.name = name;
         grid = new GridCell[gridData.length][];
         initGrid(gridData);
     }
@@ -81,6 +77,10 @@ public class HallGrid {
             return true;
         }
         return false;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }

@@ -13,59 +13,6 @@ public class HallManager {
         this.currentHallIndex = 0;
     }
 
-    public HallManager() {
-        this.halls = new ArrayList<>();
-        this.currentHallIndex = 0;
-        initializeHalls();
-    }
-
-    private void initializeHalls() {
-        halls.add(new HallGrid(new String[]{
-                "#####d####",
-                "#...o....#",
-                "#........#",
-                "#........#",
-                "#........#",
-                "#....o...#",
-                "#........#",
-                "#........#",
-                "#.o.....h#",
-                "##########"}));
-        halls.add(new HallGrid(new String[]{
-                "#####d####",
-                "#..o.....#",
-                "#........#",
-                "#...o..o.#",
-                "#........#",
-                "#...o....#",
-                "#.....h..#",
-                "#..o.....#",
-                "#........#",
-                "##########"}));
-        halls.add(new HallGrid(new String[]{
-                "#####d####",
-                "#..o.....#",
-                "#........#",
-                "#...o....#",
-                "#.o..o...#",
-                "#....o...#",
-                "#.o......#",
-                "#.h......#",
-                "#......o.#",
-                "##########"}));
-        halls.add(new HallGrid(new String[]{
-                "#####d####",
-                "#...o....#",
-                "#h...o.o.#",
-                "#...o....#",
-                "#...o....#",
-                "#o.....o.#",
-                "#...o....#",
-                "#.....o..#",
-                "#..o.....#",
-                "##########"}));
-    }
-
     public HallGrid getCurrentHall() {
         return halls.get(currentHallIndex);
     }
