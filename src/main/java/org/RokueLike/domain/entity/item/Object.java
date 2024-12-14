@@ -4,20 +4,11 @@ public class Object extends Item {
 
     private boolean isOpen;
     private boolean containsRune;
-    private Rune containedRune;
 
-    public Object() {
-        super("object", ItemType.OBJECT);
+    public Object(int x, int y) {
+        super("object", x, y, ItemType.OBJECT);
         this.isOpen = false;
         this.containsRune = false;
-        this.containedRune = null;
-    }
-
-    public Object(boolean containsRune, Rune containedRune) {
-        super("object", ItemType.OBJECT);
-        this.isOpen = false;
-        this.containsRune = containsRune;
-        this.containedRune = containedRune;
     }
 
     public boolean isOpen() {
@@ -36,18 +27,12 @@ public class Object extends Item {
         return containsRune;
     }
 
-    public Rune getContainedRune() {
-        return containedRune;
-    }
-
-    public void setContainedRune(Rune containedRune) {
+    public void setContainedRune() {
         this.containsRune = true;
-        this.containedRune = containedRune;
     }
 
     public void removeContainedRune() {
         this.containsRune = false;
-        this.containedRune = null;
     }
 
 }

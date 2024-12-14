@@ -1,6 +1,9 @@
 package org.RokueLike.domain.entity.hero;
 
+import org.RokueLike.domain.GameManager;
+import org.RokueLike.domain.entity.item.Door;
 import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.domain.hall.HallManager;
 
 public class HeroManager {
 
@@ -13,13 +16,41 @@ public class HeroManager {
     /**
      * Moves the hero to a new position if the move is valid.
      * @param hallGrid The current hall grid.
+     * @param hallManager The manager for halls in the dungeon.
      * @param directionX The x-direction to move.
      * @param directionY The y-direction to move.
      * @return True if the move was successful, false otherwise.
      */
-    public boolean moveHero(HallGrid hallGrid, int directionX, int directionY) {
-        // Implementation will go here.
-        return false;
+    public boolean moveHero(HallGrid hallGrid, HallManager hallManager, int directionX, int directionY) {
+
+        switch (hallGrid.getCellInFront(hero, directionX, directionY).getName()) {
+            case "floor":
+                hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY, true);
+                return true;
+            case "door":
+                Door door = (Door) hallGrid.getCellInFront(hero, directionX, directionY);
+                if (door.isOpen()) {
+                    if (hallManager.moveToNextHall()) {
+                        HallGrid nextHall = hallManager.getCurrentHall();
+                        GameManager.updateCurrentHall(nextHall);
+                        return true;
+                    } else {
+                        System.out.println("Congrats, you have escaped the dungeon!");
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            case "wall":
+                return false;
+            case "object":
+                return false;
+            default:
+                return false;
+        }
+
+        // Finished?
+
     }
 
     /**

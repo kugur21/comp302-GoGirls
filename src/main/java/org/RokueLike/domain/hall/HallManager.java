@@ -1,6 +1,5 @@
 package org.RokueLike.domain.hall;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HallManager {

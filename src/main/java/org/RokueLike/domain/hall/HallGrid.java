@@ -1,5 +1,8 @@
 package org.RokueLike.domain.hall;
 
+import org.RokueLike.domain.entity.EntityCell;
+import org.RokueLike.domain.entity.item.Door;
+import org.RokueLike.domain.entity.item.Object;
 import org.RokueLike.domain.entity.monster.Monster;
 
 import java.util.ArrayList;
@@ -28,14 +31,14 @@ public class HallGrid {
                     case '#':
                         grid[i][j] = new GridCell("wall", j, i);
                         break;
-                    case 'd':
-                        grid[i][j] = new GridCell("door", j, i);
-                        break;
                     case '.':
                         grid[i][j] = new GridCell("floor", j, i);
                         break;
+                    case 'd':
+                        grid[i][j] = new Door(j, i);
+                        break;
                     case 'o':
-                        grid[i][j] = new GridCell("object", j, i);
+                        grid[i][j] = new Object(j, i);
                         break;
                     case 'h':
                         grid[i][j] = new GridCell("floor", j, i);
@@ -55,6 +58,22 @@ public class HallGrid {
         throw new IllegalArgumentException("Coordinates out of bounds: (" + x + ", " + y + ")");
     }
 
+    public GridCell getCellInFront(EntityCell entity, int directionX, int directionY) {
+        return getCell(entity.getPositionX() + directionX, entity.getPositionY() + directionY);
+    }
+
+    public boolean openDoor() {
+        // TODO: Implement this method
+        // Finds the door inside the grid, opens it and returns true.
+        return false;
+    }
+
+    public boolean removeEnchantment() {
+        // TODO: Implement this method
+        // Finds the enchantment inside the grid, removes it and returns true.
+        return false;
+    }
+
     public int getStartX() {
         return startX;
     }
@@ -69,22 +88,6 @@ public class HallGrid {
 
     public int getHeight() {
         return grid.length;
-    }
-
-    public boolean openDoor(int x, int y) {
-        if (getCell(x, y).getName().equals("door")) {
-            grid[y][x] = new GridCell("floor", x, y);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean removeEnch(int x, int y) {
-        if (getCell(x, y).getName().startsWith("ench_")) {
-            grid[y][x] = new GridCell("floor", x, y);
-            return true;
-        }
-        return false;
     }
 
     public String getName() {

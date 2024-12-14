@@ -1,17 +1,14 @@
 package org.RokueLike.domain.entity.item;
 
-public abstract class Item {
+import org.RokueLike.domain.hall.GridCell;
 
-    private String name;
+public abstract class Item extends GridCell {
+
     private ItemType type;
 
-    public Item(String name, ItemType type) {
-        this.name = name;
+    public Item(String name, int x, int y, ItemType type) {
+        super(name, x, y);
         this.type = type;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public ItemType getType() {

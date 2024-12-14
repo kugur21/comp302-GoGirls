@@ -1,6 +1,7 @@
 package org.RokueLike.domain;
 
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.hero.HeroManager;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
@@ -18,6 +19,7 @@ public class GameManager {
     private static HallManager hallManager;
     private static HallGrid currentHall;
     private static Hero hero;
+    private static HeroManager heroManager;
     private static List<Monster> acitveMonsters;
 
     // Not COMPLETED
@@ -48,7 +50,7 @@ public class GameManager {
             HallGrid hall = new HallGrid(gridData, hallNames[i]);
             halls.add(hall);
 
-            System.out.println(hallNames[i] + " Layout with " + objectCount[i] + " objects:");
+            System.out.println(hallNames[i] + " layout with " + objectCount[i] + " objects:");
             builder.printGrid();
             System.out.println();
         }
@@ -58,6 +60,7 @@ public class GameManager {
     public static void initPlayMode() {
         currentHall = hallManager.getCurrentHall();
         hero = new Hero(currentHall.getStartX(), currentHall.getStartY());
+        heroManager = new HeroManager(hero);
         acitveMonsters = currentHall.getMonsters();
     }
 
@@ -68,8 +71,19 @@ public class GameManager {
         }
     }
 
-    public static void handlePlayerMovement(int x, int y) {
-        // TODO: Implement this method
+    public static void handlePlayerMovement(int dirX, int dirY) {
+
+        try {
+            boolean moved = heroManager.moveHero(currentHall, hallManager, dirX, dirY);
+            if (!moved) {
+                System.out.println("Hero cannot move in that direction.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // TODO: Capture Monster movement
+
     }
 
     public static void useEnchantment(String enchantment) {
@@ -83,6 +97,12 @@ public class GameManager {
     public static void handleLeftClick(int mouseX, int mouseY) {
         // TODO: Implement this method
         System.out.println("Mouse Clicked");
+    }
+
+    public static void updateCurrentHall(HallGrid nextHall) {
+        currentHall = nextHall;
+        hero.setPosition(currentHall.getStartX(), currentHall.getStartY(), false);
+        acitveMonsters = currentHall.getMonsters();
     }
 
     public static Hero getHero() {

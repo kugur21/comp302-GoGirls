@@ -5,14 +5,14 @@ public class Enchantment extends Item {
     private int duration;
     private boolean isActive;
 
-    public Enchantment(String name, int duration) {
-        super(name, ItemType.ENCHANTMENT);
+    public Enchantment(String name, int x, int y, int duration) {
+        super(name, x, y, ItemType.ENCHANTMENT);
         this.duration = duration;
         this.isActive = false;
     }
 
-    public Enchantment(String name) {
-        super(name, ItemType.ENCHANTMENT);
+    public Enchantment(String name, int x, int y) {
+        super(name, x, y, ItemType.ENCHANTMENT);
         this.duration = 0;
         this.isActive = false;
     }
