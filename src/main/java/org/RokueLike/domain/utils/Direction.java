@@ -2,5 +2,7 @@ package org.RokueLike.domain.utils;
 
 public enum Direction {
     LEFT,
-    RIGHT;
+    RIGHT,
+    UP,
+    DOWN;
 }

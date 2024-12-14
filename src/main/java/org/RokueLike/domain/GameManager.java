@@ -1,7 +1,10 @@
 package org.RokueLike.domain;
 
+import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
+import org.RokueLike.domain.utils.Direction;
 
 import javax.swing.Timer;
 import java.util.ArrayList;
@@ -13,11 +16,15 @@ public class GameManager {
 
     private static Builder builder;
     private static HallManager hallManager;
+    private static HallGrid currentHall;
+    private static Hero hero;
+    private static List<Monster> acitveMonsters;
 
     // Not COMPLETED
     public static void startGame() {
 
         initBuildMode();
+        initPlayMode();
 
         timer = new Timer(20, new GameLoop());
         timer.start();
@@ -48,7 +55,38 @@ public class GameManager {
         hallManager = new HallManager(halls);
     }
 
-    public static void genericLoop() {
-        // TODO Auto-generated method stub
+    public static void initPlayMode() {
+        currentHall = hallManager.getCurrentHall();
+        hero = new Hero(currentHall.getStartX(), currentHall.getStartY());
+        acitveMonsters = currentHall.getMonsters();
     }
+
+    public static void genericLoop() {
+        hero.decreaseMotionOffset();
+        for (Monster monster: acitveMonsters) {
+            monster.decreaseMotionOffset();
+        }
+    }
+
+    public static void handlePlayerMovement(int x, int y) {
+        // TODO: Implement this method
+    }
+
+    public static void useEnchantment(String enchantment) {
+        useEnchantment(enchantment, null);
+    }
+
+    public static void useEnchantment(String enchantment, Direction direction) {
+        // TODO: Implement this method
+    }
+
+    public static void handleLeftClick(int mouseX, int mouseY) {
+        // TODO: Implement this method
+        System.out.println("Mouse Clicked");
+    }
+
+    public static Hero getHero() {
+        return hero;
+    }
+
 }

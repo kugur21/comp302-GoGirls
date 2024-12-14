@@ -1,5 +1,10 @@
 package org.RokueLike.domain.hall;
 
+import org.RokueLike.domain.entity.monster.Monster;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class HallGrid {
 
     private int startX;
@@ -7,6 +12,8 @@ public class HallGrid {
     private String name;
 
     private GridCell[][] grid;
+    private List<Monster> monsters;
+
     public HallGrid(String[] gridData, String name) {
         this.name = name;
         grid = new GridCell[gridData.length][];
@@ -31,13 +38,14 @@ public class HallGrid {
                         grid[i][j] = new GridCell("object", j, i);
                         break;
                     case 'h':
-                        grid[i][j] = new GridCell("hero", j, i);
+                        grid[i][j] = new GridCell("floor", j, i);
                         this.startX = j;
                         this.startY = i;
                         break;
                 }
             }
         }
+        this.monsters = new ArrayList<>();
     }
 
     public GridCell getCell(int x, int y) {
@@ -81,6 +89,36 @@ public class HallGrid {
 
     public String getName() {
         return name;
+    }
+
+    public void addMonster(Monster monster) {
+        monsters.add(monster);
+    }
+
+    public void removeMonster(Monster monster) {
+        monsters.remove(monster);
+    }
+
+    public List<Monster> getMonsters() {
+        return monsters;
+    }
+
+    public boolean isThereMonster(int x, int y) {
+        for (Monster monster: monsters) {
+            if (monster.getPositionX() == x && monster.getPositionY() == y) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Monster getMonster(int x, int y) {
+        for (Monster monster: monsters) {
+            if (monster.getPositionX() == x && monster.getPositionY() == y) {
+                return monster;
+            }
+        }
+        return null;
     }
 
 }

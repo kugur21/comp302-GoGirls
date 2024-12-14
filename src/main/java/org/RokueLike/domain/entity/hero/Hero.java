@@ -7,9 +7,9 @@ public class Hero extends EntityCell {
     private int lives;
     private Inventory inventory;
 
-    public Hero(int x, int y, int lives) {
+    public Hero(int x, int y) {
         super("hero", x, y);
-        this.lives = lives;
+        this.lives = 3;
         this.inventory = new Inventory();
     }
 
