@@ -3,6 +3,7 @@ package org.RokueLike.domain;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.hero.HeroManager;
 import org.RokueLike.domain.entity.monster.Monster;
+import org.RokueLike.domain.entity.monster.MonsterManager;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
 import org.RokueLike.domain.utils.Direction;
@@ -14,15 +15,16 @@ import java.util.List;
 public class GameManager {
 
     private static Timer timer;
+    private static int wizardTimer = 0;
 
     private static Builder builder;
     private static HallManager hallManager;
     private static HallGrid currentHall;
     private static Hero hero;
     private static HeroManager heroManager;
-    private static List<Monster> acitveMonsters;
+    private static List<Monster> activeMonsters;
+    private static MonsterManager monsterManager;
 
-    // Not COMPLETED
     public static void startGame() {
 
         initBuildMode();
@@ -30,6 +32,8 @@ public class GameManager {
 
         timer = new Timer(20, new GameLoop());
         timer.start();
+
+        // Finished?
 
     }
 
@@ -60,37 +64,49 @@ public class GameManager {
     public static void initPlayMode() {
         currentHall = hallManager.getCurrentHall();
         hero = new Hero(currentHall.getStartX(), currentHall.getStartY());
-        heroManager = new HeroManager(hero);
-        acitveMonsters = currentHall.getMonsters();
+        heroManager = new HeroManager(hero, currentHall);
+        activeMonsters = currentHall.getMonsters();
+        monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
     }
 
     public static void genericLoop() {
         hero.decreaseMotionOffset();
-        for (Monster monster: acitveMonsters) {
+        for (Monster monster: activeMonsters) {
             monster.decreaseMotionOffset();
         }
     }
 
-    public static void handlePlayerMovement(int dirX, int dirY) {
+    public static void handleMovement(int dirX, int dirY) {
+
+        // TODO: Check conditions related to game ending state
 
         try {
-            boolean moved = heroManager.moveHero(currentHall, hallManager, dirX, dirY);
+            boolean moved = heroManager.moveHero(hallManager, dirX, dirY);
             if (!moved) {
                 System.out.println("Hero cannot move in that direction.");
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        monsterManager.moveMonsters();
 
-        // TODO: Capture Monster movement
+        //Finished?
 
     }
 
-    public static void useEnchantment(String enchantment) {
-        useEnchantment(enchantment, null);
+    public static void handleWizardBehavior() {
+        for (Monster monster : activeMonsters) {
+            if (monster.getType() == Monster.Type.WIZARD) {
+                monsterManager.processWizardBehavior(monster);
+            }
+        }
     }
 
-    public static void useEnchantment(String enchantment, Direction direction) {
+    public static void handleEnchantmentUse(String enchantment) {
+        handleEnchantmentUse(enchantment, null);
+    }
+
+    public static void handleEnchantmentUse(String enchantment, Direction direction) {
         // TODO: Implement this method
     }
 
@@ -102,7 +118,32 @@ public class GameManager {
     public static void updateCurrentHall(HallGrid nextHall) {
         currentHall = nextHall;
         hero.setPosition(currentHall.getStartX(), currentHall.getStartY(), false);
-        acitveMonsters = currentHall.getMonsters();
+        activeMonsters = currentHall.getMonsters();
+
+        if (!hasWizardsInCurrentHall()) {
+            wizardTimer = 0;
+        }
+    }
+
+    public static void incrementWizardTimer() {
+        wizardTimer++;
+    }
+
+    public static void resetWizardTimer() {
+        wizardTimer = 0;
+    }
+
+    public static boolean isWizardTimerReady() {
+        return wizardTimer >= 250;
+    }
+
+    public static boolean hasWizardsInCurrentHall() {
+        for (Monster monster : activeMonsters) {
+            if (monster.getType() == Monster.Type.WIZARD) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Hero getHero() {

@@ -2,33 +2,28 @@ package org.RokueLike.domain.entity.hero;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.item.Door;
+import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
 
 public class HeroManager {
 
     private Hero hero;
+    private HallGrid hallGrid;
 
-    public HeroManager(Hero hero) {
+    public HeroManager(Hero hero, HallGrid hallGrid) {
         this.hero = hero;
+        this.hallGrid = hallGrid;
     }
 
-    /**
-     * Moves the hero to a new position if the move is valid.
-     * @param hallGrid The current hall grid.
-     * @param hallManager The manager for halls in the dungeon.
-     * @param directionX The x-direction to move.
-     * @param directionY The y-direction to move.
-     * @return True if the move was successful, false otherwise.
-     */
-    public boolean moveHero(HallGrid hallGrid, HallManager hallManager, int directionX, int directionY) {
-
-        switch (hallGrid.getCellInFront(hero, directionX, directionY).getName()) {
+    public boolean moveHero(HallManager hallManager, int directionX, int directionY) {
+        GridCell cellInFront = hallGrid.getCellInFront(hero, directionX, directionY);
+        switch (cellInFront.getName()) {
             case "floor":
                 hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY, true);
                 return true;
             case "door":
-                Door door = (Door) hallGrid.getCellInFront(hero, directionX, directionY);
+                Door door = (Door) cellInFront;
                 if (door.isOpen()) {
                     if (hallManager.moveToNextHall()) {
                         HallGrid nextHall = hallManager.getCurrentHall();

@@ -14,39 +14,49 @@ public class GameLoop implements ActionListener {
         try {
             GameManager.genericLoop();
 
+            if (GameManager.hasWizardsInCurrentHall()) {
+                GameManager.incrementWizardTimer();
+
+                if (GameManager.isWizardTimerReady()) {
+                    GameManager.handleWizardBehavior();
+                    GameManager.resetWizardTimer();
+                }
+            }
+
+
             if (!Keyboard.isLuringMode()) {
                 if (Keyboard.isKeyPressed("UP")) {
-                    GameManager.handlePlayerMovement(0, 1);
+                    GameManager.handleMovement(0, 1);
                 } else if (Keyboard.isKeyPressed("DOWN")) {
-                    GameManager.handlePlayerMovement(0, -1);
+                    GameManager.handleMovement(0, -1);
                 } else if (Keyboard.isKeyPressed("LEFT")) {
-                    GameManager.handlePlayerMovement(-1, 0);
+                    GameManager.handleMovement(-1, 0);
                     GameManager.getHero().setFacing(Direction.LEFT);
                 } else if (Keyboard.isKeyPressed("RIGHT")) {
-                    GameManager.handlePlayerMovement(1, 0);
+                    GameManager.handleMovement(1, 0);
                     GameManager.getHero().setFacing(Direction.RIGHT);
                 }
             } else {
                 if (Keyboard.isKeyPressed("LURE_UP")) {
-                    GameManager.useEnchantment("LURE", Direction.UP);
+                    GameManager.handleEnchantmentUse("LURE", Direction.UP);
                     Keyboard.deactivateLuringMode();
                 } else if (Keyboard.isKeyPressed("LURE_DOWN")) {
-                    GameManager.useEnchantment("LURE", Direction.DOWN);
+                    GameManager.handleEnchantmentUse("LURE", Direction.DOWN);
                     Keyboard.deactivateLuringMode();
                 } else if (Keyboard.isKeyPressed("LURE_LEFT")) {
-                    GameManager.useEnchantment("LURE", Direction.LEFT);
+                    GameManager.handleEnchantmentUse("LURE", Direction.LEFT);
                     Keyboard.deactivateLuringMode();
                 } else if (Keyboard.isKeyPressed("LURE_RIGHT")) {
-                    GameManager.useEnchantment("LURE", Direction.RIGHT);
+                    GameManager.handleEnchantmentUse("LURE", Direction.RIGHT);
                     Keyboard.deactivateLuringMode();
                 }
             }
 
             if (Keyboard.isKeyPressed("USE_REVEAL")) {
-                GameManager.useEnchantment("REVEAL");
+                GameManager.handleEnchantmentUse("REVEAL");
             }
             if (Keyboard.isKeyPressed("USE_PROTECTION")) {
-                GameManager.useEnchantment("REVEAL");
+                GameManager.handleEnchantmentUse("REVEAL");
             }
 
         } catch (Exception e) {

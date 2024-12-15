@@ -1,59 +1,114 @@
 package org.RokueLike.domain.entity.monster;
 
+import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.hall.HallGrid;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class MonsterManager {
 
     private List<Monster> monsters;
+    private HallGrid hallGrid;
+    private Hero hero;
 
-    public MonsterManager() {
-        this.monsters = new ArrayList<>();
-    }
-
-    public MonsterManager(List<Monster> monsters) {
+    public MonsterManager(List<Monster> monsters, HallGrid hallGrid, Hero hero) {
         this.monsters = monsters;
+        this.hallGrid = hallGrid;
+        this.hero = hero;
     }
 
-    /**
-     * Handles the archer monster's behavior.
-     * @param archer The archer monster to process.
-     * @param heroX The x-coordinate of the hero.
-     * @param heroY The y-coordinate of the hero.
-     */
-    public void processArcherBehavior(Monster archer, int heroX, int heroY) {
-        // Implementation will go here.
+    public void moveMonsters() {
+        for (Monster monster : monsters) {
+            switch (monster.getType()) {
+                case ARCHER:
+                    processArcherBehavior(monster);
+                    break;
+                case FIGHTER:
+                    processFighterBehavior(monster);
+                    break;
+            }
+        }
     }
 
-    /**
-     * Handles the fighter monster's behavior.
-     * @param fighter The fighter monster to process.
-     * @param heroX The x-coordinate of the hero.
-     * @param heroY The y-coordinate of the hero.
-     */
-    public void processFighterBehavior(Monster fighter, int heroX, int heroY) {
-        // Implementation will go here.
+    public void processArcherBehavior(Monster archer) {
+        int attackRange = 4;
+        if (isHeroInRange(archer, attackRange)) {
+            // TODO: Add logic to reduce hero health or trigger other effects
+            System.out.println("Archer attacks the hero!");
+
+            return;
+        }
+
+        int dirX = 0;
+        int dirY = 0;
+        if (Math.abs(archer.getPositionX() - hero.getPositionX()) <= attackRange) {
+            dirX = (archer.getPositionX() > hero.getPositionX()) ? 1 : -1;
+        }
+        if (Math.abs(archer.getPositionY() - hero.getPositionY()) <= attackRange) {
+            dirY = (archer.getPositionY() > hero.getPositionY()) ? 1 : -1;
+        }
+        if (isPassable(archer, dirX, dirY)) {
+            archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY, true);
+            System.out.println("Archer moves to (" + archer.getPositionX() + ", " + archer.getPositionY() + ")");
+        } else {
+            randomMove(archer);
+        }
     }
 
-    /**
-     * Handles the wizard monster's behavior.
-     * @param wizard The wizard monster to process.
-     */
+    public void processFighterBehavior(Monster fighter) {
+        int attackRange = 1;
+        if (isHeroInRange(fighter, attackRange)) {
+            // TODO: Add logic to reduce hero health or trigger other effects
+            System.out.println("Fighter stabs the hero with a dagger!");
+            return;
+        }
+        randomMove(fighter);
+    }
+
     public void processWizardBehavior(Monster wizard) {
-        // Implementation will go here.
+        try {
+            hallGrid.changeRuneLocation();
+            System.out.println("Wizard teleports the rune!");
+
+        } catch (IllegalStateException e) {
+            System.err.println("Error: " + e.getMessage());
+        }
     }
 
-    /**
-     * Moves the specified monster if it is mobile.
-     * @param monster The monster to move.
-     * @param directionX The x-direction to move.
-     * @param directionY The y-direction to move.
-     */
-    public void moveMonster(Monster monster, int directionX, int directionY) {
-        // Implementation will go here.
+
+    private boolean isPassable(Monster monster, int x, int y) {
+        return hallGrid.getCellInFront(monster, x, y).getName().equals("floor") && !hallGrid.isThereMonster(monster.getPositionX() + x, monster.getPositionY() + y);
     }
+
+    private void randomMove(Monster monster) {
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        Random random = new Random();
+
+        for (int i = 0; i < directions.length; i++) {
+            int randomIndex = random.nextInt(directions.length);
+            int dirX = directions[randomIndex][0];
+            int dirY = directions[randomIndex][1];
+
+            if (isPassable(monster, dirX, dirY)) {
+                monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY() + dirY, true);
+                System.out.println(monster.getName() + " randomly moves to (" + monster.getPositionX() + ", " + monster.getPositionY() + ")");
+                return;
+            }
+        }
+
+        System.out.println(monster.getName() + " cannot move.");
+    }
+
+    public boolean isHeroInRange(Monster monster, int range) {
+        int distanceX = Math.abs(monster.getPositionX() - hero.getPositionX());
+        int distanceY = Math.abs(monster.getPositionY() - hero.getPositionY());
+        return (distanceX + distanceY) <= range;
+    }
+
+
+
+
 
     /**
      * Handles the interaction of a fighter monster with a thrown luring gem.
@@ -62,26 +117,6 @@ public class MonsterManager {
      * @param gemY The y-coordinate of the luring gem.
      */
     public void processLuringGem(Monster fighter, int gemX, int gemY) {
-        // Implementation will go here.
-    }
-
-    /**
-     * Checks if a hero is within range of an archer monster's attack.
-     * @param archer The archer monster.
-     * @param heroX The x-coordinate of the hero.
-     * @param heroY The y-coordinate of the hero.
-     * @return True if the hero is within attack range, false otherwise.
-     */
-    public boolean isHeroInRange(Monster archer, int heroX, int heroY) {
-        // Implementation will go here.
-        return false;
-    }
-
-    /**
-     * Teleports the rune randomly if a wizard monster is present.
-     * @param wizard The wizard monster to process.
-     */
-    public void teleportRune(Monster wizard) {
         // Implementation will go here.
     }
 

@@ -7,6 +7,7 @@ import org.RokueLike.domain.entity.monster.Monster;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class HallGrid {
 
@@ -16,6 +17,7 @@ public class HallGrid {
 
     private GridCell[][] grid;
     private List<Monster> monsters;
+    private List<Object> objects;
 
     public HallGrid(String[] gridData, String name) {
         this.name = name;
@@ -24,6 +26,9 @@ public class HallGrid {
     }
 
     private void initGrid(String[] gridData) {
+        this.objects = new ArrayList<>();
+        this.monsters = new ArrayList<>();
+
         for (int i = 0; i < gridData.length; i++) {
             grid[i] = new GridCell[gridData[i].length()];
             for (int j = 0; j < gridData[i].length(); j++) {
@@ -38,7 +43,9 @@ public class HallGrid {
                         grid[i][j] = new Door(j, i);
                         break;
                     case 'o':
-                        grid[i][j] = new Object(j, i);
+                        Object object = new Object(j, i);
+                        grid[i][j] = object;
+                        objects.add(object);
                         break;
                     case 'h':
                         grid[i][j] = new GridCell("floor", j, i);
@@ -48,7 +55,7 @@ public class HallGrid {
                 }
             }
         }
-        this.monsters = new ArrayList<>();
+        initRune();
     }
 
     public GridCell getCell(int x, int y) {
@@ -92,6 +99,37 @@ public class HallGrid {
 
     public String getName() {
         return name;
+    }
+
+    public void initRune() {
+        if (objects.isEmpty()) {
+            throw new IllegalStateException("No objects available for placing the rune.");
+        }
+        Random random = new Random();
+        Object randomObject = objects.get(random.nextInt(objects.size()));
+
+        randomObject.setContainedRune();
+        System.out.println("Rune initialized in object at (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
+    }
+
+
+    public void changeRuneLocation() {
+        for (Object object : objects) {
+            if (object.containsRune()) {
+                object.removeContainedRune();
+                System.out.println("Rune removed from (" + object.getPositionX() + ", " + object.getPositionY() + ")");
+                break;
+            }
+        }
+
+        Random random = new Random();
+        Object randomObject = objects.get(random.nextInt(objects.size()));
+        randomObject.setContainedRune();
+        System.out.println("Rune teleported to (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
+    }
+
+    public List<Object> getObjects() {
+        return objects;
     }
 
     public void addMonster(Monster monster) {
