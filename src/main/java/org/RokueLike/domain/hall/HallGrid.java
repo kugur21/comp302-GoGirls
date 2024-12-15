@@ -69,6 +69,33 @@ public class HallGrid {
         return getCell(entity.getPositionX() + directionX, entity.getPositionY() + directionY);
     }
 
+    public boolean isSafeLocation(int positionX, int positionY) {
+        return getCell(positionX, positionY).getName().equals("floor") && isThereMonster(positionX, positionY);
+    }
+
+    public boolean isSafeLocation(EntityCell entity, int directionX, int directionY) {
+        return isSafeLocation(entity.getPositionX() + directionX, entity.getPositionY() + directionY);
+    }
+
+    public int[] findRandomSafeCell() {
+        Random random = new Random();
+        List<int[]> floorTiles = new ArrayList<>();
+
+        for (int y = 0; y < getHeight(); y++) {
+            for (int x = 0; x < getWidth(); x++) {
+                if (getCell(x, y).getName().equals("floor") && isThereMonster(x, y)) {
+                    floorTiles.add(new int[]{x, y});
+                }
+            }
+        }
+
+        if (!floorTiles.isEmpty()) {
+            return floorTiles.get(random.nextInt(floorTiles.size()));
+        }
+        return null;
+    }
+
+
     public boolean openDoor() {
         // TODO: Implement this method
         // Finds the door inside the grid, opens it and returns true.
@@ -147,10 +174,10 @@ public class HallGrid {
     public boolean isThereMonster(int x, int y) {
         for (Monster monster: monsters) {
             if (monster.getPositionX() == x && monster.getPositionY() == y) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public Monster getMonster(int x, int y) {

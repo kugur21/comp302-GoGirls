@@ -15,6 +15,8 @@ import java.util.List;
 public class GameManager {
 
     private static Timer timer;
+    private static int monsterSpawnTimer = 0;
+    private static int enchantmentTimer = 0;
     private static int wizardTimer = 0;
 
     private static Builder builder;
@@ -76,6 +78,24 @@ public class GameManager {
         }
     }
 
+    public static void handleHeroSpawn() {
+        try {
+            heroManager.respawnHero();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void handleMonsterSpawn() {
+        try {
+            monsterManager.spawnMonster();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //Finished?
+    }
+
     public static void handleMovement(int dirX, int dirY) {
 
         // TODO: Check conditions related to game ending state
@@ -125,6 +145,15 @@ public class GameManager {
         }
     }
 
+    public static boolean hasWizardsInCurrentHall() {
+        for (Monster monster : activeMonsters) {
+            if (monster.getType() == Monster.Type.WIZARD) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void incrementWizardTimer() {
         wizardTimer++;
     }
@@ -137,13 +166,28 @@ public class GameManager {
         return wizardTimer >= 250;
     }
 
-    public static boolean hasWizardsInCurrentHall() {
-        for (Monster monster : activeMonsters) {
-            if (monster.getType() == Monster.Type.WIZARD) {
-                return true;
-            }
-        }
-        return false;
+    public static void incrementMonsterSpawnTimer() {
+        monsterSpawnTimer++;
+    }
+
+    public static boolean isMonsterSpawnTimerReady() {
+        return monsterSpawnTimer >= 400;
+    }
+
+    public static void resetMonsterSpawnTimer() {
+        monsterSpawnTimer = 0;
+    }
+
+    public static void incrementEnchantmentTimer() {
+        enchantmentTimer++;
+    }
+
+    public static boolean isEnchantmentTimerReady() {
+        return enchantmentTimer >= 600;
+    }
+
+    public static void resetEnchantmentTimer() {
+        enchantmentTimer = 0;
     }
 
     public static Hero getHero() {

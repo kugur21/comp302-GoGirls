@@ -16,11 +16,16 @@ public class GameLoop implements ActionListener {
 
             if (GameManager.hasWizardsInCurrentHall()) {
                 GameManager.incrementWizardTimer();
-
                 if (GameManager.isWizardTimerReady()) {
                     GameManager.handleWizardBehavior();
                     GameManager.resetWizardTimer();
                 }
+            }
+
+            GameManager.incrementMonsterSpawnTimer();
+            if (GameManager.isMonsterSpawnTimerReady()) {
+                GameManager.handleMonsterSpawn();
+                GameManager.resetMonsterSpawnTimer();
             }
 
 

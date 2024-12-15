@@ -1,5 +1,6 @@
 package org.RokueLike.domain.entity.monster;
 
+import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.hall.HallGrid;
 
@@ -34,7 +35,7 @@ public class MonsterManager {
     public void processArcherBehavior(Monster archer) {
         int attackRange = 4;
         if (isHeroInRange(archer, attackRange)) {
-            // TODO: Add logic to reduce hero health or trigger other effects
+            heroMonsterInteraction(archer);
             System.out.println("Archer attacks the hero!");
 
             return;
@@ -48,7 +49,7 @@ public class MonsterManager {
         if (Math.abs(archer.getPositionY() - hero.getPositionY()) <= attackRange) {
             dirY = (archer.getPositionY() > hero.getPositionY()) ? 1 : -1;
         }
-        if (isPassable(archer, dirX, dirY)) {
+        if (hallGrid.isSafeLocation(archer, dirX, dirY)) {
             archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY, true);
             System.out.println("Archer moves to (" + archer.getPositionX() + ", " + archer.getPositionY() + ")");
         } else {
@@ -59,7 +60,7 @@ public class MonsterManager {
     public void processFighterBehavior(Monster fighter) {
         int attackRange = 1;
         if (isHeroInRange(fighter, attackRange)) {
-            // TODO: Add logic to reduce hero health or trigger other effects
+            heroMonsterInteraction(fighter);
             System.out.println("Fighter stabs the hero with a dagger!");
             return;
         }
@@ -76,11 +77,6 @@ public class MonsterManager {
         }
     }
 
-
-    private boolean isPassable(Monster monster, int x, int y) {
-        return hallGrid.getCellInFront(monster, x, y).getName().equals("floor") && !hallGrid.isThereMonster(monster.getPositionX() + x, monster.getPositionY() + y);
-    }
-
     private void randomMove(Monster monster) {
         int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         Random random = new Random();
@@ -90,7 +86,7 @@ public class MonsterManager {
             int dirX = directions[randomIndex][0];
             int dirY = directions[randomIndex][1];
 
-            if (isPassable(monster, dirX, dirY)) {
+            if (hallGrid.isSafeLocation(monster, dirX, dirY)) {
                 monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY() + dirY, true);
                 System.out.println(monster.getName() + " randomly moves to (" + monster.getPositionX() + ", " + monster.getPositionY() + ")");
                 return;
@@ -106,9 +102,42 @@ public class MonsterManager {
         return (distanceX + distanceY) <= range;
     }
 
+    public void heroMonsterInteraction(Monster monster) {
+        if (monster.isAttacksHero()) {
+            System.out.println(monster.getType().getName() + " attacks the hero!");
+            hero.decrementLives();
+            System.out.println("Hero's health: " + hero.getLives());
+            if (!hero.isAlive()) {
+                System.out.println("Game Over!");
+                System.exit(0);
+            }
+            GameManager.handleHeroSpawn();
+        } else {
+            System.out.println(monster.getType().getName() + " doesn't attack the hero.");
+        }
+    }
 
+    public void spawnMonster() {
+        Monster newMonster = generateRandomMonster();
+        int[] spawnPosition = hallGrid.findRandomSafeCell();
 
+        if (spawnPosition != null) {
+            newMonster.setPosition(spawnPosition[0], spawnPosition[1], false);
+            //monsters.add(newMonster); // I think it's abundant, since we have hallGrid.addMonster
+            hallGrid.addMonster(newMonster);
+            System.out.println("Spawned a " + newMonster.getType().getName() +
+                    " at (" + newMonster.getPositionX() + ", " + newMonster.getPositionY() + ")");
+        } else {
+            System.out.println("No valid spawn location found for a new monster.");
+        }
+    }
 
+    private Monster generateRandomMonster() {
+        Random random = new Random();
+        Monster.Type[] types = Monster.Type.values();
+        Monster.Type randomType = types[random.nextInt(types.length)];
+        return new Monster(randomType, 0, 0);
+    }
 
     /**
      * Handles the interaction of a fighter monster with a thrown luring gem.
@@ -120,14 +149,7 @@ public class MonsterManager {
         // Implementation will go here.
     }
 
-    /**
-     * Spawns monsters in the specified hall grid at random locations.
-     * @param hallGrid The hall grid where monsters will spawn.
-     * @param spawnCount The number of monsters to spawn.
-     */
-    public void spawnMonsters(HallGrid hallGrid, int spawnCount) {
-        // Implementation will go here.
-    }
+
 
     public List<Monster> getMonsters() {
         return monsters;

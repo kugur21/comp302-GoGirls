@@ -48,11 +48,31 @@ public class HeroManager {
 
     }
 
+    public void respawnHero() {
+        int startX = hallGrid.getStartX();
+        int startY = hallGrid.getStartY();
+
+        if (hallGrid.isSafeLocation(startX, startY)) {
+            hero.setPosition(startX, startY, false);
+            System.out.println("Hero respawned at starting position: (" + startX + ", " + startY + ")");
+        } else {
+            int[] safeLocation = hallGrid.findRandomSafeCell();
+            if (safeLocation != null) {
+                hero.setPosition(safeLocation[0], safeLocation[1], false);
+                System.out.println("Hero respawned at safe position: (" + safeLocation[0] + ", " + safeLocation[1] + ")");
+            } else {
+                System.out.println("No safe location found. Game over!");
+                System.exit(0);
+            }
+        }
+    }
+
+
     /**
-     * Handles interactions with objects in the hero's current cell.
+     * Handles interactions with objects in the hero's current object.
      * @param hallGrid The current hall grid.
      */
-    public void interactWithCell(HallGrid hallGrid) {
+    public void interactWithOnject(HallGrid hallGrid) {
         // Implementation will go here.
     }
 
