@@ -62,6 +62,121 @@ public class HallGrid {
         initRune();
     }
 
+    public boolean openDoor() {
+        // TODO: Implement this method
+        // Finds the door inside the grid, opens it and returns true.
+        return false;
+    }
+
+    public int getStartX() {
+        return startX;
+    }
+
+    public int getStartY() {
+        return startY;
+    }
+
+    public int getWidth() {
+        return grid[0].length;
+    }
+
+    public int getHeight() {
+        return grid.length;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Enchantment getCurrentEnchantment() {
+        return currentEnchantment;
+    }
+
+    public void addEnchantment(Enchantment enchantment) {
+        grid[enchantment.getPositionY()][enchantment.getPositionX()] = enchantment;
+        currentEnchantment = enchantment;
+    }
+
+    public void removeEnchantment() {
+        grid[currentEnchantment.getPositionY()][currentEnchantment.getPositionX()] = new GridCell("floor", currentEnchantment.getPositionX(), currentEnchantment.getPositionY());
+        currentEnchantment = null;
+    }
+
+    public void addMonster(Monster monster) {
+        monsters.add(monster);
+    }
+
+    public List<Monster> getMonsters() {
+        return monsters;
+    }
+
+    public boolean isThereMonster(int x, int y) {
+        for (Monster monster: monsters) {
+            if (monster.getPositionX() == x && monster.getPositionY() == y) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void initRune() {
+        if (objects.isEmpty()) {
+            throw new IllegalStateException("No objects available for placing the rune.");
+        }
+        Random random = new Random();
+        Object randomObject = objects.get(random.nextInt(objects.size()));
+
+        randomObject.setContainedRune();
+        System.out.println("Rune initialized in object at (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
+    }
+
+
+    public void changeRuneLocation() {
+        for (Object object : objects) {
+            if (object.containsRune()) {
+                object.removeContainedRune();
+                System.out.println("Rune removed from (" + object.getPositionX() + ", " + object.getPositionY() + ")");
+                break;
+            }
+        }
+
+        Random random = new Random();
+        Object randomObject = objects.get(random.nextInt(objects.size()));
+        randomObject.setContainedRune();
+        System.out.println("Rune teleported to (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
+    }
+
+    public int[][] findRuneRegion(int bound) {
+        for (Object object : objects) {
+            if (object.containsRune()) {
+                int runeX = object.getPositionX();
+                int runeY = object.getPositionY();
+
+                Random random = new Random();
+                int startX = Math.max(0, runeX - random.nextInt(bound));
+                int startY = Math.max(0, runeY - random.nextInt(bound));
+                int endX = Math.min(getWidth() - 1, startX + 3);
+                int endY = Math.min(getHeight() - 1, startY + 3);
+
+                if (endX - startX < 3) {
+                    startX = Math.max(0, endX - 3);
+                }
+                if (endY - startY < 3) {
+                    startY = Math.max(0, endY - 3);
+                }
+
+                List<int[]> region = new ArrayList<>();
+                for (int y = startY; y <= endY; y++) {
+                    for (int x = startX; x <= endX; x++) {
+                        region.add(new int[]{x, y});
+                    }
+                }
+                return region.toArray(new int[0][0]);
+            }
+        }
+        throw new IllegalStateException("No rune found in any object.");
+    }
+
     public GridCell getCell(int x, int y) {
         if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight()) {
             return grid[y][x];
@@ -98,90 +213,4 @@ public class HallGrid {
         }
         return null;
     }
-
-
-    public boolean openDoor() {
-        // TODO: Implement this method
-        // Finds the door inside the grid, opens it and returns true.
-        return false;
-    }
-
-    public void addEnchantment(Enchantment enchantment) {
-        grid[enchantment.getPositionY()][enchantment.getPositionX()] = enchantment;
-        currentEnchantment = enchantment;
-    }
-
-    public void removeEnchantment() {
-        grid[currentEnchantment.getPositionY()][currentEnchantment.getPositionX()] = new GridCell("floor", currentEnchantment.getPositionX(), currentEnchantment.getPositionY());
-        currentEnchantment = null;
-    }
-
-    public int getStartX() {
-        return startX;
-    }
-
-    public int getStartY() {
-        return startY;
-    }
-
-    public int getWidth() {
-        return grid[0].length;
-    }
-
-    public int getHeight() {
-        return grid.length;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Enchantment getCurrentEnchantment() {
-        return currentEnchantment;
-    }
-
-    public void initRune() {
-        if (objects.isEmpty()) {
-            throw new IllegalStateException("No objects available for placing the rune.");
-        }
-        Random random = new Random();
-        Object randomObject = objects.get(random.nextInt(objects.size()));
-
-        randomObject.setContainedRune();
-        System.out.println("Rune initialized in object at (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
-    }
-
-
-    public void changeRuneLocation() {
-        for (Object object : objects) {
-            if (object.containsRune()) {
-                object.removeContainedRune();
-                System.out.println("Rune removed from (" + object.getPositionX() + ", " + object.getPositionY() + ")");
-                break;
-            }
-        }
-
-        Random random = new Random();
-        Object randomObject = objects.get(random.nextInt(objects.size()));
-        randomObject.setContainedRune();
-        System.out.println("Rune teleported to (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
-    }
-
-    public void addMonster(Monster monster) {
-        monsters.add(monster);
-    }
-
-    public List<Monster> getMonsters() {
-        return monsters;
-    }
-
-    public boolean isThereMonster(int x, int y) {
-        for (Monster monster: monsters) {
-            if (monster.getPositionX() == x && monster.getPositionY() == y) {
-                return false;
-            }
-        }
-        return true;
-    }
-
 }

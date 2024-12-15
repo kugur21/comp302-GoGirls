@@ -1,6 +1,7 @@
 package org.RokueLike.domain.entity.hero;
 
 import org.RokueLike.domain.entity.EntityCell;
+import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
 
 public class Hero extends EntityCell {
 
@@ -11,6 +12,14 @@ public class Hero extends EntityCell {
         super("hero", x, y);
         this.lives = 3;
         this.inventory = new Inventory();
+    }
+
+    public boolean hasEnchantment(EnchantmentType enchantment) {
+        return inventory.hasEnchantment(enchantment);
+    }
+
+    public void useEnchantment(EnchantmentType enchantment) {
+        inventory.removeItem(enchantment);
     }
 
     public int getLives() {

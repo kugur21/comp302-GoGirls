@@ -37,7 +37,7 @@ public class GameLoop implements ActionListener {
                     GameManager.resetWizardTimer();
                 }
             }
-
+            GameManager.handleLureBehaviour();
 
             if (!Keyboard.isLuringMode()) {
                 if (Keyboard.isKeyPressed("UP")) {

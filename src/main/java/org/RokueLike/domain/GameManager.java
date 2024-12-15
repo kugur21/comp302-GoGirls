@@ -74,7 +74,7 @@ public class GameManager {
         heroManager = new HeroManager(hero, currentHall);
         activeMonsters = currentHall.getMonsters();
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
-        itemManager = new ItemManager(currentHall);
+        itemManager = new ItemManager(currentHall, hero, monsterManager);
     }
 
     public static void genericLoop() {
@@ -157,6 +157,10 @@ public class GameManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void handleLureBehaviour() {
+        monsterManager.updateLuredMonsters();
     }
 
     public static void handleLeftClick(int mouseX, int mouseY) {

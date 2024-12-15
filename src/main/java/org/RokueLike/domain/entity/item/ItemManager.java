@@ -1,18 +1,24 @@
 package org.RokueLike.domain.entity.item;
 
-import org.RokueLike.domain.entity.EntityCell;
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.monster.MonsterManager;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.utils.Direction;
 
+import javax.swing.*;
 import java.util.Random;
 
 public class ItemManager {
 
     private HallGrid hallGrid;
+    private Hero hero;
+    private MonsterManager monsterManager;
 
-    public ItemManager(HallGrid hallGrid) {
-        this.hallGrid = hallGrid;}
+    public ItemManager(HallGrid hallGrid, Hero hero, MonsterManager monsterManager) {
+        this.hallGrid = hallGrid;
+        this.hero = hero;
+        this.monsterManager = monsterManager;
+    }
 
     public void spawnEnchantment() {
         int[] location = hallGrid.findRandomSafeCell();
@@ -50,15 +56,36 @@ public class ItemManager {
     }
 
     public void applyReveal() {
-        // TODO: Implement this method.
+        if (hero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)) {
+            hero.useEnchantment(Enchantment.EnchantmentType.REVEAL);
+            int[][] runeRegion = hallGrid.findRuneRegion(4);
+            highlightRegion(runeRegion);
+            System.out.println("Reveal applied. Highlighting region for 10 seconds.");
+            Timer revealTimer = new Timer(10000, e -> removeHighlight(runeRegion));
+            revealTimer.setRepeats(false);
+            revealTimer.start();
+            System.out.println("Reveal enchantment applied.");
+        } else {
+            System.out.println("Hero does not have a Reveal Enchantment.");
+        }
     }
 
     public void applyCloakOfProtection() {
-        // TODO: Implement this method.
+        if (hero.hasEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION)) {
+            hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
+            monsterManager.processCloakOfProtection(20);
+        } else {
+            System.out.println("No Cloak of Protection enchantment available in hero's inventory.");
+        }
     }
 
     public void applyLuringGem(Direction direction) {
-        // TODO: Implement this method.
+        if (hero.hasEnchantment(Enchantment.EnchantmentType.LURING_GEM)) {
+            hero.useEnchantment(Enchantment.EnchantmentType.LURING_GEM);
+            monsterManager.processLuringGem(direction);
+        } else {
+            System.out.println("No Luring Gem enchantment available in hero's inventory.");
+        }
     }
 
     /**
@@ -79,6 +106,14 @@ public class ItemManager {
         Enchantment.EnchantmentType randomType = enchantmentTypes[new Random().nextInt(enchantmentTypes.length)];
 
         return new Enchantment(randomType, x, y);
+    }
+
+    private void highlightRegion(int[][] runeRegion) {
+        // TODO: Implement highlight logic in UI (e.g., a grid overlay).
+    }
+
+    private void removeHighlight(int[][] runeRegion) {
+        // TODO: Remove the highlight after 10 seconds.
     }
 
 }

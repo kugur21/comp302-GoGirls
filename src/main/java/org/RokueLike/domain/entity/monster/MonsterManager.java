@@ -3,7 +3,10 @@ package org.RokueLike.domain.entity.monster;
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.domain.utils.Direction;
 
+import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -12,6 +15,8 @@ public class MonsterManager {
     private List<Monster> monsters;
     private HallGrid hallGrid;
     private Hero hero;
+    private final List<Monster> luredFighters = new ArrayList<>();
+    private Direction lureDirection;
 
     public MonsterManager(List<Monster> monsters, HallGrid hallGrid, Hero hero) {
         this.monsters = monsters;
@@ -139,17 +144,73 @@ public class MonsterManager {
         return new Monster(randomType, 0, 0);
     }
 
-    /**
-     * Handles the interaction of a fighter monster with a thrown luring gem.
-     * @param fighter The fighter monster to process.
-     * @param gemX The x-coordinate of the luring gem.
-     * @param gemY The y-coordinate of the luring gem.
-     */
-    public void processLuringGem(Monster fighter, int gemX, int gemY) {
-        // Implementation will go here.
+    public void processCloakOfProtection(int duration) {
+        for (Monster monster : monsters) {
+            if (monster.getType() == Monster.MonsterType.ARCHER) {
+                monster.setAttacksHero(false);
+            }
+        }
+        System.out.println("Cloak of Protection activated. Archers cannot attack the hero for " + duration + " seconds.");
+
+        Timer protectionTimer = new Timer(duration * 1000, e -> {
+            for (Monster monster : monsters) {
+                if (monster.getType() == Monster.MonsterType.ARCHER) {
+                    monster.setAttacksHero(true);
+                }
+            }
+            System.out.println("Cloak of Protection expired. Archers can attack the hero again.");
+        });
+        protectionTimer.setRepeats(false);
+        protectionTimer.start();
     }
 
+    public void processLuringGem(Direction direction) {
+        lureDirection = direction;
+        luredFighters.clear();
 
+        for (Monster monster : monsters) {
+            if (monster.getType() == Monster.MonsterType.FIGHTER) {
+                System.out.println("Fighter at (" + monster.getPositionX() + ", " + monster.getPositionY() + ") is lured.");
+                luredFighters.add(monster);
+            }
+        }
+
+        if (!luredFighters.isEmpty()) {
+            System.out.println("Luring Gem effect started for " + luredFighters.size() + " fighters.");
+        } else {
+            System.out.println("No fighters to lure.");
+        }
+    }
+
+    public void updateLuredMonsters() {
+        if (luredFighters.isEmpty() || lureDirection == null) {
+            return;
+        }
+
+        List<Monster> completedLures = new ArrayList<>();
+        int[] offsets = getDirectionOffsets(lureDirection);
+        int deltaX = offsets[0];
+        int deltaY = offsets[1];
+
+        for (Monster monster : luredFighters) {
+            int nextX = monster.getPositionX() + deltaX;
+            int nextY = monster.getPositionY() + deltaY;
+
+            if (hallGrid.isSafeLocation(nextX, nextY)) {
+                monster.setPosition(nextX, nextY, true);
+                System.out.println("Fighter moves to (" + monster.getPositionX() + ", " + monster.getPositionY() + ").");
+            } else {
+                System.out.println("Fighter at (" + monster.getPositionX() + ", " + monster.getPositionY() + ") stops.");
+                completedLures.add(monster);
+            }
+        }
+        luredFighters.removeAll(completedLures);
+
+        if (luredFighters.isEmpty()) {
+            System.out.println("Luring Gem effect ended.");
+            lureDirection = null;
+        }
+    }
 
     public List<Monster> getMonsters() {
         return monsters;
@@ -159,4 +220,13 @@ public class MonsterManager {
         this.monsters = monsters;
     }
 
+    public static int[] getDirectionOffsets(Direction direction) {
+        return switch (direction) {
+            case LEFT -> new int[]{-1, 0};
+            case RIGHT -> new int[]{1, 0};
+            case UP -> new int[]{0, -1};
+            case DOWN -> new int[]{0, 1};
+            default -> throw new IllegalArgumentException("Unknown direction: " + direction);
+        };
+    }
 }
