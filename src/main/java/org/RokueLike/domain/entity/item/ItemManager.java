@@ -1,42 +1,64 @@
 package org.RokueLike.domain.entity.item;
 
+import org.RokueLike.domain.entity.EntityCell;
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.domain.utils.Direction;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
 public class ItemManager {
 
-    private Enchantment currentEnchantment;
-    private List<Object> objects;
+    private HallGrid hallGrid;
 
-    public ItemManager() {
-        this.currentEnchantment = null;
-        this.objects = new ArrayList<>();
+    public ItemManager(HallGrid hallGrid) {
+        this.hallGrid = hallGrid;}
+
+    public void spawnEnchantment() {
+        int[] location = hallGrid.findRandomSafeCell();
+        if (location == null) {
+            System.out.println("No safe location available to spawn enchantment.");
+            return;
+        }
+        Enchantment enchantment = generateRandomEnchantment(location[0], location[1]);
+        hallGrid.addEnchantment(enchantment);
+        System.out.println("Enchantment spawned: " + enchantment.getEnchantmentType().getName() +
+                " at (" + location[0] + ", " + location[1] + ")");
     }
 
-    /**
-     * Adds an object to the manager.
-     * @param object The object to add.
-     */
-    public void addObject(Object object) {
-        objects.add(object);
+    public void disappearEnchantment() {
+        if (hallGrid.getCurrentEnchantment() != null) {
+            hallGrid.removeEnchantment();
+            System.out.println("Enchantment removed from grid.");
+        }
     }
 
-    /**
-     * Removes an object from the manager.
-     * @param object The object to remove.
-     */
-    public void removeObject(Object object) {
-        objects.remove(object);
+    public void useEnchantment(Enchantment.EnchantmentType enchantment, Direction direction) {
+        switch (enchantment) {
+            case LURING_GEM:
+                applyLuringGem(direction);
+                break;
+            case CLOAK_OF_PROTECTION:
+                applyCloakOfProtection();
+                break;
+            case REVEAL:
+                applyReveal();
+                break;
+            default:
+                System.out.println("Invalid enchantment type.");
+        }
     }
 
-    /**
-     * Retrieves all objects managed by this manager.
-     * @return A list of objects.
-     */
-    public List<Object> getObjects() {
-        return objects;
+    public void applyReveal() {
+        // TODO: Implement this method.
+    }
+
+    public void applyCloakOfProtection() {
+        // TODO: Implement this method.
+    }
+
+    public void applyLuringGem(Direction direction) {
+        // TODO: Implement this method.
     }
 
     /**
@@ -45,30 +67,18 @@ public class ItemManager {
      * @param hero The hero interacting with the object.
      */
     public void interactWithObject(Object object, Hero hero) {
-
+        // TODO: Implement this method.
     }
 
-    /**
-     * Spawns a new enchantment in the game.
-     * @param enchantment The enchantment to spawn.
-     */
-    public void spawnEnchantment(Enchantment enchantment) {
-        this.currentEnchantment = enchantment;
-    }
-
-    /**
-     * Removes the current enchantment.
-     */
-    public void removeEnchantment() {
-        this.currentEnchantment = null;
-    }
-
-    /**
-     * Retrieves the current enchantment.
-     * @return The current enchantment, or null if none exists.
-     */
     public Enchantment getCurrentEnchantment() {
-        return currentEnchantment;
+        return hallGrid.getCurrentEnchantment();
+    }
+
+    public Enchantment generateRandomEnchantment(int x, int y) {
+        Enchantment.EnchantmentType[] enchantmentTypes = Enchantment.EnchantmentType.values();
+        Enchantment.EnchantmentType randomType = enchantmentTypes[new Random().nextInt(enchantmentTypes.length)];
+
+        return new Enchantment(randomType, x, y);
     }
 
 }

@@ -2,6 +2,7 @@ package org.RokueLike.domain.hall;
 
 import org.RokueLike.domain.entity.EntityCell;
 import org.RokueLike.domain.entity.item.Door;
+import org.RokueLike.domain.entity.item.Enchantment;
 import org.RokueLike.domain.entity.item.Object;
 import org.RokueLike.domain.entity.monster.Monster;
 
@@ -18,6 +19,7 @@ public class HallGrid {
     private GridCell[][] grid;
     private List<Monster> monsters;
     private List<Object> objects;
+    private Enchantment currentEnchantment;
 
     public HallGrid(String[] gridData, String name) {
         this.name = name;
@@ -28,6 +30,8 @@ public class HallGrid {
     private void initGrid(String[] gridData) {
         this.objects = new ArrayList<>();
         this.monsters = new ArrayList<>();
+        this.currentEnchantment = null;
+
 
         for (int i = 0; i < gridData.length; i++) {
             grid[i] = new GridCell[gridData[i].length()];
@@ -102,10 +106,14 @@ public class HallGrid {
         return false;
     }
 
-    public boolean removeEnchantment() {
-        // TODO: Implement this method
-        // Finds the enchantment inside the grid, removes it and returns true.
-        return false;
+    public void addEnchantment(Enchantment enchantment) {
+        grid[enchantment.getPositionY()][enchantment.getPositionX()] = enchantment;
+        currentEnchantment = enchantment;
+    }
+
+    public void removeEnchantment() {
+        grid[currentEnchantment.getPositionY()][currentEnchantment.getPositionX()] = new GridCell("floor", currentEnchantment.getPositionX(), currentEnchantment.getPositionY());
+        currentEnchantment = null;
     }
 
     public int getStartX() {
@@ -126,6 +134,10 @@ public class HallGrid {
 
     public String getName() {
         return name;
+    }
+
+    public Enchantment getCurrentEnchantment() {
+        return currentEnchantment;
     }
 
     public void initRune() {
@@ -155,16 +167,8 @@ public class HallGrid {
         System.out.println("Rune teleported to (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
     }
 
-    public List<Object> getObjects() {
-        return objects;
-    }
-
     public void addMonster(Monster monster) {
         monsters.add(monster);
-    }
-
-    public void removeMonster(Monster monster) {
-        monsters.remove(monster);
     }
 
     public List<Monster> getMonsters() {
@@ -178,15 +182,6 @@ public class HallGrid {
             }
         }
         return true;
-    }
-
-    public Monster getMonster(int x, int y) {
-        for (Monster monster: monsters) {
-            if (monster.getPositionX() == x && monster.getPositionY() == y) {
-                return monster;
-            }
-        }
-        return null;
     }
 
 }

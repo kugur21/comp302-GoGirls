@@ -4,18 +4,18 @@ import org.RokueLike.domain.entity.EntityCell;
 
 public class Monster extends EntityCell {
 
-    private final Type type;
+    private final MonsterType type;
     private boolean attacksHero;
     private boolean mobile;
 
-    public Monster(Type type, int x, int y) {
+    public Monster(MonsterType type, int x, int y) {
         super(type.getName() + "_monster", x, y);
         this.type = type;
         this.attacksHero = type.doesAttacksHero();
         this.mobile = type.isMobile();
     }
 
-    public Type getType() {
+    public MonsterType getType() {
         return type;
     }
 
@@ -35,7 +35,7 @@ public class Monster extends EntityCell {
         this.mobile = mobile;
     }
 
-    public enum Type {
+    public enum MonsterType {
         ARCHER("archer", true, true),
         FIGHTER("fighter", true, true),
         WIZARD("wizard", false, false);
@@ -44,7 +44,7 @@ public class Monster extends EntityCell {
         private final boolean attacksHero;
         private final boolean mobile;
 
-        Type(String name, boolean attacksHero, boolean mobile) {
+        MonsterType(String name, boolean attacksHero, boolean mobile) {
             this.name = name;
             this.attacksHero = attacksHero;
             this.mobile = mobile;

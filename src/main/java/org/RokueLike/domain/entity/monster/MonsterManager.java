@@ -134,8 +134,8 @@ public class MonsterManager {
 
     private Monster generateRandomMonster() {
         Random random = new Random();
-        Monster.Type[] types = Monster.Type.values();
-        Monster.Type randomType = types[random.nextInt(types.length)];
+        Monster.MonsterType[] types = Monster.MonsterType.values();
+        Monster.MonsterType randomType = types[random.nextInt(types.length)];
         return new Monster(randomType, 0, 0);
     }
 

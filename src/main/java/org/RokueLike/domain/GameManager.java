@@ -2,6 +2,9 @@ package org.RokueLike.domain;
 
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.hero.HeroManager;
+import org.RokueLike.domain.entity.item.Enchantment;
+import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
+import org.RokueLike.domain.entity.item.ItemManager;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.entity.monster.MonsterManager;
 import org.RokueLike.domain.hall.HallGrid;
@@ -16,7 +19,8 @@ public class GameManager {
 
     private static Timer timer;
     private static int monsterSpawnTimer = 0;
-    private static int enchantmentTimer = 0;
+    private static int enchantmentSpawnTimer = 0;
+    private static int enchantmentDurationTimer = 0;
     private static int wizardTimer = 0;
 
     private static Builder builder;
@@ -26,6 +30,7 @@ public class GameManager {
     private static HeroManager heroManager;
     private static List<Monster> activeMonsters;
     private static MonsterManager monsterManager;
+    private static ItemManager itemManager;
 
     public static void startGame() {
 
@@ -69,6 +74,7 @@ public class GameManager {
         heroManager = new HeroManager(hero, currentHall);
         activeMonsters = currentHall.getMonsters();
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
+        itemManager = new ItemManager(currentHall);
     }
 
     public static void genericLoop() {
@@ -84,6 +90,7 @@ public class GameManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        //Finished?
     }
 
     public static void handleMonsterSpawn() {
@@ -92,12 +99,32 @@ public class GameManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         //Finished?
     }
 
-    public static void handleMovement(int dirX, int dirY) {
+    public static void handleEnchantmentSpawn() {
+        try {
+            itemManager.spawnEnchantment();
+            enchantmentDurationTimer = 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //Finished?
+    }
 
+    public static void handleEnchantmentExpiration() {
+        if (currentHall.getCurrentEnchantment() != null) {
+            enchantmentDurationTimer++;
+            if (enchantmentDurationTimer >= 300) {
+                System.out.println("Enchantment expired: " + currentHall.getCurrentEnchantment().getEnchantmentType().getName());
+                itemManager.disappearEnchantment();
+                enchantmentDurationTimer = 0;
+            }
+        }
+    }
+
+
+    public static void handleMovement(int dirX, int dirY) {
         // TODO: Check conditions related to game ending state
 
         try {
@@ -109,25 +136,27 @@ public class GameManager {
             e.printStackTrace();
         }
         monsterManager.moveMonsters();
-
         //Finished?
-
     }
 
     public static void handleWizardBehavior() {
         for (Monster monster : activeMonsters) {
-            if (monster.getType() == Monster.Type.WIZARD) {
+            if (monster.getType() == Monster.MonsterType.WIZARD) {
                 monsterManager.processWizardBehavior(monster);
             }
         }
     }
 
-    public static void handleEnchantmentUse(String enchantment) {
+    public static void handleEnchantmentUse(EnchantmentType enchantment) {
         handleEnchantmentUse(enchantment, null);
     }
 
-    public static void handleEnchantmentUse(String enchantment, Direction direction) {
-        // TODO: Implement this method
+    public static void handleEnchantmentUse(EnchantmentType enchantment, Direction direction) {
+        try {
+            itemManager.useEnchantment(enchantment, direction);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void handleLeftClick(int mouseX, int mouseY) {
@@ -147,7 +176,7 @@ public class GameManager {
 
     public static boolean hasWizardsInCurrentHall() {
         for (Monster monster : activeMonsters) {
-            if (monster.getType() == Monster.Type.WIZARD) {
+            if (monster.getType() == Monster.MonsterType.WIZARD) {
                 return true;
             }
         }
@@ -178,16 +207,16 @@ public class GameManager {
         monsterSpawnTimer = 0;
     }
 
-    public static void incrementEnchantmentTimer() {
-        enchantmentTimer++;
+    public static void incrementEnchantmentSpawnTimer() {
+        enchantmentSpawnTimer++;
     }
 
-    public static boolean isEnchantmentTimerReady() {
-        return enchantmentTimer >= 600;
+    public static boolean isEnchantmentSpawnTimerReady() {
+        return enchantmentSpawnTimer >= 600;
     }
 
-    public static void resetEnchantmentTimer() {
-        enchantmentTimer = 0;
+    public static void resetEnchantmentSpawnTimer() {
+        enchantmentSpawnTimer = 0;
     }
 
     public static Hero getHero() {
