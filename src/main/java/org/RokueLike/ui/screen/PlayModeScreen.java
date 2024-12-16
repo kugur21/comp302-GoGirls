@@ -13,36 +13,35 @@ public class PlayModeScreen extends JPanel {
     private final PlayModeRenderer renderer;
 
     public PlayModeScreen() {
-        GameManager.init();  // Initialize game manager logic
+        GameManager.init();  // Initialize the GameManager logic
         this.renderer = new PlayModeRenderer();
 
         this.setFocusable(true);
         this.setLayout(null);
 
-        // Add key listener for player movements
+        // Add key listener for movement and interaction
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 handlePlayerInput(e.getKeyCode());
-                repaint();
+                repaint(); // Repaint after every action
             }
         });
     }
 
     /**
-     * Handles player input for movement or actions.
+     * Handles player input for movement and interaction.
      *
-     * @param keyCode The key pressed by the player.
+     * @param keyCode The key pressed.
      */
-
     private void handlePlayerInput(int keyCode) {
         switch (keyCode) {
-            case KeyEvent.VK_UP -> GameManager.movePlayer(0, -1);
-            case KeyEvent.VK_DOWN -> GameManager.movePlayer(0, 1);
-            case KeyEvent.VK_LEFT -> GameManager.movePlayer(-1, 0);
-            case KeyEvent.VK_RIGHT -> GameManager.movePlayer(1, 0);
-            case KeyEvent.VK_SPACE -> GameManager.interact();  // Interaction key
-            default -> System.out.println("[PlayModeScreen]: Unhandled key pressed.");
+            case KeyEvent.VK_UP -> GameManager.handleMovement(0, -1);
+            case KeyEvent.VK_DOWN -> GameManager.handleMovement(0, 1);
+            case KeyEvent.VK_LEFT -> GameManager.handleMovement(-1, 0);
+            case KeyEvent.VK_RIGHT -> GameManager.handleMovement(1, 0);
+            case KeyEvent.VK_SPACE -> GameManager.handleEnchantmentUse(null); // Interact
+            default -> System.out.println("[PlayModeScreen]: Unknown key pressed.");
         }
     }
 
@@ -51,5 +50,4 @@ public class PlayModeScreen extends JPanel {
         super.paintComponent(g);
         renderer.renderPlayMode((Graphics2D) g);
     }
-
 }

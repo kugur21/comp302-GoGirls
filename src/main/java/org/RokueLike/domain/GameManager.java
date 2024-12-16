@@ -51,9 +51,10 @@ public class GameManager {
         */
 
     }
-    /*
-    // TODO: WILL CHANGE
+
     public static void initBuildMode() {
+        // TODO: Will change according to the implementation of BuildManager
+        /*
         builder = new Builder();
         List<HallGrid> halls = new ArrayList<>();
 
@@ -74,7 +75,8 @@ public class GameManager {
             System.out.println();
         }
         hallManager = new HallManager(halls);
-    }*/
+        */
+    }
 
     public static void initPlayMode() {
         currentHall = hallManager.getCurrentHall();
