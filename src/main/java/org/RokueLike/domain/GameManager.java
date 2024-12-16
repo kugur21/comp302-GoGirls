@@ -23,6 +23,7 @@ public class GameManager {
     private static int enchantmentSpawnTimer = 0;
     private static int enchantmentDurationTimer = 0;
     private static int wizardTimer = 0;
+    private static int frameCounter = 0;
 
     private static Builder builder;
     private static HallManager hallManager;
@@ -91,7 +92,6 @@ public class GameManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //Finished?
     }
 
     public static void handleMonsterSpawn() {
@@ -100,7 +100,6 @@ public class GameManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //Finished?
     }
 
     public static void handleEnchantmentSpawn() {
@@ -110,7 +109,6 @@ public class GameManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //Finished?
     }
 
     public static void handleEnchantmentExpiration() {
@@ -126,18 +124,18 @@ public class GameManager {
 
 
     public static void handleMovement(int dirX, int dirY) {
-        // TODO: Check conditions related to game ending state
 
         try {
-            boolean moved = heroManager.moveHero(hallManager, dirX, dirY);
-            if (!moved) {
-                System.out.println("Hero cannot move in that direction.");
+            if (!isGameOver()) {
+                boolean moved = heroManager.moveHero(hallManager, dirX, dirY);
+                if (!moved) {
+                    System.out.println("Hero cannot move in that direction.");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         monsterManager.moveMonsters();
-        //Finished?
     }
 
     public static void handleWizardBehavior() {
@@ -210,6 +208,19 @@ public class GameManager {
         }
     }
 
+    public static void updateRemainingTime() {
+        frameCounter++;
+        if (frameCounter >= 50) {
+            frameCounter = 0;
+            if (hero.getRemainingTime() > 0) {
+                hero.decrementRemainingTime();
+                System.out.println("Remaining Time: " + hero.getRemainingTime());
+            } else {
+                System.out.println("Time's up! Game Over.");
+            }
+        }
+    }
+
     public static boolean hasWizardsInCurrentHall() {
         for (Monster monster : activeMonsters) {
             if (monster.getType() == Monster.MonsterType.WIZARD) {
@@ -255,8 +266,20 @@ public class GameManager {
         enchantmentSpawnTimer = 0;
     }
 
+    public static boolean isGameOver() {
+        return !hero.isAlive();
+    }
+
     public static Hero getHero() {
         return hero;
+    }
+
+    public static HallGrid getCurrentHall() {
+        return currentHall;
+    }
+
+    public static List<Monster> getActiveMonsters() {
+        return activeMonsters;
     }
 
 }

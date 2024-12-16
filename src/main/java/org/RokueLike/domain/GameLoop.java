@@ -15,7 +15,7 @@ public class GameLoop implements ActionListener {
         try {
             GameManager.genericLoop();
 
-            GameManager.incrementEnchantmentSpawnTimer();
+            GameManager.updateRemainingTime();
 
             GameManager.incrementMonsterSpawnTimer();
             if (GameManager.isMonsterSpawnTimerReady()) {

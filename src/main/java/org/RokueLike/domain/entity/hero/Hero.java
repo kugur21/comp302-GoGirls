@@ -47,16 +47,20 @@ public class Hero extends EntityCell {
     }
 
     public boolean isAlive() {
-        return lives > 0;
+        return lives > 0 && remainingTime > 0;
     }
 
-    public void addTime(int seconds) {
+    public int getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void addRemainingTime(int seconds) {
         this.remainingTime += seconds;
         System.out.println("Hero gained " + seconds + " seconds. Total time: " + remainingTime + " seconds.");
     }
 
-    public int getTimeRemaining() {
-        return remainingTime;
+    public void decrementRemainingTime() {
+        this.remainingTime--;
     }
 
 }

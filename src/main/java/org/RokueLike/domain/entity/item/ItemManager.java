@@ -44,7 +44,7 @@ public class ItemManager {
 
         if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_TIME) {
             System.out.println("Collected Extra Time enchantment!");
-            hero.addTime(5);
+            hero.addRemainingTime(5);
         } else if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_LIFE) {
             System.out.println("Collected Extra Life enchantment!");
             hero.incrementLives();
