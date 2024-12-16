@@ -34,6 +34,7 @@ public class PlayModeScreen extends JPanel {
      *
      * @param keyCode The key pressed by the player.
      */
+
     private void handlePlayerInput(int keyCode) {
         switch (keyCode) {
             case KeyEvent.VK_UP -> GameManager.movePlayer(0, -1);
@@ -50,4 +51,5 @@ public class PlayModeScreen extends JPanel {
         super.paintComponent(g);
         renderer.renderPlayMode((Graphics2D) g);
     }
+
 }
