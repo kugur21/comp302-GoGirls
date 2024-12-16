@@ -1,5 +1,5 @@
 package org.RokueLike.domain;
-/*
+
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.hero.HeroManager;
 import org.RokueLike.domain.entity.item.Object;
@@ -17,9 +17,9 @@ import org.RokueLike.domain.utils.MessageBox;
 import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
-*/
+
 public class GameManager {
-/*
+
     private static Timer timer;
     private static int monsterSpawnTimer = 0;
     private static int enchantmentSpawnTimer = 0;
@@ -28,7 +28,7 @@ public class GameManager {
     private static int frameCounter = 0;
     private static MessageBox messageBox;
 
-    private static Builder builder;
+    private static BuildManager buildManager;
     private static HallManager hallManager;
     private static HallGrid currentHall;
     private static Hero hero;
@@ -38,7 +38,7 @@ public class GameManager {
     private static ItemManager itemManager;
 
     private static boolean onTitleScreen;
-*/
+
     public static void init() {
 
         System.out.println("[GameManager]: Starting game...");
@@ -51,7 +51,7 @@ public class GameManager {
         */
 
     }
-/*
+    /*
     // TODO: WILL CHANGE
     public static void initBuildMode() {
         builder = new Builder();
@@ -74,7 +74,7 @@ public class GameManager {
             System.out.println();
         }
         hallManager = new HallManager(halls);
-    }
+    }*/
 
     public static void initPlayMode() {
         currentHall = hallManager.getCurrentHall();
@@ -299,5 +299,5 @@ public class GameManager {
     public static List<Monster> getActiveMonsters() {
         return activeMonsters;
     }
-*/
+
 }
