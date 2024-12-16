@@ -66,6 +66,8 @@ public class HeroManager {
             }
         }
     }
+    
+    
 
 
     /**
@@ -112,4 +114,7 @@ public class HeroManager {
         return false;
     }
 
+    public boolean isAdjacentTo(int x, int y) {
+        return (Math.abs(hero.getPositionX() - x) <= 1 && Math.abs(hero.getPositionY() - y) <= 1);
+    }
 }

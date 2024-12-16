@@ -62,10 +62,27 @@ public class HallGrid {
         initRune();
     }
 
-    public boolean openDoor() {
-        // TODO: Implement this method
-        // Finds the door inside the grid, opens it and returns true.
-        return false;
+    public void openDoor() {
+        boolean doorOpened = false;
+
+        for (int y = 0; y < getHeight(); y++) {
+            for (int x = 0; x < getWidth(); x++) {
+                GridCell cell = grid[y][x];
+
+                if (cell instanceof Door door) {
+                    if (!door.isOpen()) {
+                        door.open(); // Open the door
+                        System.out.println("Door opened at (" + x + ", " + y + ").");
+                        doorOpened = true;
+                    }
+                }
+            }
+        }
+
+        if (!doorOpened) {
+            System.out.println("No doors found to open in this hall.");
+        }
+
     }
 
     public int getStartX() {

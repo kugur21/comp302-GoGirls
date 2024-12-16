@@ -39,6 +39,23 @@ public class ItemManager {
         }
     }
 
+    public void collectEnchantment() {
+        Enchantment currentEnchantment = hallGrid.getCurrentEnchantment();
+
+        if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_TIME) {
+            System.out.println("Collected Extra Time enchantment!");
+            hero.addTime(5);
+        } else if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_LIFE) {
+            System.out.println("Collected Extra Life enchantment!");
+            hero.incrementLives();
+        } else {
+            System.out.println("Collected " + currentEnchantment.getEnchantmentType().getName() + " enchantment!");
+            hero.addToInventory(currentEnchantment.getEnchantmentType());
+        }
+
+        hallGrid.removeEnchantment();
+    }
+
     public void useEnchantment(Enchantment.EnchantmentType enchantment, Direction direction) {
         switch (enchantment) {
             case LURING_GEM:
@@ -88,17 +105,15 @@ public class ItemManager {
         }
     }
 
-    /**
-     * Handles interaction with an object.
-     * @param object The object being interacted with.
-     * @param hero The hero interacting with the object.
-     */
-    public void interactWithObject(Object object, Hero hero) {
-        // TODO: Implement this method.
-    }
-
-    public Enchantment getCurrentEnchantment() {
-        return hallGrid.getCurrentEnchantment();
+    public void interactWithObject(Object object) {
+        if (object.containsRune()) {
+            System.out.println("Congratulations! You found the rune!");
+            object.removeContainedRune();
+            hallGrid.openDoor();
+            // Play a sound indicating the door is open
+        } else {
+            System.out.println("The object is empty. Keep looking!");
+        }
     }
 
     public Enchantment generateRandomEnchantment(int x, int y) {

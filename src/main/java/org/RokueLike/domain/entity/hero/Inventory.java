@@ -7,66 +7,31 @@ import java.util.List;
 
 public class Inventory {
 
-    private List<String> items;
+    private final List<EnchantmentType> items;
 
     public Inventory() {
         this.items = new ArrayList<>();
     }
 
     public boolean hasEnchantment(EnchantmentType enchantment) {
-        // TODO: Implement this method.
-        return false;
+        return items.contains(enchantment);
     }
 
-    /**
-     * Adds an item to the inventory sequentially.
-     * @param itemName The name of the item to add.
-     */
-    public void addItem(String itemName) {
-        // TODO: Implement this method.
+    public void addItem(EnchantmentType enchantment) {
+        items.add(enchantment);
+        System.out.println("Added " + enchantment.getName() + " to inventory.");
     }
 
-    /**
-     * Removes the item at the specified index from the inventory.
-     * @param enchantment@return The removed item name.
-     */
-    public String removeItem(EnchantmentType enchantment) {
-        // TODO: Implement this method.
-        return null;
+    public void removeItem(EnchantmentType enchantment) {
+        if (items.remove(enchantment)) {
+            System.out.println("Removed " + enchantment.getName() + " from inventory.");
+        } else {
+            System.out.println(enchantment.getName() + " not found in inventory.");
+        }
     }
 
-    /**
-     * Gets the item at the specified index without removing it.
-     * @param index The index of the item.
-     * @return The item name.
-     */
-    public String getItem(int index) {
-        // TODO: Implement this method.
-        return null;
+    public List<EnchantmentType> getItems() {
+        return items;
     }
 
-    /**
-     * Gets all items in the inventory.
-     * @return A list of all items.
-     */
-    public List<String> getAllItems() {
-        // TODO: Implement this method.
-        return null;
-    }
-
-    /**
-     * Clears all items from the inventory.
-     */
-    public void clearInventory() {
-        // TODO: Implement this method.
-    }
-
-    /**
-     * Gets the total number of items in the inventory.
-     * @return The number of items.
-     */
-    public int getItemCount() {
-        // TODO: Implement this method.
-        return 0;
-    }
 }

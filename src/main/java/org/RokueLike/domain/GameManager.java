@@ -2,11 +2,12 @@ package org.RokueLike.domain;
 
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.hero.HeroManager;
-import org.RokueLike.domain.entity.item.Enchantment;
+import org.RokueLike.domain.entity.item.Object;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
 import org.RokueLike.domain.entity.item.ItemManager;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.entity.monster.MonsterManager;
+import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
 import org.RokueLike.domain.utils.Direction;
@@ -164,8 +165,39 @@ public class GameManager {
     }
 
     public static void handleLeftClick(int mouseX, int mouseY) {
-        // TODO: Implement this method
-        System.out.println("Mouse Clicked");
+        try {
+            if (currentHall.getCurrentEnchantment() != null
+                    && currentHall.getCurrentEnchantment().getPositionX() == mouseX
+                    && currentHall.getCurrentEnchantment().getPositionY() == mouseY) {
+
+                System.out.println("Enchantment clicked at (" + mouseX + ", " + mouseY + ").");
+                itemManager.collectEnchantment();
+            } else {
+                System.out.println("No enchantment at clicked location (" + mouseX + ", " + mouseY + ").");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error handling left-click.");
+        }
+    }
+
+    public static void handleRightClick(int mouseX, int mouseY) {
+        try {
+            GridCell clickedCell = currentHall.getCell(mouseX, mouseY);
+            if (clickedCell instanceof Object clickedObject) {
+                if (heroManager.isAdjacentTo(mouseX, mouseY)) {
+                    System.out.println("Object clicked at (" + mouseX + ", " + mouseY + ").");
+                    itemManager.interactWithObject(clickedObject);
+                } else {
+                    System.out.println("Hero is not adjacent to the object at (" + mouseX + ", " + mouseY + ").");
+                }
+            }
+        } catch (ClassCastException e) {
+            System.out.println("Clicked cell is not an object at (" + mouseX + ", " + mouseY + ").");
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error handling right-click.");
+        }
     }
 
     public static void updateCurrentHall(HallGrid nextHall) {

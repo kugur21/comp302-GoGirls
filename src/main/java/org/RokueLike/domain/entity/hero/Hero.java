@@ -6,11 +6,13 @@ import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
 public class Hero extends EntityCell {
 
     private int lives;
-    private Inventory inventory;
+    private int remainingTime;
+    private final Inventory inventory;
 
     public Hero(int x, int y) {
         super("hero", x, y);
         this.lives = 3;
+        this.remainingTime = 0;
         this.inventory = new Inventory();
     }
 
@@ -22,23 +24,25 @@ public class Hero extends EntityCell {
         inventory.removeItem(enchantment);
     }
 
-    public int getLives() {
-        return lives;
+    public void addToInventory(EnchantmentType enchantment) {
+        inventory.addItem(enchantment);
     }
 
-    public void setLives(int lives) {
-        this.lives = lives;
+    public int getLives() {
+        return lives;
     }
 
     public void incrementLives() {
         if (lives < 4) {
             this.lives++;
+            System.out.println("Hero gained an extra life! Lives: " + lives);
         }
     }
 
     public void decrementLives() {
         if (lives > 0) {
             this.lives--;
+            System.out.println("Hero lost a life! Lives remaining: " + lives);
         }
     }
 
@@ -46,8 +50,13 @@ public class Hero extends EntityCell {
         return lives > 0;
     }
 
-    public Inventory getInventory() {
-        return inventory;
+    public void addTime(int seconds) {
+        this.remainingTime += seconds;
+        System.out.println("Hero gained " + seconds + " seconds. Total time: " + remainingTime + " seconds.");
+    }
+
+    public int getTimeRemaining() {
+        return remainingTime;
     }
 
 }
