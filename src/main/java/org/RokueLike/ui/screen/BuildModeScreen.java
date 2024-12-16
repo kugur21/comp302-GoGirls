@@ -1,6 +1,8 @@
 package org.RokueLike.ui.screen;
 
+import org.RokueLike.domain.BuildManager;
 import org.RokueLike.ui.Window;
+import org.RokueLike.ui.renderer.BuildModeRenderer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,16 +10,21 @@ import java.awt.event.ActionListener;
 
 public class BuildModeScreen extends JPanel{
 
+    private final BuildModeRenderer renderer;
 
     public BuildModeScreen() {
+        BuildManager.init(); // Initialize the BuildManager
+        this.renderer = new BuildModeRenderer();
         this.setLayout(null);
 
+        // Title Label
         JLabel titleLabel = new JLabel("Build Mode");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         titleLabel.setBounds(0, 20, Window.WIDTH, 50);
         this.add(titleLabel);
 
+        // Buttons
         JButton manualButton = createButton("Manual Placement", 150, e -> enterManualPlacement());
         this.add(manualButton);
 
@@ -38,18 +45,30 @@ public class BuildModeScreen extends JPanel{
 
     private void enterManualPlacement() {
         System.out.println("[BuildModeScreen]: Entering Manual Placement Mode.");
-        // Logic for manual placement (e.g., grid visualization and interaction)
-        // Implement this in conjunction with your hall grid logic.
+        // Manual placement logic - Input handling for x, y coordinates will be implemented here.
+        // For now, simulate input:
+        BuildManager.placeObjectManually("earth", 7, 7); // Example
+        repaint();
     }
 
     private void assignObjectsRandomly() {
         System.out.println("[BuildModeScreen]: Assigning objects randomly.");
-        // Call backend logic to randomly assign objects to the grid.
+        BuildManager.placeObjectRandomly("earth", 6);
+        BuildManager.placeObjectRandomly("air", 9);
+        BuildManager.placeObjectRandomly("water", 13);
+        BuildManager.placeObjectRandomly("fire", 17);
+        repaint();
     }
 
     private void proceedToPlayMode() {
         System.out.println("[BuildModeScreen]: Proceeding to Play Mode.");
         Window.showScreen("PlayModeScreen");
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        renderer.renderBuildMode((Graphics2D) g);
     }
 
 }
