@@ -1,11 +1,22 @@
 package org.RokueLike;
 
-import javax.swing.*;
-import org.RokueLike.ui.LaunchScreen;
+import org.RokueLike.ui.Window;
 
-import java.awt.*;
 
 public class Main {
+
+    public static void main(String[] args) {
+        try {
+            System.out.println("[Main]: Starting...");
+            Window.create();
+            System.out.println("[Main]: Started!");
+        } catch(Exception e) {
+            System.err.println("\n[Main]: Uncaught exception in initialization!\n");
+            System.exit(-1);
+        }
+    }
+
+    /*
     public static void main(String[] args) {
         // Create the game window
         JFrame window = new JFrame("Rokuelike Game");
@@ -26,4 +37,5 @@ public class Main {
         // Set the window to be visible
         window.setVisible(true);
     }
+    */
 }
