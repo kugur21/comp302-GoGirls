@@ -11,6 +11,7 @@ import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
 import org.RokueLike.domain.utils.Direction;
+import org.RokueLike.domain.utils.MessageBox;
 
 import javax.swing.Timer;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class GameManager {
     private static int enchantmentDurationTimer = 0;
     private static int wizardTimer = 0;
     private static int frameCounter = 0;
+    private static MessageBox messageBox;
 
     private static Builder builder;
     private static HallManager hallManager;
@@ -33,6 +35,8 @@ public class GameManager {
     private static List<Monster> activeMonsters;
     private static MonsterManager monsterManager;
     private static ItemManager itemManager;
+
+    private static boolean onTitleScreen;
 
     public static void startGame() {
 
@@ -77,6 +81,9 @@ public class GameManager {
         activeMonsters = currentHall.getMonsters();
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
         itemManager = new ItemManager(currentHall, hero, monsterManager);
+        messageBox = new MessageBox();
+
+        onTitleScreen = true;
     }
 
     public static void genericLoop() {
@@ -88,7 +95,8 @@ public class GameManager {
 
     public static void handleHeroSpawn() {
         try {
-            heroManager.respawnHero();
+            String response = heroManager.respawnHero();
+            messageBox.addMessage(response, 50);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,7 +104,8 @@ public class GameManager {
 
     public static void handleMonsterSpawn() {
         try {
-            monsterManager.spawnMonster();
+            String response = monsterManager.spawnMonster();
+            messageBox.addMessage(response, 50);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,8 +113,9 @@ public class GameManager {
 
     public static void handleEnchantmentSpawn() {
         try {
-            itemManager.spawnEnchantment();
+            String response = itemManager.spawnEnchantment();
             enchantmentDurationTimer = 0;
+            messageBox.addMessage(response, 50);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -115,13 +125,13 @@ public class GameManager {
         if (currentHall.getCurrentEnchantment() != null) {
             enchantmentDurationTimer++;
             if (enchantmentDurationTimer >= 300) {
-                System.out.println("Enchantment expired: " + currentHall.getCurrentEnchantment().getEnchantmentType().getName());
-                itemManager.disappearEnchantment();
+                messageBox.addMessage("Enchantment expired: " + currentHall.getCurrentEnchantment().getEnchantmentType().getName(), 50);
+                String response = itemManager.disappearEnchantment();
                 enchantmentDurationTimer = 0;
+                messageBox.addMessage(response, 30);
             }
         }
     }
-
 
     public static void handleMovement(int dirX, int dirY) {
 
@@ -129,19 +139,20 @@ public class GameManager {
             if (!isGameOver()) {
                 boolean moved = heroManager.moveHero(hallManager, dirX, dirY);
                 if (!moved) {
-                    System.out.println("Hero cannot move in that direction.");
+                    messageBox.addMessage("Hero cannot move in that direction.", 30);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        monsterManager.moveMonsters();
+        monsterManager.moveMonsters(messageBox);
     }
 
     public static void handleWizardBehavior() {
         for (Monster monster : activeMonsters) {
             if (monster.getType() == Monster.MonsterType.WIZARD) {
-                monsterManager.processWizardBehavior(monster);
+                String response = monsterManager.processWizardBehavior(monster);
+                messageBox.addMessage(response, 30);
             }
         }
     }
@@ -152,14 +163,19 @@ public class GameManager {
 
     public static void handleEnchantmentUse(EnchantmentType enchantment, Direction direction) {
         try {
-            itemManager.useEnchantment(enchantment, direction);
+            String response = itemManager.useEnchantment(enchantment, direction);
+            messageBox.addMessage(response, 50);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void handleLureBehaviour() {
-        monsterManager.updateLuredMonsters();
+        try {
+            monsterManager.updateLuredMonsters();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void handleLeftClick(int mouseX, int mouseY) {
@@ -168,10 +184,10 @@ public class GameManager {
                     && currentHall.getCurrentEnchantment().getPositionX() == mouseX
                     && currentHall.getCurrentEnchantment().getPositionY() == mouseY) {
 
-                System.out.println("Enchantment clicked at (" + mouseX + ", " + mouseY + ").");
-                itemManager.collectEnchantment();
+                String response = itemManager.collectEnchantment();
+                messageBox.addMessage(response, 50);
             } else {
-                System.out.println("No enchantment at clicked location (" + mouseX + ", " + mouseY + ").");
+                messageBox.addMessage("No enchantment at clicked location (" + mouseX + ", " + mouseY + ").", 50);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -184,14 +200,14 @@ public class GameManager {
             GridCell clickedCell = currentHall.getCell(mouseX, mouseY);
             if (clickedCell instanceof Object clickedObject) {
                 if (heroManager.isAdjacentTo(mouseX, mouseY)) {
-                    System.out.println("Object clicked at (" + mouseX + ", " + mouseY + ").");
-                    itemManager.interactWithObject(clickedObject);
+                    String response = itemManager.interactWithObject(clickedObject);
+                    messageBox.addMessage(response, 50);
                 } else {
-                    System.out.println("Hero is not adjacent to the object at (" + mouseX + ", " + mouseY + ").");
+                    messageBox.addMessage("Hero is not adjacent to the object at (" + mouseX + ", " + mouseY + ").", 50);
                 }
+            } else {
+                messageBox.addMessage("Clicked cell is not an object at (" + mouseX + ", " + mouseY + ").", 50);
             }
-        } catch (ClassCastException e) {
-            System.out.println("Clicked cell is not an object at (" + mouseX + ", " + mouseY + ").");
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error handling right-click.");

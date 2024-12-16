@@ -4,6 +4,7 @@ import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.utils.Direction;
+import org.RokueLike.domain.utils.MessageBox;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -24,26 +25,22 @@ public class MonsterManager {
         this.hero = hero;
     }
 
-    public void moveMonsters() {
+    public void moveMonsters(MessageBox messageBox) {
         for (Monster monster : monsters) {
             switch (monster.getType()) {
                 case ARCHER:
-                    processArcherBehavior(monster);
-                    break;
+                    messageBox.addMessage(processArcherBehavior(monster), 30);
                 case FIGHTER:
-                    processFighterBehavior(monster);
-                    break;
+                    messageBox.addMessage(processFighterBehavior(monster), 30);
             }
         }
     }
 
-    public void processArcherBehavior(Monster archer) {
+    public String processArcherBehavior(Monster archer) {
         int attackRange = 4;
         if (isHeroInRange(archer, attackRange)) {
             heroMonsterInteraction(archer);
-            System.out.println("Archer attacks the hero!");
-
-            return;
+            return "Archer attacks the hero!";
         }
 
         int dirX = 0;
@@ -54,35 +51,30 @@ public class MonsterManager {
         if (Math.abs(archer.getPositionY() - hero.getPositionY()) <= attackRange) {
             dirY = (archer.getPositionY() > hero.getPositionY()) ? 1 : -1;
         }
+
         if (hallGrid.isSafeLocation(archer, dirX, dirY)) {
             archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY, true);
-            System.out.println("Archer moves to (" + archer.getPositionX() + ", " + archer.getPositionY() + ")");
+            return "Archer moves to (" + archer.getPositionX() + ", " + archer.getPositionY() + ")";
         } else {
-            randomMove(archer);
+            return randomMove(archer);
         }
     }
 
-    public void processFighterBehavior(Monster fighter) {
+    public String processFighterBehavior(Monster fighter) {
         int attackRange = 1;
         if (isHeroInRange(fighter, attackRange)) {
             heroMonsterInteraction(fighter);
-            System.out.println("Fighter stabs the hero with a dagger!");
-            return;
+            return "Fighter stabs the hero with a dagger!";
         }
-        randomMove(fighter);
+        return randomMove(fighter);
     }
 
-    public void processWizardBehavior(Monster wizard) {
-        try {
-            hallGrid.changeRuneLocation();
-            System.out.println("Wizard teleports the rune!");
-
-        } catch (IllegalStateException e) {
-            System.err.println("Error: " + e.getMessage());
-        }
+    public String processWizardBehavior(Monster wizard) {
+        hallGrid.changeRuneLocation();
+        return "Wizard teleports the rune!";
     }
 
-    private void randomMove(Monster monster) {
+    private String randomMove(Monster monster) {
         int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         Random random = new Random();
 
@@ -93,12 +85,10 @@ public class MonsterManager {
 
             if (hallGrid.isSafeLocation(monster, dirX, dirY)) {
                 monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY() + dirY, true);
-                System.out.println(monster.getName() + " randomly moves to (" + monster.getPositionX() + ", " + monster.getPositionY() + ")");
-                return;
+                return monster.getName() + " randomly moves to (" + monster.getPositionX() + ", " + monster.getPositionY() + ")";
             }
         }
-
-        System.out.println(monster.getName() + " cannot move.");
+        return monster.getName() + " cannot move.";
     }
 
     public boolean isHeroInRange(Monster monster, int range) {
@@ -122,7 +112,7 @@ public class MonsterManager {
         }
     }
 
-    public void spawnMonster() {
+    public String spawnMonster() {
         Monster newMonster = generateRandomMonster();
         int[] spawnPosition = hallGrid.findRandomSafeCell();
 
@@ -130,10 +120,10 @@ public class MonsterManager {
             newMonster.setPosition(spawnPosition[0], spawnPosition[1], false);
             //monsters.add(newMonster); // I think it's abundant, since we have hallGrid.addMonster
             hallGrid.addMonster(newMonster);
-            System.out.println("Spawned a " + newMonster.getType().getName() +
-                    " at (" + newMonster.getPositionX() + ", " + newMonster.getPositionY() + ")");
+            return "Spawned a " + newMonster.getType().getName() +
+                    " at (" + newMonster.getPositionX() + ", " + newMonster.getPositionY() + ")";
         } else {
-            System.out.println("No valid spawn location found for a new monster.");
+            return "No valid spawn location found for a new monster.";
         }
     }
 

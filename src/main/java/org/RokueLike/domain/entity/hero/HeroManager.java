@@ -31,6 +31,7 @@ public class HeroManager {
                         return true;
                     } else {
                         System.out.println("Congrats, you have escaped the dungeon!");
+                        System.exit(0);
                         return false;
                     }
                 } else {
@@ -45,21 +46,21 @@ public class HeroManager {
         }
     }
 
-    public void respawnHero() {
+    public String respawnHero() {
         int startX = hallGrid.getStartX();
         int startY = hallGrid.getStartY();
 
         if (hallGrid.isSafeLocation(startX, startY)) {
             hero.setPosition(startX, startY, false);
-            System.out.println("Hero respawned at starting position: (" + startX + ", " + startY + ")");
+            return "Hero respawned at starting position: (" + startX + ", " + startY + ")";
         } else {
             int[] safeLocation = hallGrid.findRandomSafeCell();
             if (safeLocation != null) {
                 hero.setPosition(safeLocation[0], safeLocation[1], false);
-                System.out.println("Hero respawned at safe position: (" + safeLocation[0] + ", " + safeLocation[1] + ")");
+                return "Hero respawned at safe position: (" + safeLocation[0] + ", " + safeLocation[1] + ")";
             } else {
-                System.out.println("No safe location found. Game over!");
                 System.exit(0);
+                return "No safe location found. Game over!";
             }
         }
     }

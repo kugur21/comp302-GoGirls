@@ -20,59 +20,57 @@ public class ItemManager {
         this.monsterManager = monsterManager;
     }
 
-    public void spawnEnchantment() {
+    public String spawnEnchantment() {
         int[] location = hallGrid.findRandomSafeCell();
         if (location == null) {
-            System.out.println("No safe location available to spawn enchantment.");
-            return;
+            return "No safe location available to spawn enchantment.";
         }
         Enchantment enchantment = generateRandomEnchantment(location[0], location[1]);
         hallGrid.addEnchantment(enchantment);
-        System.out.println("Enchantment spawned: " + enchantment.getEnchantmentType().getName() +
-                " at (" + location[0] + ", " + location[1] + ")");
+        return "Enchantment spawned: " + enchantment.getEnchantmentType().getName() +
+                " at (" + location[0] + ", " + location[1] + ")";
     }
 
-    public void disappearEnchantment() {
+    public String disappearEnchantment() {
         if (hallGrid.getCurrentEnchantment() != null) {
             hallGrid.removeEnchantment();
-            System.out.println("Enchantment removed from grid.");
+            return "Enchantment removed from grid.";
         }
+        return "No enchantment to remove.";
     }
 
-    public void collectEnchantment() {
+    public String collectEnchantment() {
         Enchantment currentEnchantment = hallGrid.getCurrentEnchantment();
 
         if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_TIME) {
-            System.out.println("Collected Extra Time enchantment!");
             hero.addRemainingTime(5);
+            hallGrid.removeEnchantment();
+            return "Collected Extra Time enchantment!";
         } else if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_LIFE) {
-            System.out.println("Collected Extra Life enchantment!");
             hero.incrementLives();
+            hallGrid.removeEnchantment();
+            return "Collected Extra Life enchantment!";
         } else {
-            System.out.println("Collected " + currentEnchantment.getEnchantmentType().getName() + " enchantment!");
             hero.addToInventory(currentEnchantment.getEnchantmentType());
+            hallGrid.removeEnchantment();
+            return "Collected " + currentEnchantment.getEnchantmentType().getName() + " enchantment!";
         }
-
-        hallGrid.removeEnchantment();
     }
 
-    public void useEnchantment(Enchantment.EnchantmentType enchantment, Direction direction) {
+    public String useEnchantment(Enchantment.EnchantmentType enchantment, Direction direction) {
         switch (enchantment) {
             case LURING_GEM:
-                applyLuringGem(direction);
-                break;
+                return applyLuringGem(direction);
             case CLOAK_OF_PROTECTION:
-                applyCloakOfProtection();
-                break;
+                return applyCloakOfProtection();
             case REVEAL:
-                applyReveal();
-                break;
+                return applyReveal();
             default:
-                System.out.println("Invalid enchantment type.");
+                return "Invalid enchantment type.";
         }
     }
 
-    public void applyReveal() {
+    public String applyReveal() {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)) {
             hero.useEnchantment(Enchantment.EnchantmentType.REVEAL);
             int[][] runeRegion = hallGrid.findRuneRegion(4);
@@ -81,38 +79,40 @@ public class ItemManager {
             Timer revealTimer = new Timer(10000, e -> removeHighlight(runeRegion));
             revealTimer.setRepeats(false);
             revealTimer.start();
-            System.out.println("Reveal enchantment applied.");
+            return "Reveal enchantment applied.";
         } else {
-            System.out.println("Hero does not have a Reveal Enchantment.");
+            return "Hero does not have a Reveal Enchantment.";
         }
     }
 
-    public void applyCloakOfProtection() {
+    public String applyCloakOfProtection() {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION)) {
             hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
             monsterManager.processCloakOfProtection(20);
+            return "Cloak of Protection enchantment applied.";
         } else {
-            System.out.println("No Cloak of Protection enchantment available in hero's inventory.");
+            return "No Cloak of Protection enchantment available in hero's inventory.";
         }
     }
 
-    public void applyLuringGem(Direction direction) {
+    public String applyLuringGem(Direction direction) {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.LURING_GEM)) {
             hero.useEnchantment(Enchantment.EnchantmentType.LURING_GEM);
             monsterManager.processLuringGem(direction);
+            return "Luring Gem enchantment applied.";
         } else {
-            System.out.println("No Luring Gem enchantment available in hero's inventory.");
+            return "No Luring Gem enchantment available in hero's inventory.";
         }
     }
 
-    public void interactWithObject(Object object) {
+    public String interactWithObject(Object object) {
         if (object.containsRune()) {
-            System.out.println("Congratulations! You found the rune!");
             object.removeContainedRune();
             hallGrid.openDoor();
-            // Play a sound indicating the door is open
+            // TODO: Play a sound indicating the door is open
+            return "Congratulations! You found the rune, door is unlocked!";
         } else {
-            System.out.println("The object is empty. Keep looking!");
+            return "The object is empty. Keep looking!";
         }
     }
 
