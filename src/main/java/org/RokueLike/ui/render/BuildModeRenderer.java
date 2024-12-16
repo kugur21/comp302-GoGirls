@@ -1,4 +1,4 @@
-package org.RokueLike.ui.renderer;
+package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.BuildManager;
 

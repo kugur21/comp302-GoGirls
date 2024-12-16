@@ -2,7 +2,7 @@ package org.RokueLike.ui.screen;
 
 import org.RokueLike.domain.BuildManager;
 import org.RokueLike.ui.Window;
-import org.RokueLike.ui.renderer.BuildModeRenderer;
+import org.RokueLike.ui.render.BuildModeRenderer;
 
 import javax.swing.*;
 import java.awt.*;
