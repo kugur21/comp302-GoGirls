@@ -1,6 +1,8 @@
 package org.RokueLike.ui.screen;
 
 import org.RokueLike.domain.GameManager;
+import org.RokueLike.ui.input.Keyboard;
+import org.RokueLike.ui.input.Mouse;
 import org.RokueLike.ui.render.PlayModeRenderer;
 
 import javax.swing.*;
@@ -19,14 +21,10 @@ public class PlayModeScreen extends JPanel {
         this.setFocusable(true);
         this.setLayout(null);
 
-        // Add key listener for movement and interaction
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                handlePlayerInput(e.getKeyCode());
-                repaint(); // Repaint after every action
-            }
-        });
+        // Add key and mouse listener for movement and interaction
+        this.addKeyListener(new Keyboard());
+        this.addMouseListener(new Mouse());
+        System.out.println("[PlayModeScreen]: Initialized.");
     }
 
     /**

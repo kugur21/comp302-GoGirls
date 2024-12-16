@@ -4,8 +4,8 @@ import java.util.Random;
 
 public class BuildManager {
 
-    private static final int HALL_WIDTH = 25;
-    private static final int HALL_HEIGHT = 25;
+    private static final int HALL_WIDTH = 15;
+    private static final int HALL_HEIGHT = 15;
 
     private static String[][] hallOfEarth;
     private static String[][] hallOfAir;
@@ -98,6 +98,22 @@ public class BuildManager {
         }
     }
 
+    public static void placeHeroRandomly(String[][] hall) {
+        int x = random.nextInt(HALL_WIDTH);
+        int y = random.nextInt(HALL_HEIGHT);
+
+        int placedHero = 0;
+        while (placedHero < 1) {
+            if (hall[y][x].equals(".")) { // Only place on floor tiles
+                hall[y][x] = "h";
+                placedHero++;
+            } else {
+                x = random.nextInt(HALL_WIDTH);
+                y = random.nextInt(HALL_HEIGHT);
+            }
+        }
+    }
+
     public static String[][] getHall(String hallName) {
         switch (hallName.toLowerCase()) {
             case "earth":
@@ -120,6 +136,23 @@ public class BuildManager {
     }
 
     public static String[][][] getAllHalls() {
-        return new String[][][]{hallOfEarth, hallOfAir, hallOfWater, hallOfFire};
+        return new String[][][] {hallOfEarth, hallOfAir, hallOfWater, hallOfFire};
     }
+
+    public static String[][] getAllHallsInGridFormat() {
+        String[][] hallsInGridFormat = new String[4][HALL_HEIGHT];
+        String[][][] allHalls = getAllHalls();
+
+        for (int gridIndex = 0; gridIndex < 4; gridIndex++) {
+            for (int rowIndex = 0; rowIndex < HALL_HEIGHT; rowIndex++) {
+                StringBuilder rowString = new StringBuilder();
+                for (int colIndex = 0; colIndex < HALL_WIDTH; colIndex++) {
+                    rowString.append(allHalls[gridIndex][rowIndex][colIndex]);
+                }
+                hallsInGridFormat[gridIndex][rowIndex] = rowString.toString();
+            }
+        }
+        return hallsInGridFormat;
+    }
+
 }

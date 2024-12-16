@@ -45,7 +45,7 @@ public class LaunchScreen extends JPanel {
     }
 
     private void startGame() {
-        Window.showScreen("BuildModeScreen");
+        Window.addScreen(new BuildModeScreen(), "BuildModeScreen", true);
     }
 
     private void openHelpScreen() {

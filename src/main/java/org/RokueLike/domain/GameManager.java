@@ -28,7 +28,6 @@ public class GameManager {
     private static int frameCounter = 0;
     private static MessageBox messageBox;
 
-    private static BuildManager buildManager;
     private static HallManager hallManager;
     private static HallGrid currentHall;
     private static Hero hero;
@@ -42,40 +41,30 @@ public class GameManager {
     public static void init() {
 
         System.out.println("[GameManager]: Starting game...");
-        /*
-        initBuildMode();
+
+        initHalls();
         initPlayMode();
 
         timer = new Timer(20, new GameLoop());
         timer.start();
-        */
-
     }
 
-    public static void initBuildMode() {
-        // TODO: Will change according to the implementation of BuildManager
-        /*
-        builder = new Builder();
+    public static void initHalls() {
+        // Initialize hero spawn locations
+        String[][][] hallData = BuildManager.getAllHalls();
+        for (String[][] hall : hallData) {
+            BuildManager.placeHeroRandomly(hall);
+        }
+
+        //Initialize halls
+        String[][] hallDataGridFormat = BuildManager.getAllHallsInGridFormat();
         List<HallGrid> halls = new ArrayList<>();
-
-        int[] objectCount = {6, 9, 13, 17};
         String[] hallNames = {"Hall of Earth", "Hall of Air", "Hall of Water", "Hall of Fire"};
-
-        for (int i = 0; i < objectCount.length; i++) {
-            builder.resetGrid();
-            builder.placeObject(objectCount[i]);
-            builder.placeHero();
-
-            String[] gridData = builder.getGridData();
-            HallGrid hall = new HallGrid(gridData, hallNames[i]);
+        for (int i = 0; i < hallDataGridFormat.length; i++) {
+            HallGrid hall = new HallGrid(hallDataGridFormat[i], hallNames[i]);
             halls.add(hall);
-
-            System.out.println(hallNames[i] + " layout with " + objectCount[i] + " objects:");
-            builder.printGrid();
-            System.out.println();
         }
         hallManager = new HallManager(halls);
-        */
     }
 
     public static void initPlayMode() {

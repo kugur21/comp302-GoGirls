@@ -62,7 +62,7 @@ public class BuildModeScreen extends JPanel{
 
     private void proceedToPlayMode() {
         System.out.println("[BuildModeScreen]: Proceeding to Play Mode.");
-        Window.showScreen("PlayModeScreen");
+        Window.addScreen(new PlayModeScreen(), "PlayModeScreen", true);
     }
 
     @Override

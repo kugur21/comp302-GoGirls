@@ -6,9 +6,9 @@ import java.awt.*;
 
 public class BuildModeRenderer {
 
-    private static final int TILE_SIZE = 32;  // Pixel size for each grid tile
+    private static final int TILE_SIZE = 16;  // Pixel size for each grid tile
     private static final int GRID_OFFSET_X = 50;  // Offset for rendering halls
-    private static final int GRID_OFFSET_Y = 100;
+    private static final int GRID_OFFSET_Y = 50;
 
     /**
      * Renders all halls in Build Mode.

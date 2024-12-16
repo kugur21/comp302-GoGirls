@@ -2,6 +2,9 @@ package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.item.Door;
+import org.RokueLike.domain.entity.item.Enchantment;
+import org.RokueLike.domain.entity.item.Object;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
@@ -42,9 +45,8 @@ public class PlayModeRenderer {
     private void renderGrid(Graphics2D g, HallGrid hall) {
         for (int y = 0; y < hall.getHeight(); y++) {
             for (int x = 0; x < hall.getWidth(); x++) {
-                GridCell cell = hall.getCell(x, y);
-                //Color tileColor = getTileColor(cell.getType());
-                //g.setColor(tileColor);
+                Color tileColor = getTileColor(hall.getCell(x, y));
+                g.setColor(tileColor);
                 g.fillRect(GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 g.setColor(Color.BLACK);
                 g.drawRect(GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -98,19 +100,23 @@ public class PlayModeRenderer {
         g.drawString("Time Remaining: " + hero.getRemainingTime(), 10, 60);
     }
 
-    /**
-     * Determines tile color based on the grid cell type.
-     *
-     * @param cellType Type of the grid cell.
-     * @return Color for rendering.
-     */
-    private Color getTileColor(String cellType) {
-        return switch (cellType) {
-            case "#" -> Color.DARK_GRAY;  // Wall
-            case "." -> Color.LIGHT_GRAY; // Floor
-            case "d" -> Color.ORANGE;     // Door
-            case "o" -> Color.GREEN;      // Object
-            default -> Color.PINK;        // Default unknown
-        };
+    private Color getTileColor(GridCell cell) {
+        if (cell.getName().equals("wall")) {
+            return Color.DARK_GRAY;
+        } else if (cell.getName().equals("floor")) {
+            return Color.LIGHT_GRAY;
+        } else if (cell instanceof Door) {
+            return Color.ORANGE;
+        } else if (cell instanceof Object) {
+            return Color.GREEN;
+        } else if (cell instanceof Hero) {
+            return Color.BLUE;
+        } else if (cell instanceof Monster) {
+            return Color.RED;
+        } else if (cell instanceof Enchantment) {
+            return Color.PINK;
+        } else {
+            return Color.WHITE;
+        }
     }
 }
