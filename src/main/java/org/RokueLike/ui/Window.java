@@ -1,5 +1,7 @@
 package org.RokueLike.ui;
 
+import org.RokueLike.ui.screen.BuildModeScreen;
+import org.RokueLike.ui.screen.HelpScreen;
 import org.RokueLike.ui.screen.LaunchScreen;
 
 import javax.swing.*;
@@ -35,6 +37,8 @@ public class Window {
 
     private static void addScreens() {
         mainPanel.add(new LaunchScreen(), "LaunchScreen");
+        mainPanel.add(new HelpScreen(), "HelpScreen");
+        mainPanel.add(new BuildModeScreen(), "BuildModeScreen");
 
         showScreen("LaunchScreen");
     }

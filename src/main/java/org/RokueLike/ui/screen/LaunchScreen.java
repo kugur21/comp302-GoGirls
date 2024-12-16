@@ -45,7 +45,7 @@ public class LaunchScreen extends JPanel {
     }
 
     private void startGame() {
-        org.RokueLike.ui.Window.showScreen("BuildModeScreen");
+        Window.showScreen("BuildModeScreen");
     }
 
     private void openHelpScreen() {
