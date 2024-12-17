@@ -40,6 +40,19 @@ public class Window {
     public static void showScreen(String screenName) {
         cardLayout.show(mainPanel, screenName);
         System.out.println("[Window]: Switched to screen - " + screenName);
+
+        // Request focus for the active screen
+        Component currentScreen = mainPanel.getComponent(0);
+        for (Component comp : mainPanel.getComponents()) {
+            if (comp.isVisible()) {
+                currentScreen = comp;
+                break;
+            }
+        }
+        if (currentScreen instanceof JPanel) {
+            ((JPanel) currentScreen).requestFocusInWindow();
+            System.out.println("[Window]: Focus requested for " + screenName);
+        }
     }
 
     public static void addScreen(JPanel screen, String screenName, boolean show) {

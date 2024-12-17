@@ -39,34 +39,26 @@ public class GameLoop implements ActionListener {
             }
             GameManager.handleLureBehaviour();
 
-            if (!Keyboard.isLuringMode()) {
-                if (Keyboard.isKeyPressed("UP")) {
-                    GameManager.handleMovement(0, 1);
-                } else if (Keyboard.isKeyPressed("DOWN")) {
-                    GameManager.handleMovement(0, -1);
-                } else if (Keyboard.isKeyPressed("LEFT")) {
-                    GameManager.handleMovement(-1, 0);
-                    GameManager.getHero().setFacing(Direction.LEFT);
-                } else if (Keyboard.isKeyPressed("RIGHT")) {
-                    GameManager.handleMovement(1, 0);
-                    GameManager.getHero().setFacing(Direction.RIGHT);
-                }
-            } else {
-                if (Keyboard.isKeyPressed("LURE_UP")) {
-                    GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.UP);
-                    Keyboard.deactivateLuringMode();
-                } else if (Keyboard.isKeyPressed("LURE_DOWN")) {
-                    GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.DOWN);
-                    Keyboard.deactivateLuringMode();
-                } else if (Keyboard.isKeyPressed("LURE_LEFT")) {
-                    GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.LEFT);
-                    Keyboard.deactivateLuringMode();
-                } else if (Keyboard.isKeyPressed("LURE_RIGHT")) {
-                    GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.RIGHT);
-                    Keyboard.deactivateLuringMode();
-                }
+            if (Keyboard.isKeyPressed("UP")) {
+                GameManager.handleMovement(0, -1);
+            } else if (Keyboard.isKeyPressed("DOWN")) {
+                GameManager.handleMovement(0, 1);
+            } else if (Keyboard.isKeyPressed("LEFT")) {
+                GameManager.handleMovement(-1, 0);
+                GameManager.getHero().setFacing(Direction.LEFT);
+            } else if (Keyboard.isKeyPressed("RIGHT")) {
+                GameManager.handleMovement(1, 0);
+                GameManager.getHero().setFacing(Direction.RIGHT);
             }
-
+            if (Keyboard.isKeyPressed("LURE_UP")) {
+                GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.UP);
+            } else if (Keyboard.isKeyPressed("LURE_DOWN")) {
+                GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.DOWN);
+            } else if (Keyboard.isKeyPressed("LURE_LEFT")) {
+                GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.LEFT);
+            } else if (Keyboard.isKeyPressed("LURE_RIGHT")) {
+                GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.RIGHT);
+            }
             if (Keyboard.isKeyPressed("USE_REVEAL")) {
                 GameManager.handleEnchantmentUse(EnchantmentType.REVEAL);
             }

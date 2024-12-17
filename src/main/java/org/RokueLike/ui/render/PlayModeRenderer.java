@@ -28,7 +28,7 @@ public class PlayModeRenderer {
         Hero hero = GameManager.getHero();
         List<Monster> monsters = GameManager.getActiveMonsters();
 
-        if (currentHall == null || hero == null) return;
+        if (currentHall == null || hero == null) return;;
 
         renderGrid(g, currentHall);
         renderHero(g, hero);

@@ -5,7 +5,7 @@ import org.RokueLike.domain.GameManager;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class Mouse implements MouseListener {
+public class MousePlay implements MouseListener {
     @Override
     public void mouseClicked(MouseEvent e) {
         int gridX = getGridCoordinate(e.getX());

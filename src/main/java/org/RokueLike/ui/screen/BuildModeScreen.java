@@ -2,6 +2,7 @@ package org.RokueLike.ui.screen;
 
 import org.RokueLike.domain.BuildManager;
 import org.RokueLike.ui.Window;
+import org.RokueLike.ui.input.MouseBuild;
 import org.RokueLike.ui.render.BuildModeRenderer;
 
 import javax.swing.*;
@@ -33,6 +34,8 @@ public class BuildModeScreen extends JPanel{
 
         JButton proceedButton = createButton("Proceed to Play Mode", 350, e -> proceedToPlayMode());
         this.add(proceedButton);
+
+        //this.addMouseListener(new MouseBuild());
     }
 
     private JButton createButton(String text, int yPosition, ActionListener action) {
@@ -69,6 +72,7 @@ public class BuildModeScreen extends JPanel{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         renderer.renderBuildMode((Graphics2D) g);
+        //repaint(); ?
     }
 
 }

@@ -31,6 +31,13 @@ public class BuildManager {
         System.out.println("[BuildManager]: All halls initialized.");
     }
 
+    /*
+    "#" -> walls
+    "." -> floor
+    "d" -> door
+    "o" -> object
+    "h" -> hero
+     */
     private static String[][] createEmptyHall() {
         String[][] hall = new String[HALL_HEIGHT][HALL_WIDTH];
         for (int y = 0; y < HALL_HEIGHT; y++) {
@@ -128,11 +135,6 @@ public class BuildManager {
                 System.out.println("[BuildManager]: Invalid hall name: " + hallName);
                 return null;
         }
-    }
-
-    public static void reset() {
-        init();
-        System.out.println("[BuildManager]: Build mode reset.");
     }
 
     public static String[][][] getAllHalls() {

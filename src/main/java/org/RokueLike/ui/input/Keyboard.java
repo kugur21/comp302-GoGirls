@@ -9,7 +9,6 @@ public class Keyboard implements KeyListener {
 
     private static boolean[] keys;
     private static int delay;
-    private static boolean luringMode;
 
     private static final Map<String, Integer> keyBindings = new HashMap<>();
     static {
@@ -29,7 +28,6 @@ public class Keyboard implements KeyListener {
     public Keyboard() {
         keys = new boolean[256];
         delay = 96;
-        luringMode = false;
     }
 
     @Override
@@ -37,35 +35,24 @@ public class Keyboard implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+        System.out.println("Key Pressed: " + e.getKeyCode());
         keys[e.getKeyCode()] = true;
 
         if (e.getKeyCode() == keyBindings.get("USE_LURING")) {
-            luringMode = true;
             System.out.println("Luring mode activated. Choose a direction (A, D, W, S).");
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
+        System.out.println("Key Released: " + e.getKeyCode());
+
         keys[e.getKeyCode()] = false;
     }
 
     public static boolean isKeyPressed(String action) {
         Integer keyCode = keyBindings.get(action);
-        if (keyCode != null && keys[keyCode] && delay <= 0) {
-            delay = 96;
-            return true;
-        } else {
-            delay--;
-            return false;
-        }
+        return keyCode != null && keys[keyCode];
     }
 
-    public static boolean isLuringMode() {
-        return luringMode;
-    }
-
-    public static void deactivateLuringMode() {
-        luringMode = false;
-    }
 }
