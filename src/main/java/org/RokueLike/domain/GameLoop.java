@@ -68,7 +68,6 @@ public class GameLoop implements ActionListener {
 
         } catch (Exception e) {
             System.out.println("Error in GameLoop");
-            e.printStackTrace();
             System.exit(-1);
         }
 

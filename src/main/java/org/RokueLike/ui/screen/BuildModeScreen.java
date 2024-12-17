@@ -35,7 +35,7 @@ public class BuildModeScreen extends JPanel{
         JButton proceedButton = createButton("Proceed to Play Mode", 350, e -> proceedToPlayMode());
         this.add(proceedButton);
 
-        //this.addMouseListener(new MouseBuild());
+        this.addMouseListener(new MouseBuild());
     }
 
     private JButton createButton(String text, int yPosition, ActionListener action) {
@@ -72,7 +72,7 @@ public class BuildModeScreen extends JPanel{
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         renderer.renderBuildMode((Graphics2D) g);
-        //repaint(); ?
+        repaint();
     }
 
 }

@@ -20,10 +20,10 @@ public class BuildModeRenderer {
         String[][][] halls = BuildManager.getAllHalls();
 
         // Render each hall in its respective position
-        renderHall(g, halls[0], GRID_OFFSET_X, GRID_OFFSET_Y, "Hall Of Earth");
-        renderHall(g, halls[1], GRID_OFFSET_X + 350, GRID_OFFSET_Y, "Hall Of Air");
-        renderHall(g, halls[2], GRID_OFFSET_X, GRID_OFFSET_Y + 350, "Hall Of Water");
-        renderHall(g, halls[3], GRID_OFFSET_X + 350, GRID_OFFSET_Y + 350, "Hall Of Fire");
+        renderHall(g, halls[0], GRID_OFFSET_X, GRID_OFFSET_Y, "earth");
+        renderHall(g, halls[1], GRID_OFFSET_X + 350, GRID_OFFSET_Y, "air");
+        renderHall(g, halls[2], GRID_OFFSET_X, GRID_OFFSET_Y + 350, "water");
+        renderHall(g, halls[3], GRID_OFFSET_X + 350, GRID_OFFSET_Y + 350, "fire");
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.RokueLike.domain;
 
+import javax.swing.*;
 import java.util.Random;
 
 public class BuildManager {
@@ -27,8 +28,10 @@ public class BuildManager {
         placeDoor(hallOfAir);
         placeDoor(hallOfWater);
         placeDoor(hallOfFire);
-
         System.out.println("[BuildManager]: All halls initialized.");
+
+        Timer timer = new Timer(20, new BuildLoop());
+        timer.start();
     }
 
     /*
