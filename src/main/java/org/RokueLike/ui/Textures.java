@@ -31,7 +31,6 @@ public class Textures {
                 throw new IllegalArgumentException("JSON file not found in resources.");
             }
 
-
             ObjectMapper objectMapper = new ObjectMapper();
             JsonNode root = objectMapper.readTree(jsonStream);
 
@@ -58,6 +57,7 @@ public class Textures {
         }
     }
 
+    // Sprite'ı adından getiren metod
     public static BufferedImage getSprite(String name) {
         BufferedImage sprite = sprites.get(name);
         if (sprite != null) return sprite;
@@ -66,7 +66,32 @@ public class Textures {
             return null;
         }
     }
+    public static void addSprite(String name, BufferedImage image) {
+        if (sprites == null) {
+            sprites = new HashMap<>();
+        }
+        sprites.put(name, image);
+        System.out.println("[Textures]: Added sprite -> " + name);
+    }
+
+
+    // Tüm sprite isimlerini döndüren metod
     public static Set<String> getSpriteNames() {
-        return sprites.keySet(); // HashMap'teki tüm anahtarları (sprite isimlerini) döner
+        return sprites.keySet();
+    }
+
+    // Yeni Eklenen Metod: PNG Dosyasını BufferedImage Olarak Yükler
+    public static BufferedImage loadPNG(String filePath) {
+        try {
+            InputStream stream = Textures.class.getClassLoader().getResourceAsStream(filePath);
+            if (stream == null) {
+                throw new IllegalArgumentException("File not found: " + filePath);
+            }
+            return ImageIO.read(stream);
+        } catch (Exception e) {
+            System.err.println("[Textures]: Failed to load PNG file: " + filePath);
+            e.printStackTrace();
+            return null;
+        }
     }
 }
