@@ -6,10 +6,16 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 public class MousePlay implements MouseListener {
+
+    // Same as BuildModeRenderer
+    final int GRID_OFFSET_X = 50;
+    final int GRID_OFFSET_Y = 50;
+
+
     @Override
     public void mouseClicked(MouseEvent e) {
-        int gridX = getGridCoordinate(e.getX());
-        int gridY = getGridCoordinate(e.getY());
+        int gridX = getGridCoordinate(e.getX(), GRID_OFFSET_X);
+        int gridY = getGridCoordinate(e.getY(), GRID_OFFSET_Y);
 
         if (e.getButton() == MouseEvent.BUTTON1) {
             GameManager.handleLeftClick(gridX, gridY);
@@ -35,9 +41,9 @@ public class MousePlay implements MouseListener {
      * This assumes that each grid cell has a fixed pixel size.
      * Adjust `CELL_SIZE` based on your game's implementation.
      */
-    private int getGridCoordinate(int pixelCoordinate) {
-        final int CELL_SIZE = 32; // Example: 32x32 pixels per grid cell
-        return pixelCoordinate / CELL_SIZE;
+    private int getGridCoordinate(int pixelCoordinate, int offset) {
+        final int CELL_SIZE = 16; // Same as BuildModeRenderer
+        return (pixelCoordinate - offset) / CELL_SIZE;
     }
 
 }

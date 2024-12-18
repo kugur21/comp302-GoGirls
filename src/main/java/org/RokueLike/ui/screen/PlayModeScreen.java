@@ -17,9 +17,7 @@ public class PlayModeScreen extends JPanel {
         this.renderer = new PlayModeRenderer();
 
         this.setFocusable(true);
-        //this.requestFocusInWindow();
         this.setLayout(null);
-
 
         // Add key and mouse listener for movement and interaction
         this.addKeyListener(new Keyboard());

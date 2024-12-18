@@ -8,7 +8,6 @@ import java.util.HashMap;
 public class Keyboard implements KeyListener {
 
     private static boolean[] keys;
-    private static int delay;
 
     private static final Map<String, Integer> keyBindings = new HashMap<>();
     static {
@@ -27,7 +26,6 @@ public class Keyboard implements KeyListener {
 
     public Keyboard() {
         keys = new boolean[256];
-        delay = 96;
     }
 
     @Override
@@ -35,7 +33,6 @@ public class Keyboard implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println("Key Pressed: " + e.getKeyCode());
         keys[e.getKeyCode()] = true;
 
         if (e.getKeyCode() == keyBindings.get("USE_LURING")) {
@@ -45,8 +42,6 @@ public class Keyboard implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        System.out.println("Key Released: " + e.getKeyCode());
-
         keys[e.getKeyCode()] = false;
     }
 
