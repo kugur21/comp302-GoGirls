@@ -1,5 +1,6 @@
 package org.RokueLike.domain;
 
+// halların dataları tutar, game managera aktarır
 import java.util.Random;
 
 public class BuildManager {
