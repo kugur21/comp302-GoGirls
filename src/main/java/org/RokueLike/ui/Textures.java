@@ -51,11 +51,43 @@ public class Textures {
                 sprites.put(name, sprite);
             }
 
+            // **Manually load Inventory.png**
+            InputStream inventoryStream = Textures.class.getClassLoader()
+                    .getResourceAsStream("images/Inventory.png");
+            if (inventoryStream == null) {
+                throw new IllegalArgumentException("Inventory.png not found in resources/images.");
+            }
+            BufferedImage inventoryImage = ImageIO.read(inventoryStream);
+            sprites.put("Inventory", inventoryImage); // Add to sprite map
+
+
             System.out.println("[Textures]: Successfully loaded sprites from JSON!");
         } catch (Exception e) {
             System.err.println("[Textures]: Failed to load sprites!");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Attempts to load a sprite sheet as PNG or JPG.
+     */
+    private static BufferedImage loadSpriteSheet() {
+        BufferedImage spriteSheet = null;
+        String[] possibleFormats = { "images/0x72_16x16DungeonTileset.v5.png", "images/0x72_16x16DungeonTileset.v5.jpg" };
+
+        for (String path : possibleFormats) {
+            try {
+                InputStream spriteSheetStream = Textures.class.getClassLoader().getResourceAsStream(path);
+                if (spriteSheetStream != null) {
+                    spriteSheet = ImageIO.read(spriteSheetStream);
+                    System.out.println("[Textures]: Loaded sprite sheet: " + path);
+                    break;
+                }
+            } catch (Exception e) {
+                System.err.println("[Textures]: Failed to load sprite sheet: " + path);
+            }
+        }
+        return spriteSheet;
     }
 
     public static BufferedImage getSprite(String name) {

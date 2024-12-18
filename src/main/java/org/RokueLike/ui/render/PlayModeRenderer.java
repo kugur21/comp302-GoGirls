@@ -2,121 +2,149 @@ package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
-import org.RokueLike.domain.entity.item.Door;
 import org.RokueLike.domain.entity.item.Enchantment;
-import org.RokueLike.domain.entity.item.Object;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.ui.Textures;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.ArrayList;
 
 public class PlayModeRenderer {
 
-    private static final int TILE_SIZE = 32;  // Grid tile size
-    private static final int GRID_OFFSET_X = 50;  // Offset for grid rendering
-    private static final int GRID_OFFSET_Y = 50;
+    private static final int TILE_SIZE = 32;  // Tile size
+    private static final int GRID_OFFSET_X = 50;  // Grid X start
+    private static final int GRID_OFFSET_Y = 50;  // Grid Y start
 
-    /**
-     * Renders the game grid, hero, and active monsters.
-     *
-     * @param g Graphics2D object used for rendering.
-     */
     public void renderPlayMode(Graphics2D g) {
         HallGrid currentHall = GameManager.getCurrentHall();
         Hero hero = GameManager.getHero();
         List<Monster> monsters = GameManager.getActiveMonsters();
 
-        if (currentHall == null || hero == null) return;;
+        if (currentHall == null || hero == null) return;
 
         renderGrid(g, currentHall);
-        renderHero(g, hero);
         renderMonsters(g, monsters);
-        renderUI(g, hero);
+        renderHero(g, hero);
+
+        int remainingTime = hero.getRemainingTime();
+        renderHUD(g, hero, remainingTime);
     }
 
-    /**
-     * Renders the game grid.
-     *
-     * @param g    Graphics2D object.
-     * @param hall HallGrid representing the current grid.
-     */
     private void renderGrid(Graphics2D g, HallGrid hall) {
         for (int y = 0; y < hall.getHeight(); y++) {
             for (int x = 0; x < hall.getWidth(); x++) {
-                Color tileColor = getTileColor(hall.getCell(x, y));
-                g.setColor(tileColor);
-                g.fillRect(GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                g.setColor(Color.BLACK);
-                g.drawRect(GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-
+                GridCell cell = hall.getCell(x, y);
+                drawTile(g, cell, x, y);
             }
         }
     }
 
-    /**
-     * Renders the hero.
-     *
-     * @param g    Graphics2D object.
-     * @param hero Hero object representing the player.
-     */
-    private void renderHero(Graphics2D g, Hero hero) {
-        g.setColor(Color.BLUE);
-        g.fillOval(
-                GRID_OFFSET_X + hero.getPositionX() * TILE_SIZE,
-                GRID_OFFSET_Y + hero.getPositionY() * TILE_SIZE,
-                TILE_SIZE, TILE_SIZE
-        );
-    }
+    private void drawTile(Graphics2D g, GridCell cell, int x, int y) {
+        BufferedImage img = switch (cell.getName()) {
+            case "wall" -> Textures.getSprite("wall_center");
+            case "floor" -> Textures.getSprite("floor_plain");
+            case "door" -> Textures.getSprite("door_closed");
+            case "chest" -> Textures.getSprite("chest_closed");
+            case "skull" -> Textures.getSprite("skull");
+            case "column" -> Textures.getSprite("column");
+            case "object" -> Textures.getSprite("box"); // Default placeholder
+            default -> Textures.getSprite("black");
+        };
 
-    /**
-     * Renders monsters on the grid.
-     *
-     * @param g        Graphics2D object.
-     * @param monsters List of active monsters.
-     */
-    private void renderMonsters(Graphics2D g, List<Monster> monsters) {
-        g.setColor(Color.RED);
-        for (Monster monster : monsters) {
-            g.fillOval(
-                    GRID_OFFSET_X + monster.getPositionX() * TILE_SIZE,
-                    GRID_OFFSET_Y + monster.getPositionY() * TILE_SIZE,
-                    TILE_SIZE, TILE_SIZE
-            );
+        if (img != null) {
+            g.drawImage(img, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        } else {
+            System.err.println("[Textures]: Missing sprite for " + cell.getName());
         }
     }
 
-    /**
-     * Renders the player UI (health and stats).
-     *
-     * @param g    Graphics2D object.
-     * @param hero Hero object.
-     */
-    private void renderUI(Graphics2D g, Hero hero) {
-        g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.PLAIN, 20));
-        g.drawString("Health: " + hero.getLives() + " / " + 4, 10, 30);
-        g.drawString("Time Remaining: " + hero.getRemainingTime(), 10, 60);
+    private void renderHUD(Graphics2D g, Hero hero, int remainingTime) {
+        int HUD_X = 550; // HUD X position
+        int HUD_Y = 50;  // HUD Y position
+        int HUD_WIDTH = 200; // HUD width
+
+        // HUD Background
+        g.setColor(new Color(50, 25, 50)); // Dark purple
+        g.fillRoundRect(HUD_X, HUD_Y, HUD_WIDTH, 400, 20, 20);
+
+        // Play/Pause Buttons
+
+        // Time Section
+        g.setColor(Color.LIGHT_GRAY);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("Time:", HUD_X + 20, HUD_Y + 60);
+        g.drawString(remainingTime + " seconds", HUD_X + 80, HUD_Y + 60);
+
+        // Health Section (Hearts)
+
+
+        // Inventory
+        renderInventory(g, hero, HUD_X + 20, HUD_Y + 140);
     }
 
-    private Color getTileColor(GridCell cell) {
-        if (cell.getName().equals("wall")) {
-            return Color.DARK_GRAY;
-        } else if (cell.getName().equals("floor")) {
-            return Color.LIGHT_GRAY;
-        } else if (cell instanceof Door) {
-            return Color.ORANGE;
-        } else if (cell instanceof Object) {
-            return Color.GREEN;
-        } else if (cell instanceof Hero) {
-            return Color.BLUE;
-        } else if (cell instanceof Monster) {
-            return Color.RED;
-        } else if (cell instanceof Enchantment) {
-            return Color.PINK;
-        } else {
-            return Color.WHITE;
+    private void renderInventory(Graphics2D g, Hero hero, int inventoryX, int inventoryY) {
+        BufferedImage inventoryBg = Textures.getSprite("Inventory");
+        if (inventoryBg != null) {
+            g.drawImage(inventoryBg, inventoryX, inventoryY, 160, 160, null);
+        }
+
+        // Inventory Slots and Items
+        int slotSize = 40;
+        int gap = 10;
+        int itemStartX = inventoryX + 10;
+        int itemStartY = inventoryY + 40;
+
+        List<BufferedImage> itemImages = new ArrayList<>();
+        for (Enchantment.EnchantmentType item : hero.getInventory().getItems()) {
+            BufferedImage img = Textures.getSprite(item.getName());
+            if (img != null) {
+                itemImages.add(img);
+            }
+        }
+
+        for (int i = 0; i < 6; i++) { // Draw 6 slots
+            g.setColor(new Color(80, 80, 100)); // Slot background
+            g.fillRect(itemStartX + (i % 3) * (slotSize + gap), itemStartY + (i / 3) * (slotSize + gap), slotSize, slotSize);
+
+            if (i < itemImages.size()) {
+                BufferedImage itemImg = itemImages.get(i);
+                g.drawImage(itemImg,
+                        itemStartX + (i % 3) * (slotSize + gap),
+                        itemStartY + (i / 3) * (slotSize + gap),
+                        slotSize, slotSize, null);
+            }
+        }
+    }
+
+    private void renderHero(Graphics2D g, Hero hero) {
+        BufferedImage heroSprite = Textures.getSprite("npc_elf");
+        if (heroSprite != null) {
+            g.drawImage(heroSprite,
+                    GRID_OFFSET_X + hero.getPositionX() * TILE_SIZE,
+                    GRID_OFFSET_Y + hero.getPositionY() * TILE_SIZE,
+                    TILE_SIZE, TILE_SIZE, null);
+        }
+    }
+
+    private void renderMonsters(Graphics2D g, List<Monster> monsters) {
+        for (Monster monster : monsters) {
+            String spriteName = switch (monster.getType()) {
+                case ARCHER -> "npc_dwarf";
+                case FIGHTER -> "npc_knight_blue";
+                case WIZARD -> "npc_wizzard";
+            };
+
+            BufferedImage monsterSprite = Textures.getSprite(spriteName);
+            if (monsterSprite != null) {
+                g.drawImage(monsterSprite,
+                        GRID_OFFSET_X + monster.getPositionX() * TILE_SIZE,
+                        GRID_OFFSET_Y + monster.getPositionY() * TILE_SIZE,
+                        TILE_SIZE, TILE_SIZE, null);
+            }
         }
     }
 }

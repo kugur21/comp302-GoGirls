@@ -52,8 +52,9 @@ public class Enchantment extends Item {
             this.duration = duration;
         }
 
+        // Revised for PlayModeRenderer by Sarp
         public String getName() {
-            return name;
+            return this.name().toLowerCase();
         }
 
         public int getDuration() {
