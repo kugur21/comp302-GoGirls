@@ -87,7 +87,8 @@ public class Textures {
         BufferedImage sprite = sprites.get(name);
         if (sprite != null) return sprite;
         else {
-            System.err.println("[Textures]: Sprite '" + name + "' not found!");
+            // System.err.println("[Textures]: Sprite '" + name + "' not found!");
+            // Duzeltilmesi gerekiyor: [Textures]: Sprite 'cloak' not found! messajı surekli cıkıyor
             return null;
         }
     }

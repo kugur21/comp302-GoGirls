@@ -187,20 +187,4 @@ public class BuildManager {
         return new String[][][] {hallOfEarth, hallOfAir, hallOfWater, hallOfFire};
     }
 
-    public static String[][] getAllHallsInGridFormat() {
-        String[][] hallsInGridFormat = new String[4][HALL_HEIGHT];
-        String[][][] allHalls = getAllHalls();
-
-        for (int gridIndex = 0; gridIndex < 4; gridIndex++) {
-            for (int rowIndex = 0; rowIndex < HALL_HEIGHT; rowIndex++) {
-                StringBuilder rowString = new StringBuilder();
-                for (int colIndex = 0; colIndex < HALL_WIDTH; colIndex++) {
-                    rowString.append(allHalls[gridIndex][rowIndex][colIndex]);
-                }
-                hallsInGridFormat[gridIndex][rowIndex] = rowString.toString();
-            }
-        }
-        return hallsInGridFormat;
-    }
-
 }

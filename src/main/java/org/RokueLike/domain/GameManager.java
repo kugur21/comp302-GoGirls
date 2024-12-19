@@ -57,11 +57,10 @@ public class GameManager {
         }
 
         //Initialize halls
-        String[][] hallDataGridFormat = BuildManager.getAllHallsInGridFormat();
         List<HallGrid> halls = new ArrayList<>();
         String[] hallNames = {"Hall of Earth", "Hall of Air", "Hall of Water", "Hall of Fire"};
-        for (int i = 0; i < hallDataGridFormat.length; i++) {
-            HallGrid hall = new HallGrid(hallDataGridFormat[i], hallNames[i]);
+        for (int i = 0; i < hallData.length; i++) {
+            HallGrid hall = new HallGrid(hallData[i], hallNames[i]);
             halls.add(hall);
         }
         hallManager = new HallManager(halls);

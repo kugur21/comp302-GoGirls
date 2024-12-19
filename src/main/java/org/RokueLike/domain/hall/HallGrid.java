@@ -21,40 +21,58 @@ public class HallGrid {
     private List<Object> objects;
     private Enchantment currentEnchantment;
 
-    public HallGrid(String[] gridData, String name) {
+    public HallGrid(String[][] gridData, String name) {
         this.name = name;
-        grid = new GridCell[gridData.length][];
+        grid = new GridCell[gridData.length][gridData[0].length];
         initGrid(gridData);
     }
 
-    private void initGrid(String[] gridData) {
+    private void initGrid(String[][] gridData) {
         this.objects = new ArrayList<>();
         this.monsters = new ArrayList<>();
         this.currentEnchantment = null;
 
-
         for (int i = 0; i < gridData.length; i++) {
-            grid[i] = new GridCell[gridData[i].length()];
-            for (int j = 0; j < gridData[i].length(); j++) {
-                switch (gridData[i].charAt(j)) {
-                    case '#':
+            for (int j = 0; j < gridData[i].length; j++) {
+                String cellValue = gridData[i][j];
+
+                switch (cellValue) {
+                    case "#":
                         grid[i][j] = new GridCell("wall", j, i);
                         break;
-                    case '.':
+                    case ".":
                         grid[i][j] = new GridCell("floor", j, i);
                         break;
-                    case 'd':
+                    case "d":
                         grid[i][j] = new Door(j, i);
                         break;
-                    case 'o':
-                        Object object = new Object(j, i);
-                        grid[i][j] = object;
-                        objects.add(object);
-                        break;
-                    case 'h':
+                    case "h":
                         grid[i][j] = new GridCell("floor", j, i);
                         this.startX = j;
                         this.startY = i;
+                        break;
+                    default:
+                        try {
+                            // Handle objects (e.g., "o1", "o2", ..., "o6")
+                            if (cellValue.startsWith("o")) {
+                                int objectType = Integer.parseInt(cellValue.substring(1)); // Extract object type
+                                if (objectType >= 1 && objectType <= 6) {
+                                    String objectName = "object" + objectType; // Create object name
+                                    Object object = new Object(objectName, j, i); // Initialize Object
+                                    grid[i][j] = object;
+                                    objects.add(object);
+                                } else {
+                                    System.err.println("Invalid object type: " + cellValue + " at (" + j + ", " + i + ")");
+                                    grid[i][j] = new GridCell("floor", j, i); // Default to floor
+                                }
+                            } else {
+                                System.err.println("Unrecognized grid value: " + cellValue + " at (" + j + ", " + i + ")");
+                                grid[i][j] = new GridCell("floor", j, i); // Default to floor
+                            }
+                        } catch (Exception e) {
+                            System.err.println("Error while initializing grid cell at (" + j + ", " + i + "): " + e.getMessage());
+                            grid[i][j] = new GridCell("floor", j, i); // Default to floor
+                        }
                         break;
                 }
             }

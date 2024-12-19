@@ -24,7 +24,7 @@ public class PlayModeRenderer {
 
     public PlayModeRenderer() {
         // Textures ve font yükleme
-        Textures.init();
+        //Textures.init(); // Main de initialize edildiği için burada tekrar çağırılmasına gerek yok
         addCustomSprites();
         pixelFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f); // Piksel font
     }
@@ -95,17 +95,25 @@ public class PlayModeRenderer {
     }
 
     private void drawTile(Graphics2D g, GridCell cell, int x, int y) {
+        if (cell == null) {
+            System.err.println("[PlayModeRenderer]: Null cell at (" + x + ", " + y + ")");
+            return; // Skip rendering
+        }
         BufferedImage img = switch (cell.getName()) {
+            case "object1" -> Textures.getSprite("chest_closed");
+            case "object2" -> Textures.getSprite("chest_golden_closed");
+            case "object3" -> Textures.getSprite("column");
+            case "object4" -> Textures.getSprite("torch_4");
+            case "object5" -> Textures.getSprite("box");
+            case "object6" -> Textures.getSprite("boxes_stacked");
             case "wall" -> Textures.getSprite("wall_center");
             case "floor" -> Textures.getSprite("floor_plain");
             case "door" -> Textures.getSprite("door_closed");
-            case "chest" -> Textures.getSprite("chest_closed");
             case "skull" -> Textures.getSprite("skull");
-            case "column" -> Textures.getSprite("column");
             case "extra_time_enchantment" -> Textures.getSprite("extra_time");
             case "extra_life_enchantment" -> Textures.getSprite("extra_life");
             case "reveal_enchantment" -> Textures.getSprite("reveal");
-            case "cloak_of_protection" -> Textures.getSprite("cloak");
+            //case "cloak_of_protection" -> Textures.getSprite("cloak");
             case "luring_gem_enchantment" -> Textures.getSprite("luring_gem");
             default -> Textures.getSprite("black");
         };

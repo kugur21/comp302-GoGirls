@@ -5,8 +5,8 @@ public class Object extends Item {
     private boolean isOpen;
     private boolean containsRune;
 
-    public Object(int x, int y) {
-        super("object", x, y, ItemType.OBJECT);
+    public Object(String name, int x, int y) {
+        super(name, x, y, ItemType.OBJECT);
         this.isOpen = false;
         this.containsRune = false;
     }
