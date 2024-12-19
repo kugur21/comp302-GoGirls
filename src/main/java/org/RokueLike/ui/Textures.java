@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Set;
 
 public class Textures {
@@ -51,8 +53,31 @@ public class Textures {
             }
 
             System.out.println("[Textures]: Successfully loaded sprites from JSON!");
+
+            // Dinamik olarak tüm PNG dosyalarını yükle
+            loadAllPNGs("imagesekstra"); // "images" klasöründeki tüm PNG dosyalarını yükle
+
         } catch (Exception e) {
             System.err.println("[Textures]: Failed to load sprites!");
+            e.printStackTrace();
+        }
+    }
+
+    // Tüm PNG dosyalarını yükleme
+    private static void loadAllPNGs(String folderPath) {
+        try {
+            // Klasör altındaki tüm dosyaları oku
+            File folder = new File(Objects.requireNonNull(Textures.class.getClassLoader().getResource(folderPath)).getFile());
+            for (File file : Objects.requireNonNull(folder.listFiles())) {
+                if (file.getName().endsWith(".png")) { // Sadece PNG dosyalarını işleme al
+                    String name = file.getName().replace(".png", ""); // Dosya adını al
+                    BufferedImage image = ImageIO.read(file); // Dosyayı BufferedImage olarak oku
+                    sprites.put(name, image); // HashMap'e ekle
+                    System.out.println("[Textures]: Loaded " + name);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("[Textures]: Failed to load PNGs from folder: " + folderPath);
             e.printStackTrace();
         }
     }
@@ -66,6 +91,7 @@ public class Textures {
             return null;
         }
     }
+
     public static void addSprite(String name, BufferedImage image) {
         if (sprites == null) {
             sprites = new HashMap<>();
@@ -73,7 +99,6 @@ public class Textures {
         sprites.put(name, image);
         System.out.println("[Textures]: Added sprite -> " + name);
     }
-
 
     // Tüm sprite isimlerini döndüren metod
     public static Set<String> getSpriteNames() {
@@ -93,7 +118,5 @@ public class Textures {
             e.printStackTrace();
             return null;
         }
-
     }
 }
-

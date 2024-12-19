@@ -16,7 +16,7 @@ public class SpriteTest extends JPanel {
 
     private void addCustomSprites() {
         // player.png gibi manuel olarak ekleyeceğin görselleri burada yükle
-        Textures.addSprite("player", Textures.loadPNG("images/player.png")); // "player" sprite'ı eklendi
+        Textures.addSprite("player", Textures.loadPNG("imagesekstra/player.png")); // "player" sprite'ı eklendi
     }
 
     @Override
