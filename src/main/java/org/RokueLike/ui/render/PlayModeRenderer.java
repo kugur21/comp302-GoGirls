@@ -105,7 +105,7 @@ public class PlayModeRenderer {
             case "extra_time_enchantment" -> Textures.getSprite("extra_time");
             case "extra_life_enchantment" -> Textures.getSprite("extra_life");
             case "reveal_enchantment" -> Textures.getSprite("reveal");
-            case "cloak_of_protection" -> Textures.getSprite("cloak");
+            case "cloak_of_protection" -> Textures.getSprite("cloak_of_protection");
             case "luring_gem_enchantment" -> Textures.getSprite("luring_gem");
             default -> Textures.getSprite("black");
         };
@@ -194,7 +194,7 @@ public class PlayModeRenderer {
         int itemStartX = inventoryX + 35; // Daha sola kaydırıldı
         int itemStartY = inventoryY + 100;
 
-        String[] demoItems = {"extra_time", "extra_life", "reveal", "cloak", "luring_gem"};
+        String[] demoItems = {"extra_time", "extra_life", "reveal", "cloak_of_protection", "luring_gem"};
         for (int i = 0; i < 6; i++) {
             g.setColor(new Color(80, 80, 100));
             g.fillRect(itemStartX + (i % 3) * (slotSize + gap), itemStartY + (i / 3) * (slotSize + gap), slotSize, slotSize);
