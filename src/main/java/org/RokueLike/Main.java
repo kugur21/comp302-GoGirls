@@ -3,8 +3,6 @@ package org.RokueLike;
 import org.RokueLike.ui.Textures;
 import org.RokueLike.ui.Window;
 
-
-
 public class Main {
 
     public static void main(String[] args) {
@@ -21,3 +19,4 @@ public class Main {
     }
 
 }
+
