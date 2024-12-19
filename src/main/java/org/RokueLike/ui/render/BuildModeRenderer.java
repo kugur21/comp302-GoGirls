@@ -17,6 +17,9 @@ public class BuildModeRenderer {
     private static final int INVENTORY_Y = 200;   // Inventory (chest) y position
     private static final int INVENTORY_WIDTH = 60;  // Inventory width
     private static final int INVENTORY_HEIGHT = 180; // Inventory height
+    private static final int INVENTORY_SLOT_SIZE = 40; // Size of each object slot in the inventory
+    private static int selectedObject = 1; // Currently selected object in the inventory
+
     public BuildModeRenderer() {
         // Add the chest image to Textures
         Textures.addSprite("buildmode_chest", Textures.loadPNG("imagesekstra/Buildmodechest.png"));
@@ -58,6 +61,27 @@ public class BuildModeRenderer {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 18));
             g.drawString("", INVENTORY_X + 10, INVENTORY_Y - 10);
+
+
+
+            // Render object slots
+            String[] objectNames = {"chest_closed", "chest_golden_closed", "column", "torch_4", "box", "boxes_stacked"};
+            for (int i = 0; i < 6; i++) {
+                int x = INVENTORY_X + 20 + (i % 3) * INVENTORY_SLOT_SIZE;
+                int y = INVENTORY_Y + 100 + (i / 3) * INVENTORY_SLOT_SIZE;
+                BufferedImage objectSprite = Textures.getSprite(objectNames[i]);
+
+                if (objectSprite != null) {
+                    g.drawImage(objectSprite, x, y, INVENTORY_SLOT_SIZE, INVENTORY_SLOT_SIZE, null);
+
+                    // Highlight selected object
+                    if (selectedObject == i + 1) {
+                        g.setColor(Color.YELLOW);
+                        g.drawRect(x - 2, y - 2, INVENTORY_SLOT_SIZE + 4, INVENTORY_SLOT_SIZE + 4);
+                    }
+                }
+            }
+
         } else {
             System.err.println("[BuildModeRenderer]: Chest sprite 'buildmode_chest' not available!");
         }
@@ -265,5 +289,13 @@ public class BuildModeRenderer {
         g.drawImage(Textures.getSprite("floor_mud_s_1"), (clusterX + 1) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
         g.drawImage(Textures.getSprite("floor_mud_s_2"), (clusterX + 2) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
         g.drawImage(Textures.getSprite("floor_mud_se"), (clusterX + 3) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+    }
+
+    public static void selectObject(int objectIndex) {
+        selectedObject = objectIndex;
+    }
+
+    public static int getSelectedObject() {
+        return selectedObject;
     }
 }
