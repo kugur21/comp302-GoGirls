@@ -75,7 +75,7 @@ public class BuildModeRenderer {
                     g.drawImage(objectSprite, x, y, INVENTORY_SLOT_SIZE, INVENTORY_SLOT_SIZE, null);
 
                     // Highlight selected object
-                    if (selectedObject == i + 1) {
+                    if (getSelectedObject() == i + 1) {
                         g.setColor(Color.YELLOW);
                         g.drawRect(x - 2, y - 2, INVENTORY_SLOT_SIZE + 4, INVENTORY_SLOT_SIZE + 4);
                     }
@@ -153,8 +153,18 @@ public class BuildModeRenderer {
             //return getFloorSprite(hall, x, y);
             case "d": // Door tile
                 return getDoorSprite(hall, x, y);
-            case "o": // Object tile
-                return getObjectSprite(hall, x, y);
+            case "o1": // Object tile
+                return Textures.getSprite("chest_closed");
+            case "o2":
+                return Textures.getSprite("chest_golden_closed");
+            case "o3":
+                return Textures.getSprite("column");
+            case "o4":
+                return Textures.getSprite("torch_4");
+            case "o5":
+                return Textures.getSprite("box");
+            case "o6":
+                return Textures.getSprite("boxes_stacked");
             default:
                 return null;
         }
@@ -297,5 +307,9 @@ public class BuildModeRenderer {
 
     public static int getSelectedObject() {
         return selectedObject;
+    }
+
+    public static int getTileSize(){
+        return TILE_SIZE;
     }
 }
