@@ -1,10 +1,11 @@
 package org.RokueLike.domain;
 
 // halların dataları tutar, game managera aktarır
+import javax.swing.*;
 import java.util.Random;
 
 public class BuildManager {
-
+    private static Timer timer;
     private static final int HALL_WIDTH = 15;
     private static final int HALL_HEIGHT = 15;
 
@@ -28,6 +29,9 @@ public class BuildManager {
         placeDoor(hallOfAir);
         placeDoor(hallOfWater);
         placeDoor(hallOfFire);
+
+        timer = new Timer(20, new BuildLoop());
+        timer.start();
 
         System.out.println("[BuildManager]: All halls initialized.");
     }
@@ -94,13 +98,13 @@ public class BuildManager {
         System.out.println("[BuildManager]: Placed " + numberOfObjects + " objects in " + hallName);
     }
 
-    public static void placeObjectManually(String hallName, int x, int y) {
+    public static void placeObjectManually(String hallName, int x, int y, int objectType) {
         String[][] hall = getHall(hallName);
         if (hall == null) return;
 
         if (x > 0 && x < HALL_WIDTH - 1 && y > 0 && y < HALL_HEIGHT - 1 && hall[y][x].equals(".")) {
-            hall[y][x] = "o";
-            System.out.println("[BuildManager]: Object placed at (" + x + ", " + y + ") in " + hallName);
+            hall[y][x] = "o" + objectType;
+            System.out.println("[BuildManager]: Object type " + objectType + " placed at (" + x + ", " + y + ") in " + hallName);
         } else {
             System.out.println("[BuildManager]: Invalid position or cell not empty.");
         }

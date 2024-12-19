@@ -2,6 +2,7 @@ package org.RokueLike.ui.screen;
 
 import org.RokueLike.domain.BuildManager;
 import org.RokueLike.ui.Window;
+import org.RokueLike.ui.input.MouseBuild;
 import org.RokueLike.ui.render.BuildModeRenderer;
 
 import javax.swing.*;
@@ -33,6 +34,8 @@ public class BuildModeScreen extends JPanel {
 
         JButton proceedButton = createButton("Proceed to Play Mode", 600, e -> proceedToPlayMode());
         this.add(proceedButton);
+
+        this.addMouseListener(new MouseBuild());
     }
 
     private JButton createButton(String text, int yPosition, ActionListener action) {
@@ -48,7 +51,7 @@ public class BuildModeScreen extends JPanel {
         System.out.println("[BuildModeScreen]: Entering Manual Placement Mode.");
         // Manual placement logic - Input handling for x, y coordinates will be implemented here.
         // For now, simulate input:
-        BuildManager.placeObjectManually("earth", 7, 7); // Example
+        //BuildManager.placeObjectManually("earth", 7, 7); // Example
         repaint();
     }
 
@@ -70,5 +73,6 @@ public class BuildModeScreen extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         renderer.renderBuildMode((Graphics2D) g);
+        repaint();
     }
 }
