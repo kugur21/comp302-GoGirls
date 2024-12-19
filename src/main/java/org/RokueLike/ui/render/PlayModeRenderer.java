@@ -48,7 +48,7 @@ public class PlayModeRenderer {
                 Color tileColor = getTileColor(hall.getCell(x, y));
                 g.setColor(tileColor);
                 g.fillRect(GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-                g.setColor(Color.BLACK);
+                //g.setColor(Color.BLACK);
                 g.drawRect(GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 
             }
