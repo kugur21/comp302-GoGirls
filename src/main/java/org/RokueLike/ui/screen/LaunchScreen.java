@@ -11,7 +11,7 @@ public class LaunchScreen extends JPanel {
     private final Image backgroundImage;
 
     public LaunchScreen() {
-        backgroundImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("/images/Rokue-like logo 4.png"))).getImage();
+        backgroundImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("/imagesekstra/Rokue-like logo 4.png"))).getImage();
         this.setLayout(null);
 
         JButton playButton = createStyledButton("PLAY", 350, 550);
