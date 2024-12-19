@@ -7,9 +7,10 @@ import java.awt.event.MouseListener;
 
 public class MousePlay implements MouseListener {
 
-    // Same as BuildModeRenderer
-    final int GRID_OFFSET_X = 50;
-    final int GRID_OFFSET_Y = 50;
+    // Same as PlayModeRenderer
+    private static final int TILE_SIZE = 36;  // Tile size
+    private static final int GRID_OFFSET_X = 70;  // Grid X başlangıcı (100'den 70'e kaydırıldı)
+    private static final int GRID_OFFSET_Y = 50;
 
 
     @Override
@@ -42,8 +43,8 @@ public class MousePlay implements MouseListener {
      * Adjust `CELL_SIZE` based on your game's implementation.
      */
     private int getGridCoordinate(int pixelCoordinate, int offset) {
-        final int CELL_SIZE = 16; // Same as BuildModeRenderer
-        return (pixelCoordinate - offset) / CELL_SIZE;
+        final int CELL_SIZE = 16; // Same as PlayModeRenderer
+        return (pixelCoordinate - offset) / TILE_SIZE;
     }
 
 }

@@ -36,10 +36,7 @@ public class GameManager {
     private static MonsterManager monsterManager;
     private static ItemManager itemManager;
 
-    private static boolean onTitleScreen;
-
     public static void init() {
-
         System.out.println("[GameManager]: Starting game...");
 
         initHalls();
@@ -74,8 +71,6 @@ public class GameManager {
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
         itemManager = new ItemManager(currentHall, hero, monsterManager);
         messageBox = new MessageBox();
-
-        onTitleScreen = true;
     }
 
     public static void genericLoop() {
@@ -177,8 +172,10 @@ public class GameManager {
                     && currentHall.getCurrentEnchantment().getPositionY() == mouseY) {
 
                 String response = itemManager.collectEnchantment();
+                System.out.println(response);
                 messageBox.addMessage(response, 50);
             } else {
+                System.out.println("No enchantment at clicked location (" + mouseX + ", " + mouseY + ").");
                 messageBox.addMessage("No enchantment at clicked location (" + mouseX + ", " + mouseY + ").", 50);
             }
         } catch (Exception e) {
@@ -193,11 +190,14 @@ public class GameManager {
             if (clickedCell instanceof Object clickedObject) {
                 if (heroManager.isAdjacentTo(mouseX, mouseY)) {
                     String response = itemManager.interactWithObject(clickedObject);
+                    System.out.println(response);
                     messageBox.addMessage(response, 50);
                 } else {
+                    System.out.println("Hero is not adjacent to the object at (" + mouseX + ", " + mouseY + ").");
                     messageBox.addMessage("Hero is not adjacent to the object at (" + mouseX + ", " + mouseY + ").", 50);
                 }
             } else {
+                System.out.println("Clicked cell is not an object at (" + mouseX + ", " + mouseY + ").");
                 messageBox.addMessage("Clicked cell is not an object at (" + mouseX + ", " + mouseY + ").", 50);
             }
         } catch (Exception e) {
@@ -288,6 +288,10 @@ public class GameManager {
 
     public static List<Monster> getActiveMonsters() {
         return activeMonsters;
+    }
+
+    public static MessageBox getMessageBox() {
+        return messageBox;
     }
 
 }
