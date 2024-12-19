@@ -87,7 +87,7 @@ public class Textures {
         BufferedImage sprite = sprites.get(name);
         if (sprite != null) return sprite;
         else {
-            System.err.println("[Textures]: Sprite '" + name + "' not found!");
+            //System.err.println("[Textures]: Sprite '" + name + "' not found!");
             return null;
         }
     }

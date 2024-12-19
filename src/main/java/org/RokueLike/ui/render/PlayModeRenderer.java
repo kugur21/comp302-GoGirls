@@ -6,6 +6,7 @@ import org.RokueLike.domain.entity.item.Enchantment;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.domain.utils.MessageBox;
 import org.RokueLike.ui.FontLoader;
 import org.RokueLike.ui.Textures;
 
@@ -21,6 +22,8 @@ public class PlayModeRenderer {
     private static final int WINDOW_WIDTH = 1150;  // Pencere genişliği
     private static final int WINDOW_HEIGHT = 850;  // Pencere yüksekliği
     private Font pixelFont; // Özel piksel fontu
+
+    private final Rectangle messageBox = new Rectangle(300, 300, 550, 100);
 
     public PlayModeRenderer() {
         // Textures ve font yükleme
@@ -238,4 +241,5 @@ public class PlayModeRenderer {
             }
         }
     }
+
 }

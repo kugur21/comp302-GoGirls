@@ -46,7 +46,7 @@ public class HallGrid {
                     case 'd':
                         grid[i][j] = new Door(j, i);
                         break;
-                    case 'o':
+                    case 'o': // Will be modified to include more objects such that o1, o2, o3, etc.
                         Object object = new Object(j, i);
                         grid[i][j] = object;
                         objects.add(object);
@@ -78,7 +78,6 @@ public class HallGrid {
                 }
             }
         }
-
         if (!doorOpened) {
             System.out.println("No doors found to open in this hall.");
         }
