@@ -1,3 +1,4 @@
+
 package org.RokueLike.domain.entity.item;
 
 public class Enchantment extends Item {
@@ -52,8 +53,9 @@ public class Enchantment extends Item {
             this.duration = duration;
         }
 
+        // Revised for PlayModeRenderer by Sarp
         public String getName() {
-            return name;
+            return this.name().toLowerCase();
         }
 
         public int getDuration() {
