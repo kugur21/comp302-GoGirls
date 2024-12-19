@@ -17,6 +17,7 @@ public class SpriteTest extends JPanel {
     private void addCustomSprites() {
         // player.png gibi manuel olarak ekleyeceğin görselleri burada yükle
         Textures.addSprite("player", Textures.loadPNG("imagesekstra/player.png")); // "player" sprite'ı eklendi
+        Textures.addSprite("enemy", Textures.loadPNG("imagesekstra/wizard.png"));  // Örnek başka bir sprite
     }
 
     @Override
@@ -30,13 +31,10 @@ public class SpriteTest extends JPanel {
 
         int row = 0, col = 0; // Satır ve sütun başlangıcı
 
-        // Yüklenen tüm sprite'ların isimlerini al
-        for (String name : Textures.getSpriteNames()) {
-            if (name.equals("player")) {
-                // Player sprite'ı en sağ üstte göster
-                continue; // Döngüde atla, özel konumlandırma aşağıda yapılacak
-            }
+        // Manuel eklenen PNG sprite'ların adlarını döndürmek için
+        String[] manualSprites = {"player", "enemy"}; // Yalnızca manuel eklenen sprite isimlerini belirtin
 
+        for (String name : manualSprites) {
             Image sprite = Textures.getSprite(name);
             if (sprite == null) {
                 System.err.println("[SpriteTest]: Missing sprite -> " + name);
@@ -61,27 +59,11 @@ public class SpriteTest extends JPanel {
                 row++;
             }
         }
-
-        // Player sprite'ı özel olarak en sağ üst köşeye yerleştir
-        Image playerSprite = Textures.getSprite("player");
-        if (playerSprite != null) {
-            int panelWidth = getWidth();
-            int drawX = panelWidth - tileSize - xOffset; // Sağ kenardan tileSize kadar uzaklık bırak
-            int drawY = yOffset; // Üst kenara yakınlık
-
-            // Player'ı çiz
-            g.drawImage(playerSprite, drawX, drawY, tileSize, tileSize, null);
-
-            // İsmini yazdır
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.PLAIN, 10));
-            g.drawString("player", drawX, drawY + tileSize + 12);
-        }
     }
 
     public static void main(String[] args) {
         // Test penceresi oluştur
-        JFrame frame = new JFrame("Sprite Test");
+        JFrame frame = new JFrame("Manual Sprite Test");
         SpriteTest spriteTest = new SpriteTest();
         frame.add(spriteTest);
 

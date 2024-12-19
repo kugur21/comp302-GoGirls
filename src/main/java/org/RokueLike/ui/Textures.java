@@ -55,7 +55,7 @@ public class Textures {
             System.out.println("[Textures]: Successfully loaded sprites from JSON!");
 
             // Dinamik olarak tüm PNG dosyalarını yükle
-            loadAllPNGs("imagesekstra"); // "images" klasöründeki tüm PNG dosyalarını yükle
+            loadAllPNGs("images"); // "images" klasöründeki tüm PNG dosyalarını yükle
 
         } catch (Exception e) {
             System.err.println("[Textures]: Failed to load sprites!");
