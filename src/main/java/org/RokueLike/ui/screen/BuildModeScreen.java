@@ -25,10 +25,6 @@ public class BuildModeScreen extends JPanel {
         titleLabel.setBounds(0, 20, Window.WIDTH, 50);
         this.add(titleLabel);
 
-        // Buttons
-        JButton manualButton = createButton("Manual Placement", 500, e -> enterManualPlacement());
-        this.add(manualButton);
-
         JButton randomButton = createButton("Random Assignment", 550, e -> assignObjectsRandomly());
         this.add(randomButton);
 
@@ -46,25 +42,21 @@ public class BuildModeScreen extends JPanel {
         return button;
     }
 
-
-    private void enterManualPlacement() {
-        System.out.println("[BuildModeScreen]: Entering Manual Placement Mode.");
-        // Manual placement logic - Input handling for x, y coordinates will be implemented here.
-        // For now, simulate input:
-        //BuildManager.placeObjectManually("earth", 7, 7); // Example
-        repaint();
-    }
-
     private void assignObjectsRandomly() {
         System.out.println("[BuildModeScreen]: Assigning objects randomly.");
-        BuildManager.placeObjectRandomly("earth", 6);
-        BuildManager.placeObjectRandomly("air", 9);
-        BuildManager.placeObjectRandomly("water", 13);
-        BuildManager.placeObjectRandomly("fire", 17);
+        BuildManager.placeObjectRandomly("earth");
+        BuildManager.placeObjectRandomly("air");
+        BuildManager.placeObjectRandomly("water");
+        BuildManager.placeObjectRandomly("fire");
         repaint();
     }
 
     private void proceedToPlayMode() {
+        System.out.println("[BuildModeScreen]: Assigning objects randomly to satisfy object limit.");
+        BuildManager.placeObjectRandomly("earth");
+        BuildManager.placeObjectRandomly("air");
+        BuildManager.placeObjectRandomly("water");
+        BuildManager.placeObjectRandomly("fire");
         System.out.println("[BuildModeScreen]: Proceeding to Play Mode.");
         Window.addScreen(new PlayModeScreen(), "PlayModeScreen", true);
     }

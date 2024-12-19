@@ -81,28 +81,37 @@ public class BuildManager {
         }
     }
 
-    public static void placeObjectRandomly(String hallName, int numberOfObjects) {
+    public static void placeObjectRandomly(String hallName) {
         String[][] hall = getHall(hallName);
+        int objectLimit = getHallObjectLimit(hallName);
         if (hall == null) return;
 
-        int placedObjects = 0;
-        while (placedObjects < numberOfObjects) {
+        int placedObjects = getObjectCount(hallName);
+        while (placedObjects < objectLimit) {
             int x = random.nextInt(HALL_WIDTH);
             int y = random.nextInt(HALL_HEIGHT);
 
-            if (hall[y][x].equals(".")) { // Only place on floor tiles
-                hall[y][x] = "o";
+            if (hall[y][x].equals(".") && !isInFrontOfDoor(hall, x, y)) { // Only place on floor tiles
+                int objectType = 1 + random.nextInt(6);
+                hall[y][x] = "o" + objectType;
                 placedObjects++;
             }
         }
-        System.out.println("[BuildManager]: Placed " + numberOfObjects + " objects in " + hallName);
+        System.out.println("[BuildManager]: Randomly filled " + hallName + " to its object limit.");
     }
 
     public static void placeObjectManually(String hallName, int x, int y, int objectType) {
         String[][] hall = getHall(hallName);
+        int objectLimit = getHallObjectLimit(hallName);
         if (hall == null) return;
 
-        if (x > 0 && x < HALL_WIDTH - 1 && y > 0 && y < HALL_HEIGHT - 1 && hall[y][x].equals(".")) {
+        int placedObjects = getObjectCount(hallName);
+        if (placedObjects >= objectLimit) {
+            System.out.println("[BuildManager]: Cannot place object. Hall is at full capacity.");
+            return;
+        }
+
+        if (x > 0 && x < HALL_WIDTH - 1 && y > 0 && y < HALL_HEIGHT - 1 && hall[y][x].equals(".") && !isInFrontOfDoor(hall, x, y)) {
             hall[y][x] = "o" + objectType;
             System.out.println("[BuildManager]: Object type " + objectType + " placed at (" + x + ", " + y + ") in " + hallName);
         } else {
@@ -126,20 +135,52 @@ public class BuildManager {
         }
     }
 
+    private static boolean isInFrontOfDoor(String[][] hall, int x, int y) {
+        return (x > 0 && "d".equals(hall[y][x - 1])) || // Left of door
+                (x < HALL_WIDTH - 1 && "d".equals(hall[y][x + 1])) || // Right of door
+                (y > 0 && "d".equals(hall[y - 1][x])) || // Above door
+                (y < HALL_HEIGHT - 1 && "d".equals(hall[y + 1][x])); // Below door
+    }
+
     public static String[][] getHall(String hallName) {
-        switch (hallName.toLowerCase()) {
-            case "earth":
-                return hallOfEarth;
-            case "air":
-                return hallOfAir;
-            case "water":
-                return hallOfWater;
-            case "fire":
-                return hallOfFire;
-            default:
+        return switch (hallName.toLowerCase()) {
+            case "earth" -> hallOfEarth;
+            case "air" -> hallOfAir;
+            case "water" -> hallOfWater;
+            case "fire" -> hallOfFire;
+            default -> {
                 System.out.println("[BuildManager]: Invalid hall name: " + hallName);
-                return null;
+                yield null;
+            }
+        };
+    }
+
+    public static int getObjectCount(String hallName) {
+        String[][] hall = getHall(hallName);
+        if (hall == null) return -1;
+
+        int objectCount = 0;
+        for (String[] row : hall) {
+            for (String cell : row) {
+                if (cell.startsWith("o")) {
+                    objectCount++;
+                }
+            }
         }
+        return objectCount;
+    }
+
+    public static int getHallObjectLimit(String hallName) {
+        return switch (hallName.toLowerCase()) {
+            case "earth" -> 6;
+            case "air" -> 9;
+            case "water" -> 13;
+            case "fire" -> 17;
+            default -> {
+                System.out.println("[BuildManager]: Invalid hall name: " + hallName);
+                yield -1;
+            }
+        };
     }
 
     public static String[][][] getAllHalls() {
