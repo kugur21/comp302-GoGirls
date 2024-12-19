@@ -1,4 +1,4 @@
-package org.RokueLike.ui.render;
+package org.RokueLike.domain.entity.monster;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
@@ -6,7 +6,6 @@ import org.RokueLike.domain.entity.item.Enchantment;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
-import org.RokueLike.ui.FontLoader;
 import org.RokueLike.ui.Textures;
 
 import java.awt.*;
@@ -15,22 +14,18 @@ import java.util.List;
 
 public class PlayModeRenderer {
 
-    private static final int TILE_SIZE = 36;  // Tile size
-    private static final int GRID_OFFSET_X = 70;  // Grid X başlangıcı (100'den 70'e kaydırıldı)
-    private static final int GRID_OFFSET_Y = 50;  // Grid Y başlangıcı
-    private static final int WINDOW_WIDTH = 1150;  // Pencere genişliği
-    private static final int WINDOW_HEIGHT = 850;  // Pencere yüksekliği
-    private Font pixelFont; // Özel piksel fontu
+    private static final int TILE_SIZE = 32;  // Tile size
+    private static final int GRID_OFFSET_X = 50;  // Grid X start
+    private static final int GRID_OFFSET_Y = 50;  // Grid Y start
 
     public PlayModeRenderer() {
-        // Textures ve font yükleme
+        // Initialize Textures and load custom sprites
         Textures.init();
         addCustomSprites();
-        pixelFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f); // Piksel font
     }
 
     /**
-     * Özel sprite'ları Textures sınıfına ekler.
+     * Adds custom sprites to the Textures class.
      */
     private void addCustomSprites() {
         Textures.addSprite("player", Textures.loadPNG("imagesekstra/player.png"));
@@ -40,10 +35,8 @@ public class PlayModeRenderer {
         Textures.addSprite("extra_time", Textures.loadPNG("imagesekstra/extra_time.png"));
         Textures.addSprite("extra_life", Textures.loadPNG("imagesekstra/extraheart.png"));
         Textures.addSprite("reveal", Textures.loadPNG("imagesekstra/reveal.png"));
-        Textures.addSprite("cloak_of_protection", Textures.loadPNG("imagesekstra/protection.png"));
+        Textures.addSprite("cloak", Textures.loadPNG("imagesekstra/protection.png"));
         Textures.addSprite("luring_gem", Textures.loadPNG("imagesekstra/luringgem.png"));
-        Textures.addSprite("exit_button", Textures.loadPNG("imagesekstra/exit.png"));
-        Textures.addSprite("pause_button", Textures.loadPNG("imagesekstra/pause.png"));
         System.out.println("[PlayModeRenderer]: Custom sprites loaded successfully!");
     }
 
@@ -54,16 +47,6 @@ public class PlayModeRenderer {
 
         if (currentHall == null || hero == null) return;
 
-        // Arka planı floor_plain sprite'ı ile doldur
-        BufferedImage floorPlainImage = Textures.getSprite("floor_plain");
-        if (floorPlainImage != null) {
-            for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y++) {
-                for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x++) {
-                    g.drawImage(floorPlainImage, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-                }
-            }
-        }
-
         renderGrid(g, currentHall);
         renderMonsters(g, monsters);
         renderHero(g, hero);
@@ -73,19 +56,7 @@ public class PlayModeRenderer {
         renderHUD(g, hero, remainingTime);
     }
 
-
     private void renderGrid(Graphics2D g, HallGrid hall) {
-        BufferedImage floorImage = Textures.getSprite("floor_plain");
-        if (floorImage != null) {
-            for (int y = 0; y < hall.getHeight(); y++) {
-                for (int x = 0; x < hall.getWidth(); x++) {
-                    g.drawImage(floorImage, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-                }
-            }
-        } else {
-            System.err.println("[Textures]: Missing sprite for 'floor_plain'");
-        }
-
         for (int y = 0; y < hall.getHeight(); y++) {
             for (int x = 0; x < hall.getWidth(); x++) {
                 GridCell cell = hall.getCell(x, y);
@@ -105,7 +76,7 @@ public class PlayModeRenderer {
             case "extra_time_enchantment" -> Textures.getSprite("extra_time");
             case "extra_life_enchantment" -> Textures.getSprite("extra_life");
             case "reveal_enchantment" -> Textures.getSprite("reveal");
-            case "cloak_of_protection" -> Textures.getSprite("cloak");
+            case "cloak_of_protection_enchantment" -> Textures.getSprite("cloak");
             case "luring_gem_enchantment" -> Textures.getSprite("luring_gem");
             default -> Textures.getSprite("black");
         };
@@ -116,7 +87,6 @@ public class PlayModeRenderer {
             System.err.println("[Textures]: Missing sprite for " + cell.getName());
         }
     }
-
     private void renderEnchantments(Graphics2D g, HallGrid hall) {
         for (int y = 0; y < hall.getHeight(); y++) {
             for (int x = 0; x < hall.getWidth(); x++) {
@@ -134,69 +104,63 @@ public class PlayModeRenderer {
         }
     }
 
+
     private void renderHUD(Graphics2D g, Hero hero, int remainingTime) {
-        int HUD_X = GRID_OFFSET_X + GameManager.getCurrentHall().getWidth() * TILE_SIZE + 30; // Daha sola kaydırıldı
-        int HUD_Y = GRID_OFFSET_Y;
-        int HUD_WIDTH = 200;
+        int HUD_X = 550; // HUD X position
+        int HUD_Y = 50;  // HUD Y position
+        int HUD_WIDTH = 200; // HUD width
 
-        HallGrid currentHall = GameManager.getCurrentHall();
-        int gridHeight = currentHall.getHeight() * TILE_SIZE;
+        // HUD Background
+        g.setColor(new Color(50, 25, 50)); // Dark purple
+        g.fillRoundRect(HUD_X, HUD_Y, HUD_WIDTH, 400, 20, 20);
 
-        g.setColor(new Color(163, 137, 134)); // Yeni morumsu ve buğdayımsı renk
-
-        g.fillRoundRect(HUD_X, HUD_Y, HUD_WIDTH, gridHeight, 20, 20);
-
-        renderControlButtons(g, HUD_X + 15, HUD_Y + 20);
-
-        g.setFont(pixelFont);
+        // Time Section
         g.setColor(Color.LIGHT_GRAY);
-        g.drawString("Time:", HUD_X + 15, HUD_Y + 90);
-        g.drawString(remainingTime + " seconds", HUD_X + 15, HUD_Y + 110);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("Time:", HUD_X + 20, HUD_Y + 60);
+        g.drawString(remainingTime + " seconds", HUD_X + 80, HUD_Y + 60);
 
-        renderHearts(g, hero, HUD_X + 15, HUD_Y + 150);
-        renderInventory(g, HUD_X + 15, HUD_Y + 190);
-    }
+        // Health Section (Hearts)
+        renderHearts(g, hero, HUD_X + 20, HUD_Y + 100);
 
-    private void renderControlButtons(Graphics2D g, int controlX, int controlY) {
-        BufferedImage exitButton = Textures.getSprite("exit_button");
-        if (exitButton != null) {
-            g.drawImage(exitButton, controlX, controlY, 32, 32, null);
-        }
-
-        BufferedImage pauseButton = Textures.getSprite("pause_button");
-        if (pauseButton != null) {
-            g.drawImage(pauseButton, controlX + 40, controlY, 32, 32, null);
-        }
+        // Inventory
+        renderInventory(g, HUD_X + 20, HUD_Y + 140);
     }
 
     private void renderHearts(Graphics2D g, Hero hero, int heartX, int heartY) {
         BufferedImage heartImg = Textures.getSprite("heart");
         if (heartImg != null) {
-            int heartSize = 28; // Heart boyutu küçültüldü
-            int spacing = 5;
+            int heartSize = 32; // Size of each heart
+            int spacing = 5;    // Spacing between hearts
             for (int i = 0; i < hero.getLives(); i++) {
                 g.drawImage(heartImg, heartX + i * (heartSize + spacing), heartY, heartSize, heartSize, null);
             }
+        } else {
+            System.err.println("[Textures]: Heart sprite not found!");
         }
     }
 
     private void renderInventory(Graphics2D g, int inventoryX, int inventoryY) {
         BufferedImage inventoryBg = Textures.getSprite("Inventory");
-        int inventoryWidth = 180;
-        int inventoryHeight = 270;
+        int inventoryWidth = 160;  // Adjust the width if needed
+        int inventoryHeight = 200; // Increase the height to make it larger
 
+        // Draw the inventory background
         if (inventoryBg != null) {
             g.drawImage(inventoryBg, inventoryX, inventoryY, inventoryWidth, inventoryHeight, null);
         }
 
-        int slotSize = 30;
+        // Inventory Slots (static demo items)
+        int slotSize = 40;
         int gap = 10;
-        int itemStartX = inventoryX + 35; // Daha sola kaydırıldı
-        int itemStartY = inventoryY + 100;
+        int itemStartX = inventoryX + 10;
+        int itemStartY = inventoryY + 60; // Adjusted start Y position to fit the taller inventory
 
+        // Example items: Replace with dynamic item fetching if needed
         String[] demoItems = {"extra_time", "extra_life", "reveal", "cloak", "luring_gem"};
-        for (int i = 0; i < 6; i++) {
-            g.setColor(new Color(80, 80, 100));
+
+        for (int i = 0; i < 6; i++) { // Draw 6 slots
+            g.setColor(new Color(80, 80, 100)); // Slot background
             g.fillRect(itemStartX + (i % 3) * (slotSize + gap), itemStartY + (i / 3) * (slotSize + gap), slotSize, slotSize);
 
             if (i < demoItems.length) {

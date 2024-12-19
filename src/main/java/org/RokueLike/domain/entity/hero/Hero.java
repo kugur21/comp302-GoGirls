@@ -1,3 +1,4 @@
+
 package org.RokueLike.domain.entity.hero;
 
 import org.RokueLike.domain.entity.EntityCell;
@@ -51,7 +52,7 @@ public class Hero extends EntityCell {
     }
 
     public int getRemainingTime() {
-        return remainingTime;
+        return this.remainingTime;
     }
 
     public void addRemainingTime(int seconds) {
@@ -62,5 +63,21 @@ public class Hero extends EntityCell {
     public void decrementRemainingTime() {
         this.remainingTime--;
     }
+
+
+    // Inventory getter method added for PlayModeRenderer
+    public Inventory getInventory() {
+        return this.inventory;
+    }
+
+
+
+
+
+
+
+
+
+
 
 }
