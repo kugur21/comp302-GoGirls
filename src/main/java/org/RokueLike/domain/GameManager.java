@@ -20,6 +20,12 @@ import java.util.List;
 
 public class GameManager {
 
+    private static final int GAME_DELAY = 80;
+    private static final int MONSTER_SPAWN = 8000;
+    private static final int ENCHANTMENT_SPAWN = 12000;
+    private static final int ENCHANTMENT_DURATION = 6000;
+    private static final int WIZARD_BEHAVIOR = 5000;
+
     private static Timer timer;
     private static int monsterSpawnTimer = 0;
     private static int enchantmentSpawnTimer = 0;
@@ -42,7 +48,7 @@ public class GameManager {
         initHalls();
         initPlayMode();
 
-        timer = new Timer(20, new GameLoop());
+        timer = new Timer(GAME_DELAY, new GameLoop());
         timer.start();
     }
 
@@ -92,6 +98,7 @@ public class GameManager {
     public static void handleMonsterSpawn() {
         try {
             String response = monsterManager.spawnMonster();
+            System.out.println(response);
             messageBox.addMessage(response, 50);
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,6 +108,7 @@ public class GameManager {
     public static void handleEnchantmentSpawn() {
         try {
             String response = itemManager.spawnEnchantment();
+            System.out.println(response);
             enchantmentDurationTimer = 0;
             messageBox.addMessage(response, 50);
         } catch (Exception e) {
@@ -111,7 +119,7 @@ public class GameManager {
     public static void handleEnchantmentExpiration() {
         if (currentHall.getCurrentEnchantment() != null) {
             enchantmentDurationTimer++;
-            if (enchantmentDurationTimer >= 300) {
+            if (enchantmentDurationTimer >= (ENCHANTMENT_DURATION / GAME_DELAY)) {
                 messageBox.addMessage("Enchantment expired: " + currentHall.getCurrentEnchantment().getEnchantmentType().getName(), 50);
                 String response = itemManager.disappearEnchantment();
                 enchantmentDurationTimer = 0;
@@ -132,7 +140,16 @@ public class GameManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        monsterManager.moveMonsters(messageBox);
+    }
+
+    public static void handleMonsterMovement() {
+        try {
+            if (!isGameOver()) {
+                monsterManager.moveMonsters(messageBox);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void handleWizardBehavior() {
@@ -209,22 +226,29 @@ public class GameManager {
     public static void updateCurrentHall(HallGrid nextHall) {
         currentHall = nextHall;
         hero.setPosition(currentHall.getStartX(), currentHall.getStartY(), false);
+        heroManager = new HeroManager(hero, currentHall);
         activeMonsters = currentHall.getMonsters();
+        monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
+        itemManager = new ItemManager(currentHall, hero, monsterManager);
 
         if (!hasWizardsInCurrentHall()) {
             wizardTimer = 0;
         }
+        monsterSpawnTimer = 0;
+        enchantmentSpawnTimer = 0;
+        enchantmentDurationTimer = 0;
     }
 
     public static void updateRemainingTime() {
         frameCounter++;
-        if (frameCounter >= 50) {
+        if (frameCounter >= (1000 / GAME_DELAY)) {
             frameCounter = 0;
             if (hero.getRemainingTime() > 0) {
                 hero.decrementRemainingTime();
                 System.out.println("Remaining Time: " + hero.getRemainingTime());
             } else {
                 System.out.println("Time's up! Game Over.");
+                System.exit(0);
             }
         }
     }
@@ -247,7 +271,7 @@ public class GameManager {
     }
 
     public static boolean isWizardTimerReady() {
-        return wizardTimer >= 250;
+        return wizardTimer >= (WIZARD_BEHAVIOR / GAME_DELAY);
     }
 
     public static void incrementMonsterSpawnTimer() {
@@ -255,7 +279,7 @@ public class GameManager {
     }
 
     public static boolean isMonsterSpawnTimerReady() {
-        return monsterSpawnTimer >= 400;
+        return monsterSpawnTimer >= (MONSTER_SPAWN / GAME_DELAY);
     }
 
     public static void resetMonsterSpawnTimer() {
@@ -267,7 +291,7 @@ public class GameManager {
     }
 
     public static boolean isEnchantmentSpawnTimerReady() {
-        return enchantmentSpawnTimer >= 600;
+        return enchantmentSpawnTimer >= (ENCHANTMENT_SPAWN / GAME_DELAY);
     }
 
     public static void resetEnchantmentSpawnTimer() {
@@ -275,7 +299,7 @@ public class GameManager {
     }
 
     public static boolean isGameOver() {
-        return !hero.isAlive();
+        return hero.notAlive();
     }
 
     public static Hero getHero() {

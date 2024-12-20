@@ -6,14 +6,17 @@ import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
 
 public class Hero extends EntityCell {
 
+    private static final int MAX_LIVES = 4;
+    private static final int MAX_TIME = 60;
+
     private int lives;
     private int remainingTime;
     private final Inventory inventory;
 
     public Hero(int x, int y) {
         super("hero", x, y);
-        this.lives = 3;
-        this.remainingTime = 30;
+        this.lives = MAX_LIVES;
+        this.remainingTime = MAX_TIME;
         this.inventory = new Inventory();
     }
 
@@ -34,7 +37,7 @@ public class Hero extends EntityCell {
     }
 
     public void incrementLives() {
-        if (lives < 4) {
+        if (lives < MAX_LIVES) {
             this.lives++;
             System.out.println("Hero gained an extra life! Lives: " + lives);
         }
@@ -47,8 +50,8 @@ public class Hero extends EntityCell {
         }
     }
 
-    public boolean isAlive() {
-        return lives > 0 && remainingTime > 0;
+    public boolean notAlive() {
+        return lives <= 0 || remainingTime <= 0;
     }
 
     public int getRemainingTime() {
@@ -64,20 +67,14 @@ public class Hero extends EntityCell {
         this.remainingTime--;
     }
 
+    public void resetRemainingTime() {
+        this.remainingTime = MAX_TIME;
+    }
+
 
     // Inventory getter method added for PlayModeRenderer
     public Inventory getInventory() {
         return this.inventory;
     }
-
-
-
-
-
-
-
-
-
-
 
 }

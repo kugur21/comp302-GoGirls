@@ -18,16 +18,22 @@ public class HeroManager {
 
     public boolean moveHero(HallManager hallManager, int directionX, int directionY) {
         GridCell cellInFront = hallGrid.getCellInFront(hero, directionX, directionY);
+
         switch (cellInFront.getName()) {
             case "floor":
-                hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY, true);
-                return true;
+                if (hallGrid.isSafeLocation(cellInFront.getPositionX(), cellInFront.getPositionY())) { // There can be a monster at that location
+                    hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY, true);
+                    return true;
+                } else {
+                    return false;
+                }
             case "door":
                 Door door = (Door) cellInFront;
                 if (door.isOpen()) {
                     if (hallManager.moveToNextHall()) {
                         HallGrid nextHall = hallManager.getCurrentHall();
                         GameManager.updateCurrentHall(nextHall);
+                        hero.resetRemainingTime();
                         return true;
                     } else {
                         System.out.println("Congrats, you have escaped the dungeon!");
@@ -37,10 +43,6 @@ public class HeroManager {
                 } else {
                     return false;
                 }
-            case "wall":
-                return false;
-            case "object":
-                return false;
             default:
                 return false;
         }

@@ -102,7 +102,7 @@ public class MonsterManager {
             System.out.println(monster.getType().getName() + " attacks the hero!");
             hero.decrementLives();
             System.out.println("Hero's health: " + hero.getLives());
-            if (!hero.isAlive()) {
+            if (hero.notAlive()) {
                 System.out.println("Game Over!");
                 System.exit(0);
             }
@@ -113,25 +113,22 @@ public class MonsterManager {
     }
 
     public String spawnMonster() {
-        Monster newMonster = generateRandomMonster();
-        int[] spawnPosition = hallGrid.findRandomSafeCell();
-
-        if (spawnPosition != null) {
-            newMonster.setPosition(spawnPosition[0], spawnPosition[1], false);
-            //monsters.add(newMonster); // I think it's abundant, since we have hallGrid.addMonster
-            hallGrid.addMonster(newMonster);
-            return "Spawned a " + newMonster.getType().getName() +
-                    " at (" + newMonster.getPositionX() + ", " + newMonster.getPositionY() + ")";
-        } else {
-            return "No valid spawn location found for a new monster.";
+        int[] location = hallGrid.findRandomSafeCell();
+        if (location == null) {
+            return "No safe location available to spawn monster.";
         }
+        Monster newMonster = generateRandomMonster(location[0], location[1]);
+        //monsters.add(newMonster); // I think it's abundant, since we have hallGrid.addMonster
+        hallGrid.addMonster(newMonster);
+        return "Monster spawned: " + newMonster.getType().getName() +
+                " at (" + newMonster.getPositionX() + ", " + newMonster.getPositionY() + ")";
+
     }
 
-    private Monster generateRandomMonster() {
-        Random random = new Random();
-        Monster.MonsterType[] types = Monster.MonsterType.values();
-        Monster.MonsterType randomType = types[random.nextInt(types.length)];
-        return new Monster(randomType, 0, 0);
+    private Monster generateRandomMonster(int x, int y) {
+        Monster.MonsterType[] monsterTypes = Monster.MonsterType.values();
+        Monster.MonsterType randomType = monsterTypes[new Random().nextInt(monsterTypes.length)];
+        return new Monster(randomType, x, y);
     }
 
     public void processCloakOfProtection(int duration) {

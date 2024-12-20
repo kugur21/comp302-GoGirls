@@ -30,7 +30,7 @@ public class BuildManager {
         placeDoor(hallOfWater);
         placeDoor(hallOfFire);
 
-        timer = new Timer(20, new BuildLoop());
+        timer = new Timer(10, new BuildLoop());
         timer.start();
 
         System.out.println("[BuildManager]: All halls initialized.");
@@ -91,7 +91,7 @@ public class BuildManager {
             int x = random.nextInt(HALL_WIDTH);
             int y = random.nextInt(HALL_HEIGHT);
 
-            if (hall[y][x].equals(".") && !isInFrontOfDoor(hall, x, y)) { // Only place on floor tiles
+            if (hall[y][x].equals(".") && notInFrontOfDoor(hall, x, y)) { // Only place on floor tiles
                 int objectType = 1 + random.nextInt(6);
                 hall[y][x] = "o" + objectType;
                 placedObjects++;
@@ -111,7 +111,7 @@ public class BuildManager {
             return;
         }
 
-        if (x > 0 && x < HALL_WIDTH - 1 && y > 0 && y < HALL_HEIGHT - 1 && hall[y][x].equals(".") && !isInFrontOfDoor(hall, x, y)) {
+        if (x > 0 && x < HALL_WIDTH - 1 && y > 0 && y < HALL_HEIGHT - 1 && hall[y][x].equals(".") && notInFrontOfDoor(hall, x, y)) {
             hall[y][x] = "o" + objectType;
             System.out.println("[BuildManager]: Object type " + objectType + " placed at (" + x + ", " + y + ") in " + hallName);
         } else {
@@ -135,11 +135,11 @@ public class BuildManager {
         }
     }
 
-    private static boolean isInFrontOfDoor(String[][] hall, int x, int y) {
-        return (x > 0 && "d".equals(hall[y][x - 1])) || // Left of door
-                (x < HALL_WIDTH - 1 && "d".equals(hall[y][x + 1])) || // Right of door
-                (y > 0 && "d".equals(hall[y - 1][x])) || // Above door
-                (y < HALL_HEIGHT - 1 && "d".equals(hall[y + 1][x])); // Below door
+    private static boolean notInFrontOfDoor(String[][] hall, int x, int y) {
+        return (x <= 0 || !"d".equals(hall[y][x - 1])) && // Left of door
+                (x >= HALL_WIDTH - 1 || !"d".equals(hall[y][x + 1])) && // Right of door
+                (y <= 0 || !"d".equals(hall[y - 1][x])) && // Above door
+                (y >= HALL_HEIGHT - 1 || !"d".equals(hall[y + 1][x])); // Below door
     }
 
     public static String[][] getHall(String hallName) {

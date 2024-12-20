@@ -119,7 +119,6 @@ public class ItemManager {
     public Enchantment generateRandomEnchantment(int x, int y) {
         Enchantment.EnchantmentType[] enchantmentTypes = Enchantment.EnchantmentType.values();
         Enchantment.EnchantmentType randomType = enchantmentTypes[new Random().nextInt(enchantmentTypes.length)];
-
         return new Enchantment(randomType, x, y);
     }
 
@@ -130,5 +129,4 @@ public class ItemManager {
     private void removeHighlight(int[][] runeRegion) {
         // TODO: Remove the highlight after 10 seconds.
     }
-
 }

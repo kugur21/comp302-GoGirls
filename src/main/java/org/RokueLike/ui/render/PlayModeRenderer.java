@@ -50,7 +50,7 @@ public class PlayModeRenderer {
     public void renderPlayMode(Graphics2D g) {
         HallGrid currentHall = GameManager.getCurrentHall();
         Hero hero = GameManager.getHero();
-        List<Monster> monsters = GameManager.getActiveMonsters();
+        List<Monster> monsters = currentHall.getMonsters();
 
         if (currentHall == null || hero == null) return;
 

@@ -80,6 +80,15 @@ public class HallGrid {
         initRune();
     }
 
+    public void initRune() {
+        if (objects.isEmpty()) {
+            throw new IllegalStateException("No objects available for placing the rune.");
+        }
+        Object randomObject = objects.get(new Random().nextInt(objects.size()));
+        randomObject.setContainedRune();
+        System.out.println("Rune initialized in object at (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
+    }
+
     public void openDoor() {
         boolean doorOpened = false;
 
@@ -98,73 +107,10 @@ public class HallGrid {
         }
 
         if (!doorOpened) {
-            System.out.println("No doors found to open in this hall.");
+            System.out.println("Door already unlocked, proceed to the next hall.");
         }
 
     }
-
-    public int getStartX() {
-        return startX;
-    }
-
-    public int getStartY() {
-        return startY;
-    }
-
-    public int getWidth() {
-        return grid[0].length;
-    }
-
-    public int getHeight() {
-        return grid.length;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Enchantment getCurrentEnchantment() {
-        return currentEnchantment;
-    }
-
-    public void addEnchantment(Enchantment enchantment) {
-        grid[enchantment.getPositionY()][enchantment.getPositionX()] = enchantment;
-        currentEnchantment = enchantment;
-    }
-
-    public void removeEnchantment() {
-        grid[currentEnchantment.getPositionY()][currentEnchantment.getPositionX()] = new GridCell("floor", currentEnchantment.getPositionX(), currentEnchantment.getPositionY());
-        currentEnchantment = null;
-    }
-
-    public void addMonster(Monster monster) {
-        monsters.add(monster);
-    }
-
-    public List<Monster> getMonsters() {
-        return monsters;
-    }
-
-    public boolean isThereMonster(int x, int y) {
-        for (Monster monster: monsters) {
-            if (monster.getPositionX() == x && monster.getPositionY() == y) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void initRune() {
-        if (objects.isEmpty()) {
-            throw new IllegalStateException("No objects available for placing the rune.");
-        }
-        Random random = new Random();
-        Object randomObject = objects.get(random.nextInt(objects.size()));
-
-        randomObject.setContainedRune();
-        System.out.println("Rune initialized in object at (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
-    }
-
 
     public void changeRuneLocation() {
         for (Object object : objects) {
@@ -174,9 +120,7 @@ public class HallGrid {
                 break;
             }
         }
-
-        Random random = new Random();
-        Object randomObject = objects.get(random.nextInt(objects.size()));
+        Object randomObject = objects.get(new Random().nextInt(objects.size()));
         randomObject.setContainedRune();
         System.out.println("Rune teleported to (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
     }
@@ -247,5 +191,56 @@ public class HallGrid {
             return floorTiles.get(random.nextInt(floorTiles.size()));
         }
         return null;
+    }
+
+    public void addMonster(Monster monster) {
+        monsters.add(monster);
+    }
+
+    public List<Monster> getMonsters() {
+        return monsters;
+    }
+
+    public boolean isThereMonster(int x, int y) {
+        for (Monster monster: monsters) {
+            if (monster.getPositionX() == x && monster.getPositionY() == y) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Enchantment getCurrentEnchantment() {
+        return currentEnchantment;
+    }
+
+    public void addEnchantment(Enchantment enchantment) {
+        grid[enchantment.getPositionY()][enchantment.getPositionX()] = enchantment;
+        currentEnchantment = enchantment;
+    }
+
+    public void removeEnchantment() {
+        grid[currentEnchantment.getPositionY()][currentEnchantment.getPositionX()] = new GridCell("floor", currentEnchantment.getPositionX(), currentEnchantment.getPositionY());
+        currentEnchantment = null;
+    }
+
+    public int getStartX() {
+        return startX;
+    }
+
+    public int getStartY() {
+        return startY;
+    }
+
+    public int getWidth() {
+        return grid[0].length;
+    }
+
+    public int getHeight() {
+        return grid.length;
+    }
+
+    public String getName() {
+        return name;
     }
 }

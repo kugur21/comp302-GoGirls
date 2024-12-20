@@ -13,23 +13,20 @@ public class GameLoop implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent arg0) {
         try {
-            GameManager.genericLoop();
-
             GameManager.updateRemainingTime();
+            GameManager.genericLoop();
 
             GameManager.incrementMonsterSpawnTimer();
             if (GameManager.isMonsterSpawnTimerReady()) {
                 GameManager.handleMonsterSpawn();
                 GameManager.resetMonsterSpawnTimer();
             }
-
             GameManager.incrementEnchantmentSpawnTimer();
             if (GameManager.isEnchantmentSpawnTimerReady()) {
                 GameManager.handleEnchantmentSpawn();
                 GameManager.resetEnchantmentSpawnTimer();
             }
             GameManager.handleEnchantmentExpiration();
-
             if (GameManager.hasWizardsInCurrentHall()) {
                 GameManager.incrementWizardTimer();
                 if (GameManager.isWizardTimerReady()) {
@@ -50,6 +47,8 @@ public class GameLoop implements ActionListener {
                 GameManager.handleMovement(1, 0);
                 GameManager.getHero().setFacing(Direction.RIGHT);
             }
+            GameManager.handleMonsterMovement();
+
             if (Keyboard.isKeyPressed("LURE_UP")) {
                 GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM, Direction.UP);
             } else if (Keyboard.isKeyPressed("LURE_DOWN")) {
