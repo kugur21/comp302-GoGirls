@@ -205,6 +205,27 @@ public class PlayModeRenderer {
 
         renderHearts(g, hero, HUD_X + 15, HUD_Y + 150);
         renderInventory(g, HUD_X + 15, HUD_Y + 190);
+
+        if (hero.isCloakActive()) {
+            int timer = hero.getCloakTimer();
+            BufferedImage cloakIcon = Textures.getSprite("cloak_of_protection");
+
+            if (cloakIcon != null) {
+                int iconX = GRID_OFFSET_X + 15;
+                int iconY = GRID_OFFSET_Y + 300;
+
+                g.drawImage(cloakIcon, iconX, iconY, 32, 32, null); // Cloak icon
+
+                // Blinking effect during last 5 seconds
+                if (timer <= 5 && (timer % 2 == 0)) {
+                    g.setColor(Color.RED);
+                } else {
+                    g.setColor(Color.WHITE);
+                }
+                g.setFont(pixelFont);
+                g.drawString("Cloak: " + timer + "s", iconX + 40, iconY + 20);
+            }
+        }
     }
 
     private void renderControlButtons(Graphics2D g, int controlX, int controlY) {
@@ -273,10 +294,17 @@ public class PlayModeRenderer {
     private void renderHero(Graphics2D g, Hero hero) {
         BufferedImage heroSprite = Textures.getSprite("player");
         if (heroSprite != null) {
+            // If cloak is active, render the hero with reduced opacity
+            if (hero.isCloakActive()) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% opacity
+            }
             g.drawImage(heroSprite,
                     GRID_OFFSET_X + hero.getPositionX() * TILE_SIZE,
                     GRID_OFFSET_Y + hero.getPositionY() * TILE_SIZE,
                     TILE_SIZE, TILE_SIZE, null);
+
+            // Reset opacity
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
     }
 

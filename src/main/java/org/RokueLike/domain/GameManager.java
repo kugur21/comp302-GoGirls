@@ -81,6 +81,7 @@ public class GameManager {
 
     public static void genericLoop() {
         hero.decreaseMotionOffset();
+        hero.updateCloakTimer();
         for (Monster monster: activeMonsters) {
             monster.decreaseMotionOffset();
         }

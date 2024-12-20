@@ -72,9 +72,28 @@ public class Hero extends EntityCell {
     }
 
 
-    // Inventory getter method added for PlayModeRenderer
+
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    // Cloak Of Protection için eklentiler
+    private int cloakTimer = 0; // Cloak active duration (in seconds)
+
+    public boolean isCloakActive() {
+        return cloakTimer > 0;
+    }
+
+    public void activateCloak(int duration) {
+        this.cloakTimer = duration; // Set cloak duration
+    }
+
+    public void updateCloakTimer() {
+        if (cloakTimer > 0) cloakTimer--; // Decrease timer if active
+    }
+
+    public int getCloakTimer() {
+        return cloakTimer;
     }
 
 }
