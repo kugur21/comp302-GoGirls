@@ -4,6 +4,8 @@ package org.RokueLike.domain.entity.hero;
 import org.RokueLike.domain.entity.EntityCell;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
 
+import java.util.List;
+
 public class Hero extends EntityCell {
 
     private int lives;
@@ -69,6 +71,7 @@ public class Hero extends EntityCell {
     public Inventory getInventory() {
         return this.inventory;
     }
+
 
 
 

@@ -44,6 +44,7 @@ public class PlayModeRenderer {
         Textures.addSprite("luring_gem", Textures.loadPNG("imagesekstra/luringgem.png"));
         Textures.addSprite("exit_button", Textures.loadPNG("imagesekstra/exit.png"));
         Textures.addSprite("pause_button", Textures.loadPNG("imagesekstra/pause.png"));
+
         System.out.println("[PlayModeRenderer]: Custom sprites loaded successfully!");
     }
 
@@ -54,15 +55,10 @@ public class PlayModeRenderer {
 
         if (currentHall == null || hero == null) return;
 
-        // Arka planı floor_plain sprite'ı ile doldur
-        BufferedImage floorPlainImage = Textures.getSprite("floor_plain");
-        if (floorPlainImage != null) {
-            for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y++) {
-                for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x++) {
-                    g.drawImage(floorPlainImage, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-                }
-            }
-        }
+        // High Cohesion and Low Coupling
+        renderFloor(g);
+
+        renderMudClusters(g);
 
         renderGrid(g, currentHall);
         renderMonsters(g, monsters);
@@ -73,26 +69,70 @@ public class PlayModeRenderer {
         renderHUD(g, hero, remainingTime);
     }
 
+    private void renderFloor(Graphics2D g) {
+        BufferedImage floorPlainImage = Textures.getSprite("floor_plain");
+        if (floorPlainImage != null) {
+            for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y++) {
+                for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x++) {
+                    g.drawImage(floorPlainImage, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+                }
+            }
+        }
+    }
+
+    private void renderMudClusters(Graphics2D g) {
+        for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y += 12) {
+            for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x += 12) {
+                renderMudPattern(g, x, y);
+            }
+        }
+    }
+
+    private void renderMudPattern(Graphics2D g, int clusterX, int clusterY) {
+
+        g.drawImage(Textures.getSprite("floor_mud_nw"), clusterX * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_n_1"), (clusterX + 1) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_n_2"), (clusterX + 2) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_ne"), (clusterX + 3) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+
+
+        g.drawImage(Textures.getSprite("floor_mud_w"), clusterX * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_mid_1"), (clusterX + 1) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_mid_2"), (clusterX + 2) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_e"), (clusterX + 3) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+
+
+        g.drawImage(Textures.getSprite("floor_mud_sw"), clusterX * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_s_1"), (clusterX + 1) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_s_2"), (clusterX + 2) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_se"), (clusterX + 3) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+    }
+
+
 
     private void renderGrid(Graphics2D g, HallGrid hall) {
         BufferedImage floorImage = Textures.getSprite("floor_plain");
-        if (floorImage != null) {
-            for (int y = 0; y < hall.getHeight(); y++) {
-                for (int x = 0; x < hall.getWidth(); x++) {
-                    g.drawImage(floorImage, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-                }
-            }
-        } else {
-            System.err.println("[Textures]: Missing sprite for 'floor_plain'");
-        }
 
         for (int y = 0; y < hall.getHeight(); y++) {
             for (int x = 0; x < hall.getWidth(); x++) {
+                // Render floor_plain first
+                if (floorImage != null) {
+                    g.drawImage(floorImage, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+                }
+
+                // Add mud pattern logic here
+                if ((x % 6 == 0 && y % 6 == 0)) { // Place mud at regular intervals
+                    renderMudPattern(g, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE);
+                }
+
+                // Render other tiles like walls, objects, etc.
                 GridCell cell = hall.getCell(x, y);
                 drawTile(g, cell, x, y);
             }
         }
     }
+
+
 
     private void drawTile(Graphics2D g, GridCell cell, int x, int y) {
         if (cell == null) {
@@ -193,31 +233,40 @@ public class PlayModeRenderer {
         int inventoryWidth = 180;
         int inventoryHeight = 270;
 
+
         if (inventoryBg != null) {
             g.drawImage(inventoryBg, inventoryX, inventoryY, inventoryWidth, inventoryHeight, null);
         }
 
-        int slotSize = 30;
-        int gap = 10;
-        int itemStartX = inventoryX + 35; // Daha sola kaydırıldı
-        int itemStartY = inventoryY + 100;
+        int slotSize = 30; // Slot size
+        int gap = 10;      // Gap between slots
+        int itemStartX = inventoryX + 35; // Inventory slot X offset
+        int itemStartY = inventoryY + 100; // Inventory slot Y offset
 
-        String[] demoItems = {"extra_time", "extra_life", "reveal", "cloak", "luring_gem"};
-        for (int i = 0; i < 6; i++) {
+
+        List<Enchantment.EnchantmentType> heroInventory = GameManager.getHero().getInventory().getItems();
+
+
+        for (int i = 0; i < heroInventory.size(); i++) {
             g.setColor(new Color(80, 80, 100));
-            g.fillRect(itemStartX + (i % 3) * (slotSize + gap), itemStartY + (i / 3) * (slotSize + gap), slotSize, slotSize);
+            g.fillRect(itemStartX + (i % 3) * (slotSize + gap),
+                    itemStartY + (i / 3) * (slotSize + gap),
+                    slotSize, slotSize);
 
-            if (i < demoItems.length) {
-                BufferedImage itemImg = Textures.getSprite(demoItems[i]);
-                if (itemImg != null) {
-                    g.drawImage(itemImg,
-                            itemStartX + (i % 3) * (slotSize + gap),
-                            itemStartY + (i / 3) * (slotSize + gap),
-                            slotSize, slotSize, null);
-                }
+
+            BufferedImage itemImg = Textures.getSprite(heroInventory.get(i).getName());
+            if (itemImg != null) {
+                g.drawImage(itemImg,
+                        itemStartX + (i % 3) * (slotSize + gap),
+                        itemStartY + (i / 3) * (slotSize + gap),
+                        slotSize, slotSize, null);
+            } else {
+                System.err.println("[Textures]: Missing sprite for " + heroInventory.get(i).getName());
             }
         }
     }
+
+
 
     private void renderHero(Graphics2D g, Hero hero) {
         BufferedImage heroSprite = Textures.getSprite("player");
@@ -246,4 +295,6 @@ public class PlayModeRenderer {
             }
         }
     }
+
+
 }
