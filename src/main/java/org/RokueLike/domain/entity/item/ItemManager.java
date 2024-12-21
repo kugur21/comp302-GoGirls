@@ -89,6 +89,7 @@ public class ItemManager {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION)) {
             hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
 
+            // Back-end eklentisi UI için
             hero.activateCloak(20);
 
             monsterManager.processCloakOfProtection(20);
