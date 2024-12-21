@@ -1,5 +1,4 @@
 
-
 package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
@@ -36,10 +35,11 @@ public class PlayModeRenderer {
      */
     private void addCustomSprites() {
         Textures.addSprite("player", Textures.loadPNG("imagesekstra/player.png"));
+        Textures.addSprite("player_cloak", Textures.loadPNG("imagesekstra/player_cloak.png"));
         Textures.addSprite("archer", Textures.loadPNG("imagesekstra/archer4x.png"));
         Textures.addSprite("wizard", Textures.loadPNG("imagesekstra/wizard4x.png"));
         Textures.addSprite("heart", Textures.loadPNG("imagesekstra/heart.png"));
-        Textures.addSprite("extra_time", Textures.loadPNG("imagesekstra/extra_time_1.png"));
+        Textures.addSprite("extra_time", Textures.loadPNG("imagesekstra/extra_time_1_.png"));
         Textures.addSprite("extra_life", Textures.loadPNG("imagesekstra/extraheart.png"));
         Textures.addSprite("reveal", Textures.loadPNG("imagesekstra/reveal.png"));
         Textures.addSprite("cloak_of_protection", Textures.loadPNG("imagesekstra/protection.png"));
@@ -207,25 +207,29 @@ public class PlayModeRenderer {
         renderInventory(g, HUD_X + 15, HUD_Y + 190);
 
         if (hero.isCloakActive()) {
-            int timer = hero.getCloakTimer();
+            int cloakTimer = hero.getCloakTimer();
             BufferedImage cloakIcon = Textures.getSprite("cloak_of_protection");
 
             if (cloakIcon != null) {
-                int iconX = GRID_OFFSET_X + 15;
-                int iconY = GRID_OFFSET_Y + 300;
+                int iconX = HUD_X + 15;
+                int iconY = HUD_Y + 320; // Inventory altında bir alan
 
-                g.drawImage(cloakIcon, iconX, iconY, 32, 32, null); // Cloak icon
+                g.drawImage(cloakIcon, iconX, iconY, 32, 32, null);
 
-                // Blinking effect during last 5 seconds
-                if (timer <= 5 && (timer % 2 == 0)) {
+                // Süreyi yazdır
+                g.setFont(pixelFont);
+                g.setColor(Color.WHITE);
+                g.drawString("Cloak: " + cloakTimer + "s", iconX + 40, iconY + 20);
+
+                // Son 5 saniye için kırmızı yanıp sönme efekti
+                if (cloakTimer <= 5 && (cloakTimer % 2 == 0)) {
                     g.setColor(Color.RED);
                 } else {
                     g.setColor(Color.WHITE);
                 }
-                g.setFont(pixelFont);
-                g.drawString("Cloak: " + timer + "s", iconX + 40, iconY + 20);
             }
         }
+
     }
 
     private void renderControlButtons(Graphics2D g, int controlX, int controlY) {
@@ -256,7 +260,6 @@ public class PlayModeRenderer {
         int inventoryWidth = 180;
         int inventoryHeight = 270;
 
-        // Draw Inventory Background
         if (inventoryBg != null) {
             g.drawImage(inventoryBg, inventoryX, inventoryY, inventoryWidth, inventoryHeight, null);
         }
@@ -289,7 +292,6 @@ public class PlayModeRenderer {
             g.setColor(Color.WHITE);
             g.setFont(new Font("Arial", Font.BOLD, 14));
 
-            // Coordinates below the inventory
             int cloakTextX = inventoryX + 10;
             int cloakTextY = inventoryY + inventoryHeight + 20;
 
@@ -302,21 +304,25 @@ public class PlayModeRenderer {
 
 
     private void renderHero(Graphics2D g, Hero hero) {
-        BufferedImage heroSprite = Textures.getSprite("player");
+        BufferedImage heroSprite;
+
+        if (hero.isCloakActive()) {
+            heroSprite = Textures.getSprite("player_cloak");
+        } else {
+            heroSprite = Textures.getSprite("player");
+        }
+
         if (heroSprite != null) {
-            // If cloak is active, render the hero with reduced opacity
-            if (hero.isCloakActive()) {
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% opacity
-            }
             g.drawImage(heroSprite,
                     GRID_OFFSET_X + hero.getPositionX() * TILE_SIZE,
                     GRID_OFFSET_Y + hero.getPositionY() * TILE_SIZE,
                     TILE_SIZE, TILE_SIZE, null);
-
-            // Reset opacity
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        } else {
+            System.err.println("[Error]: Hero sprite is null!");
         }
+
     }
+
 
     private void renderMonsters(Graphics2D g, List<Monster> monsters) {
         for (Monster monster : monsters) {
