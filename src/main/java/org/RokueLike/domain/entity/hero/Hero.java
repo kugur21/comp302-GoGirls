@@ -96,4 +96,6 @@ public class Hero extends EntityCell {
         return cloakTimer;
     }
 
+
+
 }

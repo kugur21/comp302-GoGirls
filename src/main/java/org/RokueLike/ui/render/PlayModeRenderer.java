@@ -256,19 +256,17 @@ public class PlayModeRenderer {
         int inventoryWidth = 180;
         int inventoryHeight = 270;
 
-
+        // Draw Inventory Background
         if (inventoryBg != null) {
             g.drawImage(inventoryBg, inventoryX, inventoryY, inventoryWidth, inventoryHeight, null);
         }
 
-        int slotSize = 30; // Slot size
-        int gap = 10;      // Gap between slots
-        int itemStartX = inventoryX + 35; // Inventory slot X offset
-        int itemStartY = inventoryY + 100; // Inventory slot Y offset
-
+        int slotSize = 30;
+        int gap = 10;
+        int itemStartX = inventoryX + 35;
+        int itemStartY = inventoryY + 100;
 
         List<Enchantment.EnchantmentType> heroInventory = GameManager.getHero().getInventory().getItems();
-
 
         for (int i = 0; i < heroInventory.size(); i++) {
             g.setColor(new Color(80, 80, 100));
@@ -276,18 +274,30 @@ public class PlayModeRenderer {
                     itemStartY + (i / 3) * (slotSize + gap),
                     slotSize, slotSize);
 
-
             BufferedImage itemImg = Textures.getSprite(heroInventory.get(i).getName());
             if (itemImg != null) {
                 g.drawImage(itemImg,
                         itemStartX + (i % 3) * (slotSize + gap),
                         itemStartY + (i / 3) * (slotSize + gap),
                         slotSize, slotSize, null);
-            } else {
-                System.err.println("[Textures]: Missing sprite for " + heroInventory.get(i).getName());
             }
         }
+
+
+        Hero hero = GameManager.getHero();
+        if (hero.getCloakTimer() > 0) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 14));
+
+            // Coordinates below the inventory
+            int cloakTextX = inventoryX + 10;
+            int cloakTextY = inventoryY + inventoryHeight + 20;
+
+            g.drawString("Cloak Active: " + hero.getCloakTimer() + "s", cloakTextX, cloakTextY);
+        }
     }
+
+
 
 
 
