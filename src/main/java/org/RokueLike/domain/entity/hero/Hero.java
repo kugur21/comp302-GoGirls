@@ -77,4 +77,23 @@ public class Hero extends EntityCell {
         return this.inventory;
     }
 
+    private int cloakTimer = 0;
+
+    public boolean isCloakActive() {
+        return cloakTimer > 0;
+    }
+
+    public void activateCloak(int duration) {
+        this.cloakTimer = duration;
+    }
+
+    public void updateCloakTimer() {
+        if (cloakTimer > 0) cloakTimer--;
+    }
+
+    public int getCloakTimer() {
+        return cloakTimer;
+    }
+
+
 }

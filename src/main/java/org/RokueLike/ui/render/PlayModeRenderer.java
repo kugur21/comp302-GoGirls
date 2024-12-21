@@ -1,3 +1,5 @@
+
+
 package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
@@ -44,25 +46,21 @@ public class PlayModeRenderer {
         Textures.addSprite("luring_gem", Textures.loadPNG("imagesekstra/luringgem.png"));
         Textures.addSprite("exit_button", Textures.loadPNG("imagesekstra/exit.png"));
         Textures.addSprite("pause_button", Textures.loadPNG("imagesekstra/pause.png"));
+
         System.out.println("[PlayModeRenderer]: Custom sprites loaded successfully!");
     }
 
     public void renderPlayMode(Graphics2D g) {
         HallGrid currentHall = GameManager.getCurrentHall();
         Hero hero = GameManager.getHero();
-        List<Monster> monsters = currentHall.getMonsters();
+        List<Monster> monsters = GameManager.getActiveMonsters();
 
         if (currentHall == null || hero == null) return;
 
-        // Arka planı floor_plain sprite'ı ile doldur
-        BufferedImage floorPlainImage = Textures.getSprite("floor_plain");
-        if (floorPlainImage != null) {
-            for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y++) {
-                for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x++) {
-                    g.drawImage(floorPlainImage, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-                }
-            }
-        }
+        // High Cohesion and Low Coupling
+        renderFloor(g);
+
+        renderMudClusters(g);
 
         renderGrid(g, currentHall);
         renderMonsters(g, monsters);
@@ -73,31 +71,75 @@ public class PlayModeRenderer {
         renderHUD(g, hero, remainingTime);
     }
 
+    private void renderFloor(Graphics2D g) {
+        BufferedImage floorPlainImage = Textures.getSprite("floor_plain");
+        if (floorPlainImage != null) {
+            for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y++) {
+                for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x++) {
+                    g.drawImage(floorPlainImage, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+                }
+            }
+        }
+    }
+
+    private void renderMudClusters(Graphics2D g) {
+        for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y += 12) {
+            for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x += 12) {
+                renderMudPattern(g, x, y);
+            }
+        }
+    }
+
+    private void renderMudPattern(Graphics2D g, int clusterX, int clusterY) {
+
+        g.drawImage(Textures.getSprite("floor_mud_nw"), clusterX * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_n_1"), (clusterX + 1) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_n_2"), (clusterX + 2) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_ne"), (clusterX + 3) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+
+
+        g.drawImage(Textures.getSprite("floor_mud_w"), clusterX * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_mid_1"), (clusterX + 1) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_mid_2"), (clusterX + 2) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_e"), (clusterX + 3) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+
+
+        g.drawImage(Textures.getSprite("floor_mud_sw"), clusterX * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_s_1"), (clusterX + 1) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_s_2"), (clusterX + 2) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        g.drawImage(Textures.getSprite("floor_mud_se"), (clusterX + 3) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+    }
+
+
 
     private void renderGrid(Graphics2D g, HallGrid hall) {
         BufferedImage floorImage = Textures.getSprite("floor_plain");
-        if (floorImage != null) {
-            for (int y = 0; y < hall.getHeight(); y++) {
-                for (int x = 0; x < hall.getWidth(); x++) {
-                    g.drawImage(floorImage, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-                }
-            }
-        } else {
-            System.err.println("[Textures]: Missing sprite for 'floor_plain'");
-        }
 
         for (int y = 0; y < hall.getHeight(); y++) {
             for (int x = 0; x < hall.getWidth(); x++) {
+                // Render floor_plain first
+                if (floorImage != null) {
+                    g.drawImage(floorImage, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+                }
+
+
+                if ((x % 6 == 0 && y % 6 == 0)) {
+                    renderMudPattern(g, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE);
+                }
+
+
                 GridCell cell = hall.getCell(x, y);
                 drawTile(g, cell, x, y);
             }
         }
     }
 
+
+
     private void drawTile(Graphics2D g, GridCell cell, int x, int y) {
         if (cell == null) {
             System.err.println("[PlayModeRenderer]: Null cell at (" + x + ", " + y + ")");
-            return; // Skip rendering
+            return;
         }
         BufferedImage img = switch (cell.getName()) {
             case "object1" -> Textures.getSprite("chest_closed");
@@ -113,7 +155,7 @@ public class PlayModeRenderer {
             case "extra_time_enchantment" -> Textures.getSprite("extra_time");
             case "extra_life_enchantment" -> Textures.getSprite("extra_life");
             case "reveal_enchantment" -> Textures.getSprite("reveal");
-            //case "cloak_of_protection" -> Textures.getSprite("cloak");
+
             case "luring_gem_enchantment" -> Textures.getSprite("luring_gem");
             default -> Textures.getSprite("black");
         };
@@ -163,6 +205,27 @@ public class PlayModeRenderer {
 
         renderHearts(g, hero, HUD_X + 15, HUD_Y + 150);
         renderInventory(g, HUD_X + 15, HUD_Y + 190);
+
+        if (hero.isCloakActive()) {
+            int timer = hero.getCloakTimer();
+            BufferedImage cloakIcon = Textures.getSprite("cloak_of_protection");
+
+            if (cloakIcon != null) {
+                int iconX = GRID_OFFSET_X + 15;
+                int iconY = GRID_OFFSET_Y + 300;
+
+                g.drawImage(cloakIcon, iconX, iconY, 32, 32, null); // Cloak icon
+
+                // Blinking effect during last 5 seconds
+                if (timer <= 5 && (timer % 2 == 0)) {
+                    g.setColor(Color.RED);
+                } else {
+                    g.setColor(Color.WHITE);
+                }
+                g.setFont(pixelFont);
+                g.drawString("Cloak: " + timer + "s", iconX + 40, iconY + 20);
+            }
+        }
     }
 
     private void renderControlButtons(Graphics2D g, int controlX, int controlY) {
@@ -193,39 +256,65 @@ public class PlayModeRenderer {
         int inventoryWidth = 180;
         int inventoryHeight = 270;
 
+        // Draw Inventory Background
         if (inventoryBg != null) {
             g.drawImage(inventoryBg, inventoryX, inventoryY, inventoryWidth, inventoryHeight, null);
         }
 
         int slotSize = 30;
         int gap = 10;
-        int itemStartX = inventoryX + 35; // Daha sola kaydırıldı
+        int itemStartX = inventoryX + 35;
         int itemStartY = inventoryY + 100;
 
-        String[] demoItems = {"extra_time", "extra_life", "reveal", "cloak", "luring_gem"};
-        for (int i = 0; i < 6; i++) {
-            g.setColor(new Color(80, 80, 100));
-            g.fillRect(itemStartX + (i % 3) * (slotSize + gap), itemStartY + (i / 3) * (slotSize + gap), slotSize, slotSize);
+        List<Enchantment.EnchantmentType> heroInventory = GameManager.getHero().getInventory().getItems();
 
-            if (i < demoItems.length) {
-                BufferedImage itemImg = Textures.getSprite(demoItems[i]);
-                if (itemImg != null) {
-                    g.drawImage(itemImg,
-                            itemStartX + (i % 3) * (slotSize + gap),
-                            itemStartY + (i / 3) * (slotSize + gap),
-                            slotSize, slotSize, null);
-                }
+        for (int i = 0; i < heroInventory.size(); i++) {
+            g.setColor(new Color(80, 80, 100));
+            g.fillRect(itemStartX + (i % 3) * (slotSize + gap),
+                    itemStartY + (i / 3) * (slotSize + gap),
+                    slotSize, slotSize);
+
+            BufferedImage itemImg = Textures.getSprite(heroInventory.get(i).getName());
+            if (itemImg != null) {
+                g.drawImage(itemImg,
+                        itemStartX + (i % 3) * (slotSize + gap),
+                        itemStartY + (i / 3) * (slotSize + gap),
+                        slotSize, slotSize, null);
             }
         }
+
+
+        Hero hero = GameManager.getHero();
+        if (hero.getCloakTimer() > 0) {
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.BOLD, 14));
+
+            // Coordinates below the inventory
+            int cloakTextX = inventoryX + 10;
+            int cloakTextY = inventoryY + inventoryHeight + 20;
+
+            g.drawString("Cloak Active: " + hero.getCloakTimer() + "s", cloakTextX, cloakTextY);
+        }
     }
+
+
+
+
 
     private void renderHero(Graphics2D g, Hero hero) {
         BufferedImage heroSprite = Textures.getSprite("player");
         if (heroSprite != null) {
+            // If cloak is active, render the hero with reduced opacity
+            if (hero.isCloakActive()) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% opacity
+            }
             g.drawImage(heroSprite,
                     GRID_OFFSET_X + hero.getPositionX() * TILE_SIZE,
                     GRID_OFFSET_Y + hero.getPositionY() * TILE_SIZE,
                     TILE_SIZE, TILE_SIZE, null);
+
+            // Reset opacity
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
     }
 
@@ -246,4 +335,6 @@ public class PlayModeRenderer {
             }
         }
     }
+
+
 }
