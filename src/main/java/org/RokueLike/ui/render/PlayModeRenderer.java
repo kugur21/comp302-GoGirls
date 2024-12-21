@@ -304,24 +304,27 @@ public class PlayModeRenderer {
 
 
     private void renderHero(Graphics2D g, Hero hero) {
-        BufferedImage heroSprite;
-
-        if (hero.isCloakActive()) {
-            heroSprite = Textures.getSprite("player_cloak");
-        } else {
-            heroSprite = Textures.getSprite("player");
-        }
+        BufferedImage heroSprite = Textures.getSprite("player"); // Mevcut sprite kullanılıyor
 
         if (heroSprite != null) {
+            // Cloak aktifse opaklığı azalt
+            if (hero.isCloakActive()) {
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f)); // %10 opaklık
+            }
+
+            // Hero'yu çizin
             g.drawImage(heroSprite,
                     GRID_OFFSET_X + hero.getPositionX() * TILE_SIZE,
                     GRID_OFFSET_Y + hero.getPositionY() * TILE_SIZE,
                     TILE_SIZE, TILE_SIZE, null);
+
+            // Opaklık ayarını sıfırla
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // %100 opaklık
         } else {
             System.err.println("[Error]: Hero sprite is null!");
         }
-
     }
+
 
 
     private void renderMonsters(Graphics2D g, List<Monster> monsters) {
