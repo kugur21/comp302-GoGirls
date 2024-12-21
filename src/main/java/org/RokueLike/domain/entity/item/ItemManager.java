@@ -88,12 +88,16 @@ public class ItemManager {
     public String applyCloakOfProtection() {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION)) {
             hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
+
+            hero.activateCloak(20);
+
             monsterManager.processCloakOfProtection(20);
             return "Cloak of Protection enchantment applied.";
         } else {
             return "No Cloak of Protection enchantment available in hero's inventory.";
         }
     }
+
 
     public String applyLuringGem(Direction direction) {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.LURING_GEM)) {

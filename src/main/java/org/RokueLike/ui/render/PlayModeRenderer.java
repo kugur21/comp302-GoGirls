@@ -304,26 +304,23 @@ public class PlayModeRenderer {
 
 
     private void renderHero(Graphics2D g, Hero hero) {
-        BufferedImage heroSprite = Textures.getSprite("player"); // Mevcut sprite kullanılıyor
-
+        BufferedImage heroSprite = Textures.getSprite("player"); // Default sprite
         if (heroSprite != null) {
-            // Cloak aktifse opaklığı azalt
             if (hero.isCloakActive()) {
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f)); // %10 opaklık
+                // Apply transparency
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% transparency
             }
 
-            // Hero'yu çizin
             g.drawImage(heroSprite,
                     GRID_OFFSET_X + hero.getPositionX() * TILE_SIZE,
                     GRID_OFFSET_Y + hero.getPositionY() * TILE_SIZE,
                     TILE_SIZE, TILE_SIZE, null);
 
-            // Opaklık ayarını sıfırla
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // %100 opaklık
-        } else {
-            System.err.println("[Error]: Hero sprite is null!");
+            // Reset transparency
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         }
     }
+
 
 
 
