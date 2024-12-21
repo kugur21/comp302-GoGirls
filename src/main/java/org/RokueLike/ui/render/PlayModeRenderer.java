@@ -39,7 +39,7 @@ public class PlayModeRenderer {
         Textures.addSprite("archer", Textures.loadPNG("imagesekstra/archer4x.png"));
         Textures.addSprite("wizard", Textures.loadPNG("imagesekstra/wizard4x.png"));
         Textures.addSprite("heart", Textures.loadPNG("imagesekstra/heart.png"));
-        Textures.addSprite("extra_time", Textures.loadPNG("imagesekstra/extra_time.png"));
+        Textures.addSprite("extra_time", Textures.loadPNG("imagesekstra/extra_time_1_.png"));
         Textures.addSprite("extra_life", Textures.loadPNG("imagesekstra/extraheart.png"));
         Textures.addSprite("reveal", Textures.loadPNG("imagesekstra/reveal.png"));
         Textures.addSprite("cloak_of_protection", Textures.loadPNG("imagesekstra/protection.png"));
@@ -57,53 +57,19 @@ public class PlayModeRenderer {
 
         if (currentHall == null || hero == null) return;
 
-        int remainingTime = hero.getRemainingTime();
-
-        // Eğer süre dolmuşsa Game Over ekranını göster
-        if (remainingTime <= 0) {
-            renderGameOver(g, hero);
-            return;
-        }
-
-        // Normal render işlemleri
+        // High Cohesion and Low Coupling
         renderFloor(g);
+
         renderMudClusters(g);
+
         renderGrid(g, currentHall);
         renderMonsters(g, monsters);
         renderHero(g, hero);
         renderEnchantments(g, currentHall);
+
+        int remainingTime = hero.getRemainingTime();
         renderHUD(g, hero, remainingTime);
     }
-    private void renderGameOver(Graphics2D g, Hero hero) {
-        // Arkaplanı karart
-        g.setColor(new Color(0, 0, 0, 150)); // Siyah, yarı saydam
-        g.fillRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        // Font boyutunu uygun şekilde ayarla
-        g.setFont(pixelFont.deriveFont(24f)); // Daha küçük font boyutu
-        g.setColor(Color.RED); // Kırmızı renk
-
-        // "Time's Up: Game Over" yazısı
-        String gameOverText = "Time's Up: Game Over";
-        FontMetrics fm = g.getFontMetrics();
-        int textWidth = fm.stringWidth(gameOverText);
-        int textHeight = fm.getHeight();
-        int x = (WINDOW_WIDTH - textWidth) / 2;
-        int y = (WINDOW_HEIGHT - textHeight) / 2 - 20; // Ortalamanın biraz üstü
-
-        g.drawString(gameOverText, x, y);
-
-        // "Hero: You Died" yazısı
-        String heroText = "Hero: You Died";
-        int heroTextWidth = fm.stringWidth(heroText);
-        int heroTextX = (WINDOW_WIDTH - heroTextWidth) / 2;
-        int heroTextY = y + textHeight + 20; // Altında biraz boşluk bırak
-
-        g.drawString(heroText, heroTextX, heroTextY);
-    }
-
-
-
 
     private void renderFloor(Graphics2D g) {
         BufferedImage floorPlainImage = Textures.getSprite("floor_plain");
