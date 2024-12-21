@@ -39,7 +39,7 @@ public class PlayModeRenderer {
         Textures.addSprite("archer", Textures.loadPNG("imagesekstra/archer4x.png"));
         Textures.addSprite("wizard", Textures.loadPNG("imagesekstra/wizard4x.png"));
         Textures.addSprite("heart", Textures.loadPNG("imagesekstra/heart.png"));
-        Textures.addSprite("extra_time", Textures.loadPNG("imagesekstra/extra_time_1.png"));
+        Textures.addSprite("extra_time", Textures.loadPNG("imagesekstra/extra_time1.png"));
         Textures.addSprite("extra_life", Textures.loadPNG("imagesekstra/extraheart.png"));
         Textures.addSprite("reveal", Textures.loadPNG("imagesekstra/reveal.png"));
         Textures.addSprite("cloak_of_protection", Textures.loadPNG("imagesekstra/protection.png"));
