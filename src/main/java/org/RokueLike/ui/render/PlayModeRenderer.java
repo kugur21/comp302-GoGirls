@@ -10,9 +10,12 @@ import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.ui.FontLoader;
 import org.RokueLike.ui.Textures;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+
+import static org.RokueLike.domain.GameManager.isPaused;
 
 public class PlayModeRenderer {
 
@@ -46,11 +49,12 @@ public class PlayModeRenderer {
         Textures.addSprite("luring_gem", Textures.loadPNG("imagesekstra/luringgem.png"));
         Textures.addSprite("exit_button", Textures.loadPNG("imagesekstra/exit.png"));
         Textures.addSprite("pause_button", Textures.loadPNG("imagesekstra/pause.png"));
+        Textures.addSprite("resume_button", Textures.loadPNG("imagesekstra/resume4x.png"));
 
         System.out.println("[PlayModeRenderer]: Custom sprites loaded successfully!");
     }
 
-    public void renderPlayMode(Graphics2D g) {
+    public void renderPlayMode(Graphics2D g, Rectangle exitButtonBounds, Rectangle pauseButtonBounds) {
         HallGrid currentHall = GameManager.getCurrentHall();
         Hero hero = GameManager.getHero();
         List<Monster> monsters = GameManager.getActiveMonsters();
@@ -69,6 +73,7 @@ public class PlayModeRenderer {
 
         int remainingTime = hero.getRemainingTime();
         renderHUD(g, hero, remainingTime);
+        renderControllerButtons(g, exitButtonBounds, pauseButtonBounds);
     }
 
     private void renderFloor(Graphics2D g) {
@@ -155,7 +160,6 @@ public class PlayModeRenderer {
             case "extra_time_enchantment" -> Textures.getSprite("extra_time");
             case "extra_life_enchantment" -> Textures.getSprite("extra_life");
             case "reveal_enchantment" -> Textures.getSprite("reveal");
-
             case "luring_gem_enchantment" -> Textures.getSprite("luring_gem");
             default -> Textures.getSprite("black");
         };
@@ -193,10 +197,7 @@ public class PlayModeRenderer {
         int gridHeight = currentHall.getHeight() * TILE_SIZE;
 
         g.setColor(new Color(163, 137, 134)); // Yeni morumsu ve buğdayımsı renk
-
         g.fillRoundRect(HUD_X, HUD_Y, HUD_WIDTH, gridHeight, 20, 20);
-
-        renderControlButtons(g, HUD_X + 15, HUD_Y + 20);
 
         g.setFont(pixelFont);
         g.setColor(Color.LIGHT_GRAY);
@@ -230,18 +231,6 @@ public class PlayModeRenderer {
             }
         }
 
-    }
-
-    private void renderControlButtons(Graphics2D g, int controlX, int controlY) {
-        BufferedImage exitButton = Textures.getSprite("exit_button");
-        if (exitButton != null) {
-            g.drawImage(exitButton, controlX, controlY, 32, 32, null);
-        }
-
-        BufferedImage pauseButton = Textures.getSprite("pause_button");
-        if (pauseButton != null) {
-            g.drawImage(pauseButton, controlX + 40, controlY, 32, 32, null);
-        }
     }
 
     private void renderHearts(Graphics2D g, Hero hero, int heartX, int heartY) {
@@ -299,9 +288,17 @@ public class PlayModeRenderer {
         }
     }
 
-
-
-
+    public void renderControllerButtons(Graphics2D g, Rectangle exitButtonBounds, Rectangle pauseButtonBounds) {
+        BufferedImage exitSprite = Textures.getSprite("exit_button");
+        if (exitSprite != null) {
+            g.drawImage(exitSprite, exitButtonBounds.x, exitButtonBounds.y, exitButtonBounds.width, exitButtonBounds.height, null);
+        }
+        String spriteName = GameManager.isPaused() ? "resume_button" : "pause_button";
+        BufferedImage pauseSprite = Textures.getSprite(spriteName);
+        if (pauseSprite != null) {
+            g.drawImage(pauseSprite, pauseButtonBounds.x, pauseButtonBounds.y, pauseButtonBounds.width, pauseButtonBounds.height, null);
+        }
+    }
 
     private void renderHero(Graphics2D g, Hero hero) {
         BufferedImage heroSprite = Textures.getSprite("player"); // Default sprite
@@ -321,9 +318,6 @@ public class PlayModeRenderer {
         }
     }
 
-
-
-
     private void renderMonsters(Graphics2D g, List<Monster> monsters) {
         for (Monster monster : monsters) {
             String spriteName = switch (monster.getType()) {
@@ -341,6 +335,5 @@ public class PlayModeRenderer {
             }
         }
     }
-
 
 }

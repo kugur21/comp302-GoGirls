@@ -13,6 +13,9 @@ public class GameLoop implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent arg0) {
         try {
+            if (GameManager.isPaused()) {
+                return;
+            }
             GameManager.updateRemainingTime();
             GameManager.genericLoop();
 

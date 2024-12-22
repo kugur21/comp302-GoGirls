@@ -26,13 +26,15 @@ public class GameManager {
     private static final int ENCHANTMENT_DURATION = 6000;
     private static final int WIZARD_BEHAVIOR = 5000;
 
-    private static Timer timer;
     private static int monsterSpawnTimer = 0;
     private static int enchantmentSpawnTimer = 0;
     private static int enchantmentDurationTimer = 0;
     private static int wizardTimer = 0;
     private static int frameCounter = 0;
     private static MessageBox messageBox;
+
+    private static Timer timer;
+    private static boolean isPaused = false;
 
     private static HallManager hallManager;
     private static HallGrid currentHall;
@@ -318,6 +320,19 @@ public class GameManager {
 
     public static MessageBox getMessageBox() {
         return messageBox;
+    }
+
+    public static void togglePauseResume() {
+        isPaused = !isPaused;
+    }
+
+    public static boolean isPaused() {
+        return isPaused;
+    }
+
+    public static void reset() {
+        System.exit(0);
+        // TODO: Resets game logic when returned to the main screen.
     }
 
 }
