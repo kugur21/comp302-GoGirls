@@ -2,6 +2,7 @@
 package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
+import org.RokueLike.domain.entity.Arrow;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.item.Door;
 import org.RokueLike.domain.entity.item.Enchantment;
@@ -11,6 +12,7 @@ import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.utils.MessageBox;
 import org.RokueLike.ui.FontLoader;
 import org.RokueLike.ui.Textures;
+import org.RokueLike.domain.entity.Arrow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -74,6 +76,8 @@ public class PlayModeRenderer {
         renderGrid(g, currentHall);
         renderRuneRegion(g, currentHall);
         renderMonsters(g, monsters);
+        renderArrows(g);  // Ensure arrows are rendered on top of the monsters
+
         renderHero(g, hero);
         renderEnchantments(g, currentHall);
 
@@ -367,5 +371,31 @@ public class PlayModeRenderer {
             }
         }
     }
+
+    private void renderArrows(Graphics2D g) {
+        for (Arrow arrow : GameManager.getActiveArrows()) {
+            // Set the color for the arrow
+            g.setColor(Color.RED);
+
+            // Calculate the position of the arrow tip (current position)
+            int arrowTipX = GRID_OFFSET_X + arrow.getCurrentX() * TILE_SIZE + TILE_SIZE / 2;
+            int arrowTipY = GRID_OFFSET_Y + arrow.getCurrentY() * TILE_SIZE + TILE_SIZE / 2;
+
+            // Calculate the position of the arrow's base (start position)
+            int arrowBaseX = GRID_OFFSET_X + arrow.getStartX() * TILE_SIZE + TILE_SIZE / 2;
+            int arrowBaseY = GRID_OFFSET_Y + arrow.getStartY() * TILE_SIZE + TILE_SIZE / 2;
+
+            // Draw the arrow line (from base to current position)
+            g.drawLine(arrowBaseX, arrowBaseY, arrowTipX, arrowTipY);
+
+            // Draw a small circle at the arrow tip to indicate its head
+            int arrowSize = TILE_SIZE / 4;
+            g.fillOval(arrowTipX - arrowSize / 2, arrowTipY - arrowSize / 2, arrowSize, arrowSize);
+        }
+    }
+
+
+
+
 
 }

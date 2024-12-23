@@ -38,25 +38,27 @@ public class MonsterManager {
 
     public void processArcherBehavior(Monster archer) {
         int attackRange = 4;
+
+        // Eğer kahraman Archer'ın menzilindeyse, ok fırlat
         if (isHeroInRange(archer, attackRange)) {
-            heroMonsterInteraction(archer);
+            // Cloak aktif değilse ok fırlat
+            if (!GameManager.isCloakActive()) {
+                GameManager.spawnArrow(
+                        archer.getPositionX(),
+                        archer.getPositionY(),
+                        hero.getPositionX(),
+                        hero.getPositionY()
+                );
+            } else {
+                // Cloak aktifse, kahraman fark edilmez
+                GameManager.getMessageBox().addMessage("Archer cannot detect you!", 2);
+            }
         }
 
-        int dirX = 0;
-        int dirY = 0;
-        if (Math.abs(archer.getPositionX() - hero.getPositionX()) <= attackRange) {
-            dirX = (archer.getPositionX() > hero.getPositionX()) ? 1 : -1;
-        }
-        if (Math.abs(archer.getPositionY() - hero.getPositionY()) <= attackRange) {
-            dirY = (archer.getPositionY() > hero.getPositionY()) ? 1 : -1;
-        }
-
-        if (hallGrid.isSafeLocation(archer, dirX, dirY)) {
-            archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY, true);
-        } else {
-            randomMove(archer);
-        }
+        // Hareket mantığı: Archer sabit durur ya da rastgele hareket eder
+        randomMove(archer);
     }
+
 
     public void processFighterBehavior(Monster fighter) {
         int attackRange = 1;

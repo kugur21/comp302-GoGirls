@@ -1,5 +1,6 @@
 package org.RokueLike.domain;
 
+import org.RokueLike.domain.entity.Arrow;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.hero.HeroManager;
 import org.RokueLike.domain.entity.item.Object;
@@ -12,13 +13,15 @@ import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
 import org.RokueLike.domain.utils.Direction;
 import org.RokueLike.domain.utils.MessageBox;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 
 import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameManager {
+public class GameManager implements ActionListener {
 
     private static final int GAME_DELAY = 80;
     private static final int MONSTER_SPAWN = 8000;
@@ -28,6 +31,9 @@ public class GameManager {
     private static final int WIZARD_BEHAVIOR = 5000;
     private static final int REVEAL_ENCHANTMENT_DURATION = 10000;
     public static final int CLOAK_ENCHANTMENT_DURATION = 20000;
+    private static final List<Arrow> activeArrows = new ArrayList<>();
+    private int archerShootTimer = 0; // Timer for Archer's shooting
+
 
 
     private static int monsterSpawnTimer = 0;
@@ -409,5 +415,85 @@ public class GameManager {
         System.exit(0);
         // TODO: Resets game logic when returned to the main screen.
     }
+    public static void spawnArrow(int startX, int startY, int targetX, int targetY) {
+        activeArrows.add(new Arrow(startX, startY, targetX, targetY));
+    }
+
+
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (isPaused()) return;
+
+        // Update timers
+        archerShootTimer++;
+
+        // Other game logic
+        updateRemainingTime();
+        genericLoop();
+
+        // Update arrows
+        updateArrows();
+
+        // Make Archers shoot every second (adjusted for the game delay)
+        if (archerShootTimer >= (1000 / GAME_DELAY)) {
+            handleArcherShooting();
+            archerShootTimer = 0;
+        }
+
+        // Handle other timers and movement
+        incrementMonsterSpawnTimer();
+        if (isMonsterSpawnTimerReady()) {
+            handleMonsterSpawn();
+            resetMonsterSpawnTimer();
+        }
+
+        incrementMonsterMovementTimer();
+        if (isMonsterMovementReady()) {
+            handleMonsterMovement();
+            resetMonsterMovementTimer();
+        }
+    }
+
+    public static void handleArcherShooting() {
+        Hero hero = getHero();
+
+        for (Monster monster : getActiveMonsters()) {
+            if (monster.getType() == Monster.MonsterType.ARCHER) {
+                // Check if hero is within shooting range
+                int distance = Math.abs(monster.getPositionX() - hero.getPositionX()) +
+                        Math.abs(monster.getPositionY() - hero.getPositionY());
+
+                // If within range and no cloak protection, hero loses a life
+                if (distance < 4 && !isCloakActive()) {
+                    spawnArrow(monster.getPositionX(), monster.getPositionY(),
+                            hero.getPositionX(), hero.getPositionY());
+                }
+            }
+        }
+    }
+    public static List<Arrow> getActiveArrows() {
+        return activeArrows;
+    }
+
+    public static void updateArrows() {
+        List<Arrow> arrowsToRemove = new ArrayList<>();
+
+        for (Arrow arrow : activeArrows) {
+            arrow.move();
+
+            // Ok hedefe ulaştıysa veya kahramana çarptıysa
+            if (arrow.hasReachedTarget()) {
+                if (arrow.getCurrentX() == hero.getPositionX() && arrow.getCurrentY() == hero.getPositionY()) {
+                    hero.decrementLives(); // Kahraman can kaybeder
+                }
+                arrowsToRemove.add(arrow); // Ok listeden kaldırılır
+            }
+        }
+
+        activeArrows.removeAll(arrowsToRemove);
+    }
+
+
 
 }
