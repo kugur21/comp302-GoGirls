@@ -15,20 +15,19 @@ public class MessageBox {
 
     public void addMessage(String message, int time) {
         this.messageQueue.add(message);
-        this.times.add(time*10);
+        this.times.add(time*100);
     }
 
     public String getMessage() {
         try {
-            this.times.set(0, this.times.getFirst()-1);
+            this.times.set(0, this.times.get(0)-1);
 
-            if(this.times.getFirst() <= 0) {
+            if(this.times.get(0) <= 0) {
                 this.times.removeFirst();
                 this.messageQueue.removeFirst();
             }
 
-            return this.messageQueue.getFirst();
-
+            return this.messageQueue.get(0);
         } catch(IndexOutOfBoundsException e) {
             return null;
         }

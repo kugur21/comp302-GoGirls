@@ -3,10 +3,12 @@ package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.item.Door;
 import org.RokueLike.domain.entity.item.Enchantment;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.domain.utils.MessageBox;
 import org.RokueLike.ui.FontLoader;
 import org.RokueLike.ui.Textures;
 
@@ -25,6 +27,8 @@ public class PlayModeRenderer {
     private static final int WINDOW_WIDTH = 1150;  // Pencere genişliği
     private static final int WINDOW_HEIGHT = 850;  // Pencere yüksekliği
     private Font pixelFont; // Özel piksel fontu
+
+    public static final Rectangle messageBox = new Rectangle(200, 480, 600, 50);
 
     public PlayModeRenderer() {
         // Textures ve font yükleme
@@ -58,6 +62,7 @@ public class PlayModeRenderer {
         HallGrid currentHall = GameManager.getCurrentHall();
         Hero hero = GameManager.getHero();
         List<Monster> monsters = GameManager.getActiveMonsters();
+        MessageBox messageBox = GameManager.getMessageBox();
 
         if (currentHall == null || hero == null) return;
 
@@ -67,6 +72,7 @@ public class PlayModeRenderer {
         renderMudClusters(g);
 
         renderGrid(g, currentHall);
+        renderRuneRegion(g, currentHall);
         renderMonsters(g, monsters);
         renderHero(g, hero);
         renderEnchantments(g, currentHall);
@@ -74,6 +80,7 @@ public class PlayModeRenderer {
         int remainingTime = hero.getRemainingTime();
         renderHUD(g, hero, remainingTime);
         renderControllerButtons(g, exitButtonBounds, pauseButtonBounds);
+        renderMessageBox(g, messageBox);
     }
 
     private void renderFloor(Graphics2D g) {
@@ -146,29 +153,46 @@ public class PlayModeRenderer {
             System.err.println("[PlayModeRenderer]: Null cell at (" + x + ", " + y + ")");
             return;
         }
-        BufferedImage img = switch (cell.getName()) {
-            case "object1" -> Textures.getSprite("chest_closed");
-            case "object2" -> Textures.getSprite("chest_golden_closed");
-            case "object3" -> Textures.getSprite("column");
-            case "object4" -> Textures.getSprite("torch_4");
-            case "object5" -> Textures.getSprite("box");
-            case "object6" -> Textures.getSprite("boxes_stacked");
-            case "wall" -> Textures.getSprite("wall_center");
-            case "floor" -> Textures.getSprite("floor_plain");
-            case "door" -> Textures.getSprite("door_closed");
-            case "skull" -> Textures.getSprite("skull");
-            case "extra_time_enchantment" -> Textures.getSprite("extra_time");
-            case "extra_life_enchantment" -> Textures.getSprite("extra_life");
-            case "reveal_enchantment" -> Textures.getSprite("reveal");
-            case "luring_gem_enchantment" -> Textures.getSprite("luring_gem");
-            default -> Textures.getSprite("black");
-        };
-
+        BufferedImage img;
+        if ("door".equals(cell.getName())) {
+            Door door = (Door) cell;
+            if (door.isOpen()) {
+                img = Textures.getSprite("door_open");
+            } else {
+                img = Textures.getSprite("door_closed");
+            }
+        } else {
+            img = switch (cell.getName()) {
+                case "object1" -> Textures.getSprite("chest_closed");
+                case "object2" -> Textures.getSprite("chest_golden_closed");
+                case "object3" -> Textures.getSprite("column");
+                case "object4" -> Textures.getSprite("torch_4");
+                case "object5" -> Textures.getSprite("box");
+                case "object6" -> Textures.getSprite("boxes_stacked");
+                case "skull" -> Textures.getSprite("skull");
+                case "wall" -> Textures.getSprite("wall_center");
+                case "floor" -> Textures.getSprite("floor_plain");
+                case "extra_time_enchantment" -> Textures.getSprite("extra_time");
+                case "extra_life_enchantment" -> Textures.getSprite("extra_life");
+                case "reveal_enchantment" -> Textures.getSprite("reveal");
+                case "luring_gem_enchantment" -> Textures.getSprite("luring_gem");
+                default -> Textures.getSprite("black");
+            };
+        }
         if (img != null) {
             g.drawImage(img, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
         } else {
             System.err.println("[Textures]: Missing sprite for " + cell.getName());
         }
+    }
+
+    private void renderRuneRegion(Graphics2D g, HallGrid hall) {
+        if (!GameManager.isRevealActive()) {
+            return;
+        }
+        // TODO: Highlight the rune region
+        // Get the rune region with hall.findRuneRegion()
+
     }
 
     private void renderEnchantments(Graphics2D g, HallGrid hall) {
@@ -206,30 +230,6 @@ public class PlayModeRenderer {
 
         renderHearts(g, hero, HUD_X + 15, HUD_Y + 150);
         renderInventory(g, HUD_X + 15, HUD_Y + 190);
-
-        if (hero.isCloakActive()) {
-            int cloakTimer = hero.getCloakTimer();
-            BufferedImage cloakIcon = Textures.getSprite("cloak_of_protection");
-
-            if (cloakIcon != null) {
-                int iconX = HUD_X + 15;
-                int iconY = HUD_Y + 320; // Inventory altında bir alan
-
-                g.drawImage(cloakIcon, iconX, iconY, 32, 32, null);
-
-                // Süreyi yazdır
-                g.setFont(pixelFont);
-                g.setColor(Color.WHITE);
-                g.drawString("Cloak: " + cloakTimer + "s", iconX + 40, iconY + 20);
-
-                // Son 5 saniye için kırmızı yanıp sönme efekti
-                if (cloakTimer <= 5 && (cloakTimer % 2 == 0)) {
-                    g.setColor(Color.RED);
-                } else {
-                    g.setColor(Color.WHITE);
-                }
-            }
-        }
 
     }
 
@@ -274,17 +274,29 @@ public class PlayModeRenderer {
                         slotSize, slotSize, null);
             }
         }
+        if (GameManager.isCloakActive()) {
+            int remainingCloakTime = GameManager.remainingCloakTimer();
+            if (remainingCloakTime > 0) {
+                g.setFont(pixelFont);
+                g.setColor(Color.WHITE);
 
+                int cloakTextX = inventoryX + 10;
+                int cloakTextY = inventoryY + inventoryHeight + 20;
 
-        Hero hero = GameManager.getHero();
-        if (hero.getCloakTimer() > 0) {
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("Arial", Font.BOLD, 14));
+                g.drawString("Cloak: " + remainingCloakTime + "s", cloakTextX, cloakTextY);
+            }
+        }
+        if (GameManager.isRevealActive()) {
+            int remainingRevealTime = GameManager.remainingRevealTimer();
+            if (remainingRevealTime > 0) {
+                g.setFont(pixelFont);
+                g.setColor(Color.WHITE);
 
-            int cloakTextX = inventoryX + 10;
-            int cloakTextY = inventoryY + inventoryHeight + 20;
+                int cloakTextX = inventoryX + 10;
+                int cloakTextY = inventoryY + inventoryHeight + 20;
 
-            g.drawString("Cloak Active: " + hero.getCloakTimer() + "s", cloakTextX, cloakTextY);
+                g.drawString("Reveal: " + remainingRevealTime + "s", cloakTextX, cloakTextY);
+            }
         }
     }
 
@@ -300,11 +312,31 @@ public class PlayModeRenderer {
         }
     }
 
+    public void renderMessageBox(Graphics2D g, MessageBox message) {
+        if(message.getMessage() == null || message.getTime() <= 0)
+            return;
+
+        g.setColor(Color.BLACK);
+        g.fillRoundRect(messageBox.x, messageBox.y, messageBox.width, messageBox.height, 10, 10);
+        g.setColor(Color.WHITE);
+        g.drawRoundRect(messageBox.x, messageBox.y, messageBox.width, messageBox.height, 10, 10);
+
+        g.setFont(new Font("Dialog", Font.PLAIN, 20));
+
+        try {
+            int textPosX = messageBox.x + (messageBox.width - g.getFontMetrics().stringWidth(message.getMessage())) / 2;
+            int textPosY = messageBox.y + ((messageBox.height - g.getFontMetrics().getHeight()) / 2) + g.getFontMetrics().getAscent();
+            g.drawString(message.getMessage(), textPosX, textPosY);
+        } catch(NullPointerException e) {
+        }
+    }
+
     private void renderHero(Graphics2D g, Hero hero) {
         BufferedImage heroSprite = Textures.getSprite("player"); // Default sprite
         if (heroSprite != null) {
-            if (hero.isCloakActive()) {
+            if (GameManager.isCloakActive()) {
                 // Apply transparency
+                heroSprite = Textures.getSprite("cloak_of_protection");
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% transparency
             }
 

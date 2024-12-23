@@ -23,11 +23,7 @@ public class Inventory {
     }
 
     public void removeItem(EnchantmentType enchantment) {
-        if (items.remove(enchantment)) {
-            System.out.println("Removed " + enchantment.getName() + " from inventory.");
-        } else {
-            System.out.println(enchantment.getName() + " not found in inventory.");
-        }
+        items.remove(enchantment);
     }
 
     public List<EnchantmentType> getItems() {

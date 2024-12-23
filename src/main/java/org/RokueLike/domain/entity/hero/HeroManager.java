@@ -21,7 +21,7 @@ public class HeroManager {
 
         switch (cellInFront.getName()) {
             case "floor":
-                if (hallGrid.isSafeLocation(cellInFront.getPositionX(), cellInFront.getPositionY())) { // There can be a monster at that location
+                if (hallGrid.isSafeLocation(cellInFront.getPositionX(), cellInFront.getPositionY())) {
                     hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY, true);
                     return true;
                 } else {
@@ -48,21 +48,18 @@ public class HeroManager {
         }
     }
 
-    public String respawnHero() {
+    public void respawnHero() {
         int startX = hallGrid.getStartX();
         int startY = hallGrid.getStartY();
 
         if (hallGrid.isSafeLocation(startX, startY)) {
             hero.setPosition(startX, startY, false);
-            return "Hero respawned at starting position: (" + startX + ", " + startY + ")";
         } else {
             int[] safeLocation = hallGrid.findRandomSafeCell();
             if (safeLocation != null) {
                 hero.setPosition(safeLocation[0], safeLocation[1], false);
-                return "Hero respawned at safe position: (" + safeLocation[0] + ", " + safeLocation[1] + ")";
             } else {
                 System.exit(0);
-                return "No safe location found. Game over!";
             }
         }
     }

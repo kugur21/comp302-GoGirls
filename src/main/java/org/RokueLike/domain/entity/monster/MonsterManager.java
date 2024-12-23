@@ -25,22 +25,21 @@ public class MonsterManager {
         this.hero = hero;
     }
 
-    public void moveMonsters(MessageBox messageBox) {
+    public void moveMonsters() {
         for (Monster monster : monsters) {
             switch (monster.getType()) {
                 case ARCHER:
-                    messageBox.addMessage(processArcherBehavior(monster), 30);
+                    processArcherBehavior(monster);
                 case FIGHTER:
-                    messageBox.addMessage(processFighterBehavior(monster), 30);
+                    processFighterBehavior(monster);
             }
         }
     }
 
-    public String processArcherBehavior(Monster archer) {
+    public void processArcherBehavior(Monster archer) {
         int attackRange = 4;
         if (isHeroInRange(archer, attackRange)) {
             heroMonsterInteraction(archer);
-            return "Archer attacks the hero!";
         }
 
         int dirX = 0;
@@ -54,27 +53,24 @@ public class MonsterManager {
 
         if (hallGrid.isSafeLocation(archer, dirX, dirY)) {
             archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY, true);
-            return "Archer moves to (" + archer.getPositionX() + ", " + archer.getPositionY() + ")";
         } else {
-            return randomMove(archer);
+            randomMove(archer);
         }
     }
 
-    public String processFighterBehavior(Monster fighter) {
+    public void processFighterBehavior(Monster fighter) {
         int attackRange = 1;
         if (isHeroInRange(fighter, attackRange)) {
             heroMonsterInteraction(fighter);
-            return "Fighter stabs the hero with a dagger!";
         }
-        return randomMove(fighter);
+        randomMove(fighter);
     }
 
-    public String processWizardBehavior(Monster wizard) {
+    public void processWizardBehavior(Monster wizard) {
         hallGrid.changeRuneLocation();
-        return "Wizard teleports the rune!";
     }
 
-    private String randomMove(Monster monster) {
+    private void randomMove(Monster monster) {
         int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         Random random = new Random();
 
@@ -85,10 +81,8 @@ public class MonsterManager {
 
             if (hallGrid.isSafeLocation(monster, dirX, dirY)) {
                 monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY() + dirY, true);
-                return monster.getName() + " randomly moves to (" + monster.getPositionX() + ", " + monster.getPositionY() + ")";
             }
         }
-        return monster.getName() + " cannot move.";
     }
 
     public boolean isHeroInRange(Monster monster, int range) {
@@ -99,30 +93,21 @@ public class MonsterManager {
 
     public void heroMonsterInteraction(Monster monster) {
         if (monster.isAttacksHero()) {
-            System.out.println(monster.getType().getName() + " attacks the hero!");
             hero.decrementLives();
-            System.out.println("Hero's health: " + hero.getLives());
             if (hero.notAlive()) {
-                System.out.println("Game Over!");
                 System.exit(0);
             }
             GameManager.handleHeroSpawn();
-        } else {
-            System.out.println(monster.getType().getName() + " doesn't attack the hero.");
         }
     }
 
-    public String spawnMonster() {
+    public void spawnMonster() {
         int[] location = hallGrid.findRandomSafeCell();
         if (location == null) {
-            return "No safe location available to spawn monster.";
+            return;
         }
         Monster newMonster = generateRandomMonster(location[0], location[1]);
-        //monsters.add(newMonster); // I think it's abundant, since we have hallGrid.addMonster
         hallGrid.addMonster(newMonster);
-        return "Monster spawned: " + newMonster.getType().getName() +
-                " at (" + newMonster.getPositionX() + ", " + newMonster.getPositionY() + ")";
-
     }
 
     private Monster generateRandomMonster(int x, int y) {
@@ -137,7 +122,6 @@ public class MonsterManager {
                 monster.setAttacksHero(false);
             }
         }
-        System.out.println("Cloak of Protection activated. Archers cannot attack the hero for " + duration + " seconds.");
 
         Timer protectionTimer = new Timer(duration * 1000, e -> {
             for (Monster monster : monsters) {
@@ -145,7 +129,6 @@ public class MonsterManager {
                     monster.setAttacksHero(true);
                 }
             }
-            System.out.println("Cloak of Protection expired. Archers can attack the hero again.");
         });
         protectionTimer.setRepeats(false);
         protectionTimer.start();
@@ -157,15 +140,8 @@ public class MonsterManager {
 
         for (Monster monster : monsters) {
             if (monster.getType() == Monster.MonsterType.FIGHTER) {
-                System.out.println("Fighter at (" + monster.getPositionX() + ", " + monster.getPositionY() + ") is lured.");
                 luredFighters.add(monster);
             }
-        }
-
-        if (!luredFighters.isEmpty()) {
-            System.out.println("Luring Gem effect started for " + luredFighters.size() + " fighters.");
-        } else {
-            System.out.println("No fighters to lure.");
         }
     }
 
@@ -185,16 +161,13 @@ public class MonsterManager {
 
             if (hallGrid.isSafeLocation(nextX, nextY)) {
                 monster.setPosition(nextX, nextY, true);
-                System.out.println("Fighter moves to (" + monster.getPositionX() + ", " + monster.getPositionY() + ").");
             } else {
-                System.out.println("Fighter at (" + monster.getPositionX() + ", " + monster.getPositionY() + ") stops.");
                 completedLures.add(monster);
             }
         }
         luredFighters.removeAll(completedLures);
 
         if (luredFighters.isEmpty()) {
-            System.out.println("Luring Gem effect ended.");
             lureDirection = null;
         }
     }

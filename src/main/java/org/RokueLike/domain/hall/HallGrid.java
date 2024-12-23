@@ -116,13 +116,11 @@ public class HallGrid {
         for (Object object : objects) {
             if (object.containsRune()) {
                 object.removeContainedRune();
-                System.out.println("Rune removed from (" + object.getPositionX() + ", " + object.getPositionY() + ")");
                 break;
             }
         }
         Object randomObject = objects.get(new Random().nextInt(objects.size()));
         randomObject.setContainedRune();
-        System.out.println("Rune teleported to (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
     }
 
     public int[][] findRuneRegion(int bound) {
@@ -153,7 +151,7 @@ public class HallGrid {
                 return region.toArray(new int[0][0]);
             }
         }
-        throw new IllegalStateException("No rune found in any object.");
+        return null;
     }
 
     public GridCell getCell(int x, int y) {
