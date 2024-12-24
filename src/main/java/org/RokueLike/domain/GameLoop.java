@@ -1,5 +1,6 @@
 package org.RokueLike.domain;
 
+import org.RokueLike.domain.entity.item.Arrow;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
 import org.RokueLike.domain.utils.Direction;
 import org.RokueLike.ui.input.Keyboard;
@@ -18,6 +19,9 @@ public class GameLoop implements ActionListener {
             }
             GameManager.updateRemainingTime();
             GameManager.genericLoop();
+
+            GameManager.getArrowManager().updateArrows();
+
 
             GameManager.incrementMonsterSpawnTimer();
             if (GameManager.isMonsterSpawnTimerReady()) {

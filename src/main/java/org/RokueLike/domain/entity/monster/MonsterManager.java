@@ -2,6 +2,7 @@ package org.RokueLike.domain.entity.monster;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.item.Arrow;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.utils.Direction;
 import org.RokueLike.domain.utils.MessageBox;
@@ -39,10 +40,22 @@ public class MonsterManager {
 
     public void processArcherBehavior(Monster archer) {
         int attackRange = 4;
+
+        // Kahraman menzil içindeyse ok at
         if (isHeroInRange(archer, attackRange)) {
             heroMonsterInteraction(archer);
+
+            // Ok oluştur ve yönü belirle
+            Direction direction = calculateArrowDirection(archer, hero);
+            if (direction != null) {
+                Arrow arrow = new Arrow(archer.getPositionX(), archer.getPositionY(), direction);
+                GameManager.getArrowManager().addArrow(arrow);
+                System.out.println("[Archer]: Arrow shot in direction: " + direction);
+            }
+
         }
 
+        // Hareket mantığı
         int dirX = 0;
         int dirY = 0;
         if (Math.abs(archer.getPositionX() - hero.getPositionX()) <= attackRange) {
@@ -52,12 +65,28 @@ public class MonsterManager {
             dirY = (archer.getPositionY() > hero.getPositionY()) ? 1 : -1;
         }
 
+        // Güvenli bir alana hareket ettir
         if (hallGrid.isSafeLocation(archer, dirX, dirY)) {
             archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY, true);
         } else {
             randomMove(archer);
+
         }
+        GameManager.debugArrows();
     }
+    private Direction calculateArrowDirection(Monster archer, Hero hero) {
+        int dx = hero.getPositionX() - archer.getPositionX();
+        int dy = hero.getPositionY() - archer.getPositionY();
+
+        if (Math.abs(dx) > Math.abs(dy)) {
+            return (dx > 0) ? Direction.RIGHT : Direction.LEFT;
+        } else if (Math.abs(dy) > Math.abs(dx)) {
+            return (dy > 0) ? Direction.DOWN : Direction.UP;
+        }
+        return null; // Eğer kahraman ve archer aynı pozisyonda ise (çakışmamalı)
+    }
+
+
 
     public void processFighterBehavior(Monster fighter) {
         int attackRange = 1;

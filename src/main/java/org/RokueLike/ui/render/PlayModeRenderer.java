@@ -3,6 +3,8 @@ package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.item.Arrow;
+import org.RokueLike.domain.entity.item.ArrowManager;
 import org.RokueLike.domain.entity.item.Door;
 import org.RokueLike.domain.entity.item.Enchantment;
 import org.RokueLike.domain.entity.monster.Monster;
@@ -56,6 +58,7 @@ public class PlayModeRenderer {
         Textures.addSprite("exit_button", Textures.loadPNG("imagesekstra/exit.png"));
         Textures.addSprite("pause_button", Textures.loadPNG("imagesekstra/pause.png"));
         Textures.addSprite("resume_button", Textures.loadPNG("imagesekstra/resume4x.png"));
+        Textures.addSprite("arrow", Textures.loadPNG("imagesekstra/arrow2.png"));
 
         System.out.println("[PlayModeRenderer]: Custom sprites loaded successfully!");
     }
@@ -76,6 +79,11 @@ public class PlayModeRenderer {
         renderGrid(g, currentHall);
         renderRuneRegion(g, currentHall);
         renderMonsters(g, monsters);
+
+
+
+
+
         renderHero(g, hero);
         renderEnchantments(g, currentHall);
 
@@ -83,6 +91,7 @@ public class PlayModeRenderer {
         renderHUD(g, hero, remainingTime);
         renderControllerButtons(g, exitButtonBounds, pauseButtonBounds);
         renderMessageBox(g, messageBox);
+        renderArrows(g, GameManager.getArrowManager());
     }
 
     private void renderFloor(Graphics2D g) {
@@ -408,5 +417,20 @@ public class PlayModeRenderer {
             }
         }
     }
+    private void renderArrows(Graphics2D g, ArrowManager arrowManager) {
+        BufferedImage arrowSprite = Textures.getSprite("arrow");
+        if (arrowSprite == null) {
+            System.err.println("[Textures]: Arrow sprite is missing!");
+            return; // Eğer sprite yüklenmediyse, render işlemini sonlandır
+        }
+        for (Arrow arrow : arrowManager.getArrows()) {
+            g.drawImage(arrowSprite,
+                    GRID_OFFSET_X + arrow.getX() * TILE_SIZE,
+                    GRID_OFFSET_Y + arrow.getY() * TILE_SIZE,
+                    TILE_SIZE, TILE_SIZE, null);
+
+        }
+    }
+
 
 }
