@@ -5,6 +5,7 @@ import org.RokueLike.ui.render.BuildModeRenderer;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+//Classes like MouseBuild, MousePlay, and Keyboard bridge input events from the UI to the GameManager
 public class MouseBuild implements MouseListener {
 
     private static boolean mouseClicked = false;

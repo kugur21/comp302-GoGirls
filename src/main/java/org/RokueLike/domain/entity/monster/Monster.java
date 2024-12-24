@@ -8,6 +8,8 @@ public class Monster extends EntityCell {
     private boolean attacksHero;
     private boolean mobile;
 
+    //MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
+
     public Monster(MonsterType type, int x, int y) {
         super(type.getName() + "_monster", x, y);
         this.type = type;

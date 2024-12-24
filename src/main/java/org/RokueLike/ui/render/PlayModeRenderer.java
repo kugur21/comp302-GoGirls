@@ -37,6 +37,8 @@ public class PlayModeRenderer {
         pixelFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f); // Piksel font
     }
 
+    ////MODEL-VIEW SEPARATION PRINCIPLE: Renderer classes (BuildModeRenderer, PlayModeRenderer) manage graphical representation and rendering tasks without interfering with the model logic.
+
     /**
      * Özel sprite'ları Textures sınıfına ekler.
      */

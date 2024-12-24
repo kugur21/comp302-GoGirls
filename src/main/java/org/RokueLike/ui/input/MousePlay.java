@@ -7,6 +7,8 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+//Classes like MouseBuild, MousePlay, and Keyboard bridge input events from the UI to the GameManager
+
 public class MousePlay implements MouseListener {
 
     // Same as PlayModeRenderer

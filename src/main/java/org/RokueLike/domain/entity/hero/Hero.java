@@ -14,6 +14,8 @@ public class Hero extends EntityCell {
     private final Inventory inventory;
 
     //INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.
+    //MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
+
     public Hero(int x, int y) {
         super("hero", x, y);
         this.lives = MAX_LIVES;

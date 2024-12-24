@@ -24,6 +24,8 @@ public class Keyboard implements KeyListener {
         keyBindings.put("LURE_RIGHT", KeyEvent.VK_D);
     }
 
+    //Classes like MouseBuild, MousePlay, and Keyboard bridge input events from the UI to the GameManager
+
     public Keyboard() {
         keys = new boolean[256];
     }

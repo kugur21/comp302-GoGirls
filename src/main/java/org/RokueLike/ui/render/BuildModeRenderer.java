@@ -25,6 +25,7 @@ public class BuildModeRenderer {
         Textures.addSprite("buildmode_chest", Textures.loadPNG("imagesekstra/Buildmodechest.png"));
     }
 
+    //MODEL-VIEW SEPARATION PRINCIPLE: Renderer classes (BuildModeRenderer, PlayModeRenderer) manage graphical representation and rendering tasks without interfering with the model logic.
 
     /**
      * Renders all halls in Build Mode.
