@@ -22,8 +22,14 @@ public class Inventory {
         System.out.println("Added " + enchantment.getName() + " to inventory.");
     }
 
+    //Fixed a bug that occurs during using an enchantment.
     public void removeItem(EnchantmentType enchantment) {
-        items.remove(enchantment);
+        if (items.contains(enchantment)) {
+            items.remove(enchantment);
+            System.out.println("Removed one " + enchantment.getName() + " from inventory.");
+        } else {
+            System.out.println("No " + enchantment.getName() + " found in inventory.");
+        }
     }
 
     public List<EnchantmentType> getItems() {
