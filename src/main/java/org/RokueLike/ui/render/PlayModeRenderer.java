@@ -190,14 +190,14 @@ public class PlayModeRenderer {
         if (!GameManager.isRevealActive()) {
             return;
         }
-        //Activation Check
+        //Activation Check above
 
         int[][] runeRegion = hall.findRuneRegion(3); // Adjust the bound parameter as needed
         if (runeRegion == null || runeRegion.length == 0) {
             return; // Exit if no rune region is defined
         }
         //
-        // Rune region loop
+        // Rune region looping starts below
         for (int[] coord : runeRegion) {
             int x = coord[0];
             int y = coord[1];
@@ -206,7 +206,7 @@ public class PlayModeRenderer {
             int renderX = GRID_OFFSET_X + x * TILE_SIZE;
             int renderY = GRID_OFFSET_Y + y * TILE_SIZE;
 
-        //Color setting
+        //Color setting to make it highlighted
             g.setColor(new Color(222, 222, 176, 128)); // Light yellow with high transparency
             g.drawRect(renderX, renderY, TILE_SIZE, TILE_SIZE);
 
