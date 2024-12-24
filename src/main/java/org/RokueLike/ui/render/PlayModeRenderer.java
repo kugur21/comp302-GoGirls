@@ -163,6 +163,15 @@ public class PlayModeRenderer {
             } else {
                 img = Textures.getSprite("door_closed");
             }
+
+            int doorSize = TILE_SIZE + 12; // Kapının boyutunu artırmak için ekleme yapıldı
+            if (img != null) {
+                g.drawImage(img,
+                        GRID_OFFSET_X + x * TILE_SIZE - (doorSize - TILE_SIZE) / 2,
+                        GRID_OFFSET_Y + y * TILE_SIZE - (doorSize - TILE_SIZE) / 2,
+                        doorSize, doorSize, null);
+            }
+            return;
         } else {
             img = switch (cell.getName()) {
                 case "object1" -> Textures.getSprite("chest_closed");
@@ -187,6 +196,8 @@ public class PlayModeRenderer {
             System.err.println("[Textures]: Missing sprite for " + cell.getName());
         }
     }
+
+
 
     private void renderRuneRegion(Graphics2D g, HallGrid hall) {
         if (!GameManager.isRevealActive()) {
@@ -266,7 +277,7 @@ public class PlayModeRenderer {
     private void renderHearts(Graphics2D g, Hero hero, int heartX, int heartY) {
         BufferedImage heartImg = Textures.getSprite("heart");
         if (heartImg != null) {
-            int heartSize = 28; // Heart boyutu küçültüldü
+            int heartSize = 28;
             int spacing = 5;
             for (int i = 0; i < hero.getLives(); i++) {
                 g.drawImage(heartImg, heartX + i * (heartSize + spacing), heartY, heartSize, heartSize, null);

@@ -60,28 +60,21 @@ public class BuildManager {
     }
 
     private static void placeDoor(String[][] hall) {
-        int side = random.nextInt(4); // Random side: 0=top, 1=bottom, 2=left, 3=right
+        int side = random.nextInt(2); // 0=top, 1=bottom
         int position;
 
         switch (side) {
             case 0: // Top
-                position = 1 + random.nextInt(HALL_WIDTH - 2);
+                position = 1 + random.nextInt(HALL_WIDTH - 2); // Sol ve sağ kenarlardan uzak dur
                 hall[0][position] = "d";
                 break;
             case 1: // Bottom
-                position = 1 + random.nextInt(HALL_WIDTH - 2);
+                position = 1 + random.nextInt(HALL_WIDTH - 2); // Sol ve sağ kenarlardan uzak dur
                 hall[HALL_HEIGHT - 1][position] = "d";
-                break;
-            case 2: // Left
-                position = 1 + random.nextInt(HALL_HEIGHT - 2);
-                hall[position][0] = "d";
-                break;
-            case 3: // Right
-                position = 1 + random.nextInt(HALL_HEIGHT - 2);
-                hall[position][HALL_WIDTH - 1] = "d";
                 break;
         }
     }
+
 
     public static void placeObjectRandomly(String hallName) {
         String[][] hall = getHall(hallName);
