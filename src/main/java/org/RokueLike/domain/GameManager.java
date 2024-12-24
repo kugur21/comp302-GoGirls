@@ -55,6 +55,9 @@ public class GameManager {
     private static boolean cloakActive;
     private static boolean lureActive;
 
+    //LOW COUPLING INSTANCE - The GameManager centralizes game logic and ensures the UI and domain layers remain loosely coupled by delegating tasks to managers and game entities.
+    //CONTROLLER PATTERN INSTANCE - The GameManager class acts as a controller for system operations such as handling enchantment usage, hero movement, and monster spawning
+
     public static void init() {
         System.out.println("[GameManager]: Starting game...");
 
@@ -98,6 +101,8 @@ public class GameManager {
             monster.decreaseMotionOffset();
         }
     }
+
+    //GameManager creates the hero, HeroManager, MonsterManager, and ItemManager during the game initialization, showcasing a Creator pattern.
 
     public static void handleHeroSpawn() {
         try {

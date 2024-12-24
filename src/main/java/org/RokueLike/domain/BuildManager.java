@@ -44,6 +44,8 @@ public class BuildManager {
     "h" -> hero
      */
     private static String[][] createEmptyHall() {
+        //The BuildManager class demonstrates the CREATOR PATTERN by taking responsibility for creating and initializing the halls (createEmptyHall)
+
         String[][] hall = new String[HALL_HEIGHT][HALL_WIDTH];
         for (int y = 0; y < HALL_HEIGHT; y++) {
             for (int x = 0; x < HALL_WIDTH; x++) {

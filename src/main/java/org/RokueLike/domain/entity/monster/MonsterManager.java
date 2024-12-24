@@ -19,6 +19,7 @@ public class MonsterManager {
     private final List<Monster> luredFighters = new ArrayList<>();
     private Direction lureDirection;
 
+    //STRATEGY PATTERN INSTANCE - The MonsterManager defines behaviors for different monster types (e.g., processArcherBehavior, processFighterBehavior) encapsulated as strategiS
     public MonsterManager(List<Monster> monsters, HallGrid hallGrid, Hero hero) {
         this.monsters = monsters;
         this.hallGrid = hallGrid;
