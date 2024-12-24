@@ -190,7 +190,7 @@ public class PlayModeRenderer {
         if (!GameManager.isRevealActive()) {
             return;
         }
-        //Activation Check above
+        //Activation Check
 
         int[][] runeRegion = hall.findRuneRegion(3); // Adjust the bound parameter as needed
         if (runeRegion == null || runeRegion.length == 0) {
@@ -207,11 +207,11 @@ public class PlayModeRenderer {
             int renderY = GRID_OFFSET_Y + y * TILE_SIZE;
 
         //Color setting to make it highlighted
-            g.setColor(new Color(222, 222, 176, 128)); // Light yellow with high transparency
+            g.setColor(new Color(222, 222, 176, 128)); // Light yellow chosen
             g.drawRect(renderX, renderY, TILE_SIZE, TILE_SIZE);
 
 
-            g.setColor(new Color(225, 225, 183, 64)); // Even lighter yellow
+            g.setColor(new Color(225, 225, 183, 64));
             g.fillRect(renderX + 2, renderY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
 
         }
