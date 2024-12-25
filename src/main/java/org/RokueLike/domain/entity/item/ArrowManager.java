@@ -2,6 +2,8 @@ package org.RokueLike.domain.entity.item;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.ui.Window;
+import org.RokueLike.ui.screen.GameOverScreen;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,9 +28,19 @@ public class ArrowManager {
 
             // Çarpışma kontrolü
             if (arrow.getX() == hero.getPositionX() && arrow.getY() == hero.getPositionY()) {
-                System.out.println("[Arrow]: Hero hit by arrow at X=" + arrow.getX() + " Y=" + arrow.getY());
-                hero.decreaseLife(); // Kahramanın canını azalt
+                hero.decrementLives();
+                if (!hero.isAlive()) {
+                    String message;
+                    if (hero.getLives() > 0) {
+                        message = "You ran out of time. Game Over!";
+                    } else {
+                        message = "You ran out of lives. Game Over!";
+                    }
+                    GameManager.reset();
+                    Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
+                }
                 arrow.deactivate(); // Oku devre dışı bırak
+                GameManager.handleHeroSpawn();
             }
 
             // Oku listeden çıkar

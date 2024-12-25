@@ -440,7 +440,9 @@ public class GameManager {
             frameCounter = 0;
 
             isPaused = false;
-
+            revealActive = false;
+            cloakActive = false;
+            lureActive = false;
 
             // Log reset action for debugging
             System.out.println("[GameManager]: Reset successful. Ready for a new game.");
@@ -448,7 +450,6 @@ public class GameManager {
         } catch (Exception e) {
             // Handle any unexpected issues during reset
             System.err.println("[GameManager]: Error during reset - " + e.getMessage());
-            e.printStackTrace();
         }
     }
 }

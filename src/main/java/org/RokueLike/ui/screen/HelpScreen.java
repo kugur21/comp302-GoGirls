@@ -50,7 +50,11 @@ public class HelpScreen extends JPanel {
                 "- Left-click on enchantments to collect them.",
                 "- Complete Build Mode to enter Play Mode and find the runes.",
                 "- Collect items and enchantments to survive and succeed.",
-                "- Use the UI to track progress and stats like time and lives."
+                "- Use the UI to track progress and stats like time and lives.",
+                "- Press P for Cloak of Protection activation.",
+                "- Press R for Reveal enchantment activation.",
+                "- Press B for Luring Gem activation. Then select a direction:",
+                "- Press A for left, W for up, S for down and D for right direction.",
         };
 
         GridBagConstraints gbc = new GridBagConstraints();

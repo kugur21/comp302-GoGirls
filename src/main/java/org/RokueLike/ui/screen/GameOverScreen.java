@@ -14,7 +14,7 @@ public class GameOverScreen extends JPanel {
         setBackground(new Color(66, 40, 53)); // Background color #422835
 
         JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
-        titleLabel.setFont(FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 36f)); // Custom font and size
+        titleLabel.setFont(FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 18f)); // Custom font and size
         titleLabel.setForeground(Color.WHITE); // White text color
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
         add(titleLabel, BorderLayout.NORTH);
@@ -34,16 +34,16 @@ public class GameOverScreen extends JPanel {
         buttonPanel.setOpaque(false); // Allow background to show through
 
         JButton restartButton = new JButton("Restart");
-        restartButton.setFont(FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 18f)); // Custom font for button
-        restartButton.setForeground(Color.WHITE);
+        restartButton.setFont(FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f)); // Custom font for button
+        restartButton.setForeground(Color.BLACK);
         restartButton.setBackground(new Color(50, 25, 40));// White text
         restartButton.addActionListener(e -> {
             Window.addScreen(new LaunchScreen(), "LaunchScreen", true);
         });
 
         JButton exitButton = new JButton("Exit");
-        exitButton.setFont(FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 18f)); // Custom font for button
-        exitButton.setForeground(Color.WHITE);
+        exitButton.setFont(FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f)); // Custom font for button
+        exitButton.setForeground(Color.BLACK);
         exitButton.setBackground(new Color(50, 25, 40));// White text
         exitButton.addActionListener(e -> {
             System.exit(0);

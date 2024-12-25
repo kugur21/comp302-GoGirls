@@ -45,7 +45,7 @@ public class MonsterManager {
         int attackRange = 4;
 
         // Check if the "Cloak of Protection" is active
-        if (GameManager.isCloakActive()) {
+        if (GameManager.isCloakActive() || hero.isImmune()) {
             System.out.println("[Archer]: Cloak of Protection is active. Archer cannot attack.");
             return;
         }

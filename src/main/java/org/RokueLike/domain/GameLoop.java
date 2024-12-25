@@ -22,8 +22,6 @@ public class GameLoop implements ActionListener {
 
             GameManager.getArrowManager().updateArrows(GameManager.getHero());
 
-
-
             GameManager.incrementMonsterSpawnTimer();
             if (GameManager.isMonsterSpawnTimerReady()) {
                 GameManager.handleMonsterSpawn();

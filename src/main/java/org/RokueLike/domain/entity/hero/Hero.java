@@ -83,27 +83,8 @@ public class Hero extends EntityCell {
         this.remainingTime = MAX_TIME;
     }
 
-    public boolean notAlive() {
-        return lives <= 0 || remainingTime <= 0;
-    }
-
     public Inventory getInventory() {
         return this.inventory;
     }
-
-    public void decreaseLife() {
-        if (lives > 0) {
-            lives--;
-            System.out.println("[Hero]: Life decreased! Remaining lives: " + lives);
-        }
-
-        if (lives <= 0) {
-            System.out.println("[Hero]: Hero is dead!");
-            String message = "Game Over! You died";
-            GameManager.reset();
-            Window.addScreen(new GameOverScreen(message), "GameOverScreen", true); // Kahraman öldüğünde oyunu sonlandırabilir
-        }
-    }
-    // game over için buraya da bakılabilir.
 
 }

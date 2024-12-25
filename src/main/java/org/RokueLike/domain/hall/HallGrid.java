@@ -183,7 +183,7 @@ public class HallGrid {
 
         for (int y = 0; y < getHeight(); y++) {
             for (int x = 0; x < getWidth(); x++) {
-                if (getCell(x, y).getName().equals("floor") && isThereMonster(x, y)) {
+                if (getCell(x, y).getName().equals("floor") && isThereMonster(x, y) && notInFrontOfTheDoor(x, y)) {
                     floorTiles.add(new int[]{x, y});
                 }
             }
@@ -210,6 +210,23 @@ public class HallGrid {
             }
         }
         return true;
+    }
+
+    private boolean notInFrontOfTheDoor(int x, int y) {
+        for (int doorY = 0; doorY < getHeight(); doorY++) {
+            for (int doorX = 0; doorX < getWidth(); doorX++) {
+                GridCell cell = getCell(doorX, doorY);
+                if (cell instanceof Door) {
+                    if ((x == doorX && y == doorY - 1) || // Above the door
+                            (x == doorX && y == doorY + 1) || // Below the door
+                            (x == doorX - 1 && y == doorY) || // Left of the door
+                            (x == doorX + 1 && y == doorY)) { // Right of the door
+                        return false; // Tile is in front of the door
+                    }
+                }
+            }
+        }
+        return true; // Tile is not in front of any door
     }
 
     public Enchantment getCurrentEnchantment() {
