@@ -1,5 +1,5 @@
 package org.RokueLike.domain.entity.item;
-
+import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.hall.HallGrid;
 
@@ -18,23 +18,28 @@ public class ArrowManager {
     public void addArrow(Arrow arrow) {
         arrows.add(arrow);
     }
-    public void updateArrows() {
+    public void updateArrows(Hero hero) {
         Iterator<Arrow> iterator = arrows.iterator();
         while (iterator.hasNext()) {
             Arrow arrow = iterator.next();
-            arrow.move();
+            arrow.move(); // Oku hareket ettir
 
-            // Sınırlar içinde mi kontrol et
-            if (!hallGrid.isSafeLocation(arrow.getX(), arrow.getY())) {
-                arrow.deactivate();
+            // Çarpışma kontrolü
+            if (arrow.getX() == hero.getPositionX() && arrow.getY() == hero.getPositionY()) {
+                System.out.println("[Arrow]: Hero hit by arrow at X=" + arrow.getX() + " Y=" + arrow.getY());
+                hero.decreaseLife(); // Kahramanın canını azalt
+                arrow.deactivate(); // Oku devre dışı bırak
             }
 
+            // Oku listeden çıkar
             if (!arrow.isActive()) {
-                iterator.remove(); // Eğer ok aktif değilse listeden kaldır
+                iterator.remove();
             }
         }
-
     }
+
+
+
 
     public List<Arrow> getArrows() {
         return arrows;

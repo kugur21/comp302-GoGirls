@@ -15,8 +15,11 @@ public class Main {
         } catch(Exception e) {
             System.err.println("\n[Main]: Uncaught exception in initialization!\n");
             System.exit(-1);
+
         }
     }
+
+
 
 }
 

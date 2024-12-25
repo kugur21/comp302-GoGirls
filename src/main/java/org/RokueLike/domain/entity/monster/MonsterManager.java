@@ -42,18 +42,19 @@ public class MonsterManager {
         int attackRange = 4;
 
         // Kahraman menzil içindeyse ok at
-        if (isHeroInRange(archer, attackRange)) {
-            heroMonsterInteraction(archer);
 
-            // Ok oluştur ve yönü belirle
+
+
+        if (isHeroInRange(archer, attackRange)) {
             Direction direction = calculateArrowDirection(archer, hero);
             if (direction != null) {
-                Arrow arrow = new Arrow(archer.getPositionX(), archer.getPositionY(), direction);
+                Arrow arrow = new Arrow(archer.getPositionX(), archer.getPositionY(), direction, attackRange);
                 GameManager.getArrowManager().addArrow(arrow);
                 System.out.println("[Archer]: Arrow shot in direction: " + direction);
             }
-
         }
+
+
 
         // Hareket mantığı
         int dirX = 0;
@@ -80,11 +81,11 @@ public class MonsterManager {
 
         if (Math.abs(dx) > Math.abs(dy)) {
             return (dx > 0) ? Direction.RIGHT : Direction.LEFT;
-        } else if (Math.abs(dy) > Math.abs(dx)) {
+        } else {
             return (dy > 0) ? Direction.DOWN : Direction.UP;
         }
-        return null; // Eğer kahraman ve archer aynı pozisyonda ise (çakışmamalı)
     }
+
 
 
 

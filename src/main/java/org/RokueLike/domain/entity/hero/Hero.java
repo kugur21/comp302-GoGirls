@@ -1,6 +1,6 @@
 
 package org.RokueLike.domain.entity.hero;
-
+import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.EntityCell;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
 
@@ -74,5 +74,17 @@ public class Hero extends EntityCell {
     public Inventory getInventory() {
         return this.inventory;
     }
+
+    public void decreaseLife() {
+        if (lives > 0) {
+            lives--;
+            System.out.println("[Hero]: Life decreased! Remaining lives: " + lives);
+        }
+
+        if (lives <= 0) {
+            System.out.println("[Hero]: Hero is dead!");
+            GameManager.reset(); // Kahraman öldüğünde oyunu sonlandırabilir
+        }
+    } // game over için buraya da bakılabilir.
 
 }

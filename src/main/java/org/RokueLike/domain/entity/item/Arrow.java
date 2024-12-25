@@ -6,12 +6,16 @@ public class Arrow {
     private int x, y;
     private final Direction direction;
     private boolean active;
+    private final int range; // Okun maksimum menzili
+    private int distanceTraveled; // Okun şimdiye kadar kat ettiği mesafe
 
-    public Arrow(int startX, int startY, Direction direction) {
+    public Arrow(int startX, int startY, Direction direction, int range) {
         this.x = startX;
         this.y = startY;
         this.direction = direction;
         this.active = true;
+        this.range = range; // Maksimum menzil atanıyor
+        this.distanceTraveled = 0; // Başlangıçta 0 mesafe
     }
 
     public void move() {
@@ -21,10 +25,10 @@ public class Arrow {
             case LEFT -> x--;
             case RIGHT -> x++;
         }
-    }
-
-    public boolean checkCollision(int targetX, int targetY) {
-        return this.x == targetX && this.y == targetY;
+        distanceTraveled++; // Her hareket edişte mesafe artar
+        if (distanceTraveled >= range) { // Menzile ulaşıldığında
+            deactivate(); // Oku devre dışı bırak
+        }
     }
 
     public boolean isActive() {
@@ -42,4 +46,8 @@ public class Arrow {
     public int getY() {
         return y;
     }
+    public Direction getDirection() {
+        return direction;
+    }
+
 }
