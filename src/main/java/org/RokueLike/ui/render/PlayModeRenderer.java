@@ -192,7 +192,7 @@ public class PlayModeRenderer {
         if (!GameManager.isRevealActive()) {
             return;
         }
-        /*
+
         //Activation Check above
 
         int[][] runeRegion = hall.findRuneRegion(3); // Adjust the bound parameter as needed
@@ -218,7 +218,7 @@ public class PlayModeRenderer {
             g.fillRect(renderX + 2, renderY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
 
         }
-        */
+
 
         // TODO: Highlight the rune region
         // Get the rune region with hall.findRuneRegion()
