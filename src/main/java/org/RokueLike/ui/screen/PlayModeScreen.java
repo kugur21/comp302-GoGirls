@@ -1,7 +1,6 @@
 package org.RokueLike.ui.screen;
 
 import org.RokueLike.domain.GameManager;
-import org.RokueLike.ui.Textures;
 import org.RokueLike.ui.input.Keyboard;
 import org.RokueLike.ui.input.MousePlay;
 import org.RokueLike.ui.render.PlayModeRenderer;
@@ -9,7 +8,7 @@ import org.RokueLike.ui.Window;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+
 
 public class PlayModeScreen extends JPanel {
 

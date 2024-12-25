@@ -18,8 +18,6 @@ public class BuildLoop implements ActionListener {
             int y = coords[1];
             String hallName = MouseBuild.getLastClickedHall();
 
-            System.out.println("[BuildLoop]: Processing click at (" + x + ", " + y + ") in " + hallName);
-
             // Place the object in the BuildManager
             BuildManager.placeObjectManually(hallName, x, y,selectedObject);
 

@@ -11,6 +11,7 @@ public class Hero extends EntityCell {
 
     private int lives;
     private int remainingTime;
+    private boolean immune = false;
     private final Inventory inventory;
 
     //INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.
@@ -21,22 +22,6 @@ public class Hero extends EntityCell {
         this.lives = MAX_LIVES;
         this.remainingTime = MAX_TIME;
         this.inventory = new Inventory();
-    }
-
-    public boolean hasEnchantment(EnchantmentType enchantment) {
-        return inventory.hasEnchantment(enchantment);
-    }
-
-    public void useEnchantment(EnchantmentType enchantment) {
-        inventory.removeItem(enchantment);
-    }
-
-    public void addToInventory(EnchantmentType enchantment) {
-        inventory.addItem(enchantment);
-    }
-
-    public int getLives() {
-        return lives;
     }
 
     public void incrementLives() {
@@ -51,8 +36,8 @@ public class Hero extends EntityCell {
         }
     }
 
-    public int getRemainingTime() {
-        return this.remainingTime;
+    public int getLives() {
+        return lives;
     }
 
     public void addRemainingTime(int seconds) {
@@ -67,12 +52,40 @@ public class Hero extends EntityCell {
         this.remainingTime = MAX_TIME;
     }
 
-    public boolean notAlive() {
-        return lives <= 0 || remainingTime <= 0;
+    public int getRemainingTime() {
+        return this.remainingTime;
+    }
+
+    public boolean isAlive() {
+        return lives > 0 && remainingTime > 0;
+    }
+
+    public boolean hasEnchantment(EnchantmentType enchantment) {
+        return inventory.hasEnchantment(enchantment);
+    }
+
+    public void useEnchantment(EnchantmentType enchantment) {
+        inventory.removeItem(enchantment);
+    }
+
+    public void addToInventory(EnchantmentType enchantment) {
+        inventory.addItem(enchantment);
     }
 
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    public EnchantmentType onEnchantment() {
+        return inventory.getActiveEnchantment();
+    }
+
+    public boolean isImmune() {
+        return immune;
+    }
+
+    public void setImmune(boolean immune) {
+        this.immune = immune;
     }
 
 }

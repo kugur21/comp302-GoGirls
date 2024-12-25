@@ -81,6 +81,13 @@ public class GameLoop implements ActionListener {
                 }
             }
 
+            GameManager.handleLureBehaviour();
+            GameManager.incrementMonsterMovementTimer();
+            if (GameManager.isMonsterMovementReady()) {
+                GameManager.handleMonsterMovement();
+                GameManager.resetMonsterMovementTimer();
+            }
+
             if (Keyboard.isKeyPressed("UP")) {
                 GameManager.handleMovement(0, -1);
             } else if (Keyboard.isKeyPressed("DOWN")) {
@@ -91,12 +98,6 @@ public class GameLoop implements ActionListener {
             } else if (Keyboard.isKeyPressed("RIGHT")) {
                 GameManager.handleMovement(1, 0);
                 GameManager.getHero().setFacing(Direction.RIGHT);
-            }
-            GameManager.handleLureBehaviour();
-            GameManager.incrementMonsterMovementTimer();
-            if (GameManager.isMonsterMovementReady()) {
-                GameManager.handleMonsterMovement();
-                GameManager.resetMonsterMovementTimer();
             }
 
         } catch (Exception e) {

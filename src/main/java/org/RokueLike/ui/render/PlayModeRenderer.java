@@ -67,21 +67,19 @@ public class PlayModeRenderer {
         MessageBox messageBox = GameManager.getMessageBox();
 
         if (currentHall == null || hero == null) return;
+        int remainingTime = hero.getRemainingTime();
+
 
         // High Cohesion and Low Coupling
         renderFloor(g);
-
         renderMudClusters(g);
-
         renderGrid(g, currentHall);
         renderRuneRegion(g, currentHall);
         renderMonsters(g, monsters);
         renderHero(g, hero);
         renderEnchantments(g, currentHall);
-
-        int remainingTime = hero.getRemainingTime();
-        renderHUD(g, hero, remainingTime);
         renderControllerButtons(g, exitButtonBounds, pauseButtonBounds);
+        renderHUD(g, hero, remainingTime);
         renderMessageBox(g, messageBox);
     }
 
@@ -206,8 +204,8 @@ public class PlayModeRenderer {
 
         //Activation Check above
 
-        int[][] runeRegion = hall.findRuneRegion(3); // Adjust the bound parameter as needed
-        if (runeRegion == null || runeRegion.length == 0) {
+        int[][] runeRegion = hall.findRuneRegion(4);
+        if (runeRegion == null) {
             return; // Exit if no rune region is defined
         }
         //
@@ -229,10 +227,6 @@ public class PlayModeRenderer {
             g.fillRect(renderX + 2, renderY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
 
         }
-
-
-        // TODO: Highlight the rune region
-        // Get the rune region with hall.findRuneRegion()
 
     }
 
@@ -354,31 +348,45 @@ public class PlayModeRenderer {
     }
 
     public void renderMessageBox(Graphics2D g, MessageBox message) {
-        if(message.getMessage() == null || message.getTime() <= 0)
+        String text = message.getMessage();
+        if(text == null || text.isEmpty() || message.getTime() <= 0)
             return;
 
         g.setColor(Color.BLACK);
         g.fillRoundRect(messageBox.x, messageBox.y, messageBox.width, messageBox.height, 10, 10);
         g.setColor(Color.WHITE);
         g.drawRoundRect(messageBox.x, messageBox.y, messageBox.width, messageBox.height, 10, 10);
+        g.setFont(pixelFont);
 
-        g.setFont(new Font("Dialog", Font.PLAIN, 20));
+        int maxWidth = messageBox.width - 20; // Padding for message to fit within the box
+        int fontSize = 20; // Initial font size
+        Font font = pixelFont.deriveFont((float) fontSize);
 
-        try {
-            int textPosX = messageBox.x + (messageBox.width - g.getFontMetrics().stringWidth(message.getMessage())) / 2;
-            int textPosY = messageBox.y + ((messageBox.height - g.getFontMetrics().getHeight()) / 2) + g.getFontMetrics().getAscent();
-            g.drawString(message.getMessage(), textPosX, textPosY);
-        } catch(NullPointerException e) {
+        while (g.getFontMetrics(font).stringWidth(text) > maxWidth && fontSize > 1) {
+            fontSize--;
+            font = pixelFont.deriveFont((float) fontSize);
         }
+        g.setFont(font);
+        FontMetrics metrics = g.getFontMetrics(font);
+        int textPosX = messageBox.x + (messageBox.width - metrics.stringWidth(text)) / 2;
+        int textPosY = messageBox.y + ((messageBox.height - metrics.getHeight()) / 2) + metrics.getAscent();
+
+        g.setColor(Color.WHITE);
+        g.drawString(text, textPosX, textPosY);
     }
 
     private void renderHero(Graphics2D g, Hero hero) {
         BufferedImage heroSprite = Textures.getSprite("player"); // Default sprite
         if (heroSprite != null) {
             if (GameManager.isCloakActive()) {
-                // Apply transparency
                 heroSprite = Textures.getSprite("cloak_of_protection");
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
+            } else if (hero.isImmune()) {
+                // 50% transparency
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% transparency
+            } else {
+                // Full opaque
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
             }
 
             g.drawImage(heroSprite,

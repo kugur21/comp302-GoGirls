@@ -2,9 +2,11 @@ package org.RokueLike.domain.entity.monster;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.item.Enchantment;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.utils.Direction;
-import org.RokueLike.domain.utils.MessageBox;
+import org.RokueLike.ui.Window;
+import org.RokueLike.ui.screen.GameOverScreen;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -93,12 +95,20 @@ public class MonsterManager {
     }
 
     public void heroMonsterInteraction(Monster monster) {
-        if (monster.isAttacksHero()) {
-            hero.decrementLives();
-            if (hero.notAlive()) {
-                System.exit(0);
+        if (!hero.isImmune()) {
+            if (monster.isAttacksHero()) {
+                hero.decrementLives();
+                if (!hero.isAlive()) {
+                    String message;
+                    if (hero.getLives() > 0) {
+                        message = "You ran out of time. Game Over!";
+                    } else {
+                        message = "You ran out of lives. Game Over!";
+                    }
+                    Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
+                }
+                GameManager.handleHeroSpawn();
             }
-            GameManager.handleHeroSpawn();
         }
     }
 
@@ -108,6 +118,11 @@ public class MonsterManager {
             return;
         }
         Monster newMonster = generateRandomMonster(location[0], location[1]);
+        if (hero.onEnchantment() == Enchantment.EnchantmentType.CLOAK_OF_PROTECTION) {
+            if (newMonster.getType() == Monster.MonsterType.ARCHER) {
+                newMonster.setAttacksHero(false);
+            }
+        }
         hallGrid.addMonster(newMonster);
     }
 
@@ -125,7 +140,7 @@ public class MonsterManager {
         }
 
         Timer protectionTimer = new Timer(duration * 1000, e -> {
-            for (Monster monster : monsters) {
+            for (Monster monster : GameManager.getActiveMonsters()) {
                 if (monster.getType() == Monster.MonsterType.ARCHER) {
                     monster.setAttacksHero(true);
                 }
