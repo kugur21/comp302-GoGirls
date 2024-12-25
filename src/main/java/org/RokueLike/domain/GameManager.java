@@ -14,6 +14,8 @@ import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
 import org.RokueLike.domain.utils.Direction;
 import org.RokueLike.domain.utils.MessageBox;
+import org.RokueLike.ui.Window;
+import org.RokueLike.ui.screen.GameOverScreen;
 
 
 import javax.swing.Timer;
@@ -247,7 +249,9 @@ public class GameManager {
             if (hero.getRemainingTime() > 0) {
                 hero.decrementRemainingTime();
             } else {
-                System.exit(0);
+                String message = "Game Over! Time is Over";
+                GameManager.reset();
+                Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
             }
         }
     }
@@ -418,9 +422,33 @@ public class GameManager {
     }
 
     public static void reset() {
-        System.exit(0);
-        // TODO: Resets game logic when returned to the main screen.
+        try {
+            // Stop and dispose of the timer safely
+            if (timer != null) {
+                timer.stop();
+                timer = null;
+            }
+
+            // Reset all static variables to their default states
+            monsterSpawnTimer = 0;
+            enchantmentSpawnTimer = 0;
+            enchantmentDurationTimer = 0;
+            wizardTimer = 0;
+            monsterMovementTimer = 0;
+            revealTimer = 0;
+            cloakTimer = 0;
+            frameCounter = 0;
+
+            isPaused = false;
+
+
+            // Log reset action for debugging
+            System.out.println("[GameManager]: Reset successful. Ready for a new game.");
+
+        } catch (Exception e) {
+            // Handle any unexpected issues during reset
+            System.err.println("[GameManager]: Error during reset - " + e.getMessage());
+            e.printStackTrace();
+        }
     }
-
-
 }

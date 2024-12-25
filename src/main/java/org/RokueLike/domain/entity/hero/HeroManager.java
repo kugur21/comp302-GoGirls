@@ -36,6 +36,7 @@ public class HeroManager {
                     hero.resetRemainingTime();
                 } else {
                     String message = "Congratulations, you WON!";
+                    GameManager.reset();
                     Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
                 }
             }
@@ -54,6 +55,7 @@ public class HeroManager {
                 hero.setPosition(safeLocation[0], safeLocation[1], false);
             } else {
                 String message = "Game Over! Could not find safe location for hero";
+                GameManager.reset();
                 Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
             }
         }

@@ -138,6 +138,7 @@ public class MonsterManager {
                     } else {
                         message = "You ran out of lives. Game Over!";
                     }
+                    GameManager.reset();
                     Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
                 }
                 GameManager.handleHeroSpawn();

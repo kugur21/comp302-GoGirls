@@ -3,6 +3,8 @@ package org.RokueLike.domain.entity.hero;
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.EntityCell;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
+import org.RokueLike.ui.Window;
+import org.RokueLike.ui.screen.GameOverScreen;
 
 public class Hero extends EntityCell {
 
@@ -97,8 +99,11 @@ public class Hero extends EntityCell {
 
         if (lives <= 0) {
             System.out.println("[Hero]: Hero is dead!");
-            GameManager.reset(); // Kahraman öldüğünde oyunu sonlandırabilir
+            String message = "Game Over! You died";
+            GameManager.reset();
+            Window.addScreen(new GameOverScreen(message), "GameOverScreen", true); // Kahraman öldüğünde oyunu sonlandırabilir
         }
-    } // game over için buraya da bakılabilir.
+    }
+    // game over için buraya da bakılabilir.
 
 }
