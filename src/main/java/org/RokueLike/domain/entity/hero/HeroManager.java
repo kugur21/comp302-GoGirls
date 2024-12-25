@@ -5,6 +5,10 @@ import org.RokueLike.domain.entity.item.Door;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
+import org.RokueLike.ui.Window;
+import org.RokueLike.ui.screen.GameOverScreen;
+
+import javax.swing.*;
 
 public class HeroManager {
 
@@ -16,35 +20,25 @@ public class HeroManager {
         this.hallGrid = hallGrid;
     }
 
-    public boolean moveHero(HallManager hallManager, int directionX, int directionY) {
+    public void moveHero(HallManager hallManager, int directionX, int directionY) {
         GridCell cellInFront = hallGrid.getCellInFront(hero, directionX, directionY);
 
-        switch (cellInFront.getName()) {
-            case "floor":
-                if (hallGrid.isSafeLocation(cellInFront.getPositionX(), cellInFront.getPositionY())) {
-                    hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY, true);
-                    return true;
+        if (cellInFront.getName().equals("floor")) {
+            if (hallGrid.isSafeLocation(cellInFront.getPositionX(), cellInFront.getPositionY())) {
+                hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY, true);
+            }
+        } else if (cellInFront.getName().equals("door")) {
+            Door door = (Door) cellInFront;
+            if (door.isOpen()) {
+                if (hallManager.moveToNextHall()) {
+                    HallGrid nextHall = hallManager.getCurrentHall();
+                    GameManager.updateCurrentHall(nextHall);
+                    hero.resetRemainingTime();
                 } else {
-                    return false;
+                    String message = "Congratulations, you WON!";
+                    Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
                 }
-            case "door":
-                Door door = (Door) cellInFront;
-                if (door.isOpen()) {
-                    if (hallManager.moveToNextHall()) {
-                        HallGrid nextHall = hallManager.getCurrentHall();
-                        GameManager.updateCurrentHall(nextHall);
-                        hero.resetRemainingTime();
-                        return true;
-                    } else {
-                        System.out.println("Congrats, you have escaped the dungeon!");
-                        System.exit(0);
-                        return false;
-                    }
-                } else {
-                    return false;
-                }
-            default:
-                return false;
+            }
         }
     }
 
@@ -59,9 +53,17 @@ public class HeroManager {
             if (safeLocation != null) {
                 hero.setPosition(safeLocation[0], safeLocation[1], false);
             } else {
-                System.exit(0);
+                String message = "Game Over! Could not find safe location for hero";
+                Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
             }
         }
+
+        hero.setImmune(true);
+        Timer immuneTimer = new Timer(5000, e -> {
+            hero.setImmune(false);
+        });
+        immuneTimer.setRepeats(false);
+        immuneTimer.start();
     }
 
     public boolean isAdjacentTo(int x, int y) {

@@ -1,5 +1,6 @@
 package org.RokueLike.ui.screen;
 
+import org.RokueLike.ui.FontLoader;
 import org.RokueLike.ui.Window;
 
 import javax.swing.*;
@@ -8,33 +9,34 @@ import java.awt.event.ActionListener;
 
 public class GameOverScreen extends JPanel {
 
-    public GameOverScreen() {
-        this.setLayout(null);
-        this.setBackground(Color.BLACK);
+    public GameOverScreen(String title) {
+        setLayout(new BorderLayout());
+        JLabel titleLabel = new JLabel(title, SwingConstants.CENTER);
+        titleLabel.setFont(FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 20, 0));
+        add(titleLabel, BorderLayout.NORTH);
 
-        JLabel gameOverLabel = new JLabel("GAME OVER");
-        gameOverLabel.setFont(new Font("Arial", Font.BOLD, 48));
-        gameOverLabel.setForeground(Color.RED);
-        gameOverLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        gameOverLabel.setBounds(0, 200, Window.WIDTH, 100);
-        this.add(gameOverLabel);
+        JPanel buttonPanel = getJPanel();
 
-        JButton restartButton = createButton("Restart", 350, e -> restartGame());
-        JButton exitButton = createButton("Exit", 450, e -> System.exit(0));
+        add(buttonPanel, BorderLayout.CENTER);
 
-        this.add(restartButton);
-        this.add(exitButton);
+        setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
     }
 
-    private JButton createButton(String text, int yPosition, ActionListener action) {
-        JButton button = new JButton(text);
-        button.setFont(new Font("Arial", Font.PLAIN, 20));
-        button.setBounds((Window.WIDTH - 200) / 2, yPosition, 200, 50);
-        button.addActionListener(action);
-        return button;
-    }
+    private static JPanel getJPanel() {
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
-    private void restartGame() {
-        Window.showScreen("LaunchScreen");
+        JButton restartButton = new JButton("Restart");
+        restartButton.setFont(new Font("Arial", Font.PLAIN, 18));
+        restartButton.addActionListener(e -> {Window.addScreen(new LaunchScreen(), "LaunchScreen", true);});
+
+        JButton exitButton = new JButton("Exit");
+        exitButton.setFont(new Font("Arial", Font.PLAIN, 18));
+        exitButton.addActionListener(e -> {System.exit(0);});
+
+        buttonPanel.add(restartButton);
+        buttonPanel.add(exitButton);
+        return buttonPanel;
     }
 }

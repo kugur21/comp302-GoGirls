@@ -113,14 +113,18 @@ public class HallGrid {
     }
 
     public void changeRuneLocation() {
+        boolean runeAvailable = false;
         for (Object object : objects) {
             if (object.containsRune()) {
                 object.removeContainedRune();
+                runeAvailable = true;
                 break;
             }
         }
-        Object randomObject = objects.get(new Random().nextInt(objects.size()));
-        randomObject.setContainedRune();
+        if (runeAvailable) {
+            Object randomObject = objects.get(new Random().nextInt(objects.size()));
+            randomObject.setContainedRune();
+        }
     }
 
     public int[][] findRuneRegion(int bound) {

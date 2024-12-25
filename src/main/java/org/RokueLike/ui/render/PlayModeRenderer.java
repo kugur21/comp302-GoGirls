@@ -67,19 +67,17 @@ public class PlayModeRenderer {
         MessageBox messageBox = GameManager.getMessageBox();
 
         if (currentHall == null || hero == null) return;
+        int remainingTime = hero.getRemainingTime();
+
 
         // High Cohesion and Low Coupling
         renderFloor(g);
-
         renderMudClusters(g);
-
         renderGrid(g, currentHall);
         renderRuneRegion(g, currentHall);
         renderMonsters(g, monsters);
         renderHero(g, hero);
         renderEnchantments(g, currentHall);
-
-        int remainingTime = hero.getRemainingTime();
         renderHUD(g, hero, remainingTime);
         renderControllerButtons(g, exitButtonBounds, pauseButtonBounds);
         renderMessageBox(g, messageBox);
@@ -206,8 +204,8 @@ public class PlayModeRenderer {
 
         //Activation Check above
 
-        int[][] runeRegion = hall.findRuneRegion(3); // Adjust the bound parameter as needed
-        if (runeRegion == null || runeRegion.length == 0) {
+        int[][] runeRegion = hall.findRuneRegion(4); // Adjust the bound parameter as needed
+        if (runeRegion == null) {
             return; // Exit if no rune region is defined
         }
         //
@@ -229,10 +227,6 @@ public class PlayModeRenderer {
             g.fillRect(renderX + 2, renderY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
 
         }
-
-
-        // TODO: Highlight the rune region
-        // Get the rune region with hall.findRuneRegion()
 
     }
 
@@ -376,9 +370,14 @@ public class PlayModeRenderer {
         BufferedImage heroSprite = Textures.getSprite("player"); // Default sprite
         if (heroSprite != null) {
             if (GameManager.isCloakActive()) {
-                // Apply transparency
                 heroSprite = Textures.getSprite("cloak_of_protection");
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
+            } else if (hero.isImmune()) {
+                // 50% transparency
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% transparency
+            } else {
+                // Full opaque
+                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
             }
 
             g.drawImage(heroSprite,

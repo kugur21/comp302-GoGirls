@@ -20,11 +20,11 @@ import java.util.List;
 
 public class GameManager {
 
-    private static final int GAME_DELAY = 80;
+    private static final int GAME_DELAY = 100;
     private static final int MONSTER_SPAWN = 8000;
     private static final int ENCHANTMENT_SPAWN = 12000;
     private static final int ENCHANTMENT_DURATION = 6000;
-    private static final int MONSTER_MOVEMENT_DELAY = 1000;
+    private static final int MONSTER_MOVEMENT_DELAY = 800;
     private static final int WIZARD_BEHAVIOR = 5000;
     private static final int REVEAL_ENCHANTMENT_DURATION = 10000;
     public static final int CLOAK_ENCHANTMENT_DURATION = 20000;
@@ -85,6 +85,7 @@ public class GameManager {
         hallManager = new HallManager(halls);
     }
 
+    //GameManager creates the hero, HeroManager, MonsterManager, and ItemManager during the game initialization, showcasing a Creator pattern.
     public static void initPlayMode() {
         currentHall = hallManager.getCurrentHall();
         hero = new Hero(currentHall.getStartX(), currentHall.getStartY());
@@ -102,11 +103,10 @@ public class GameManager {
         }
     }
 
-    //GameManager creates the hero, HeroManager, MonsterManager, and ItemManager during the game initialization, showcasing a Creator pattern.
-
     public static void handleHeroSpawn() {
         try {
             heroManager.respawnHero();
+            messageBox.addMessage(hero.getLives() + " lives left! You have 5 seconds immunity.", 35);
         } catch (Exception e) {
             System.out.println("[GameManager]: Hero Respawn Failed");
         }
@@ -141,11 +141,8 @@ public class GameManager {
 
     public static void handleMovement(int dirX, int dirY) {
         try {
-            if (!isGameOver()) {
-                boolean moved = heroManager.moveHero(hallManager, dirX, dirY);
-                if (!moved) {
-                    messageBox.addMessage("Hero cannot move in that direction.", 2);
-                }
+            if (hero.isAlive()) {
+                heroManager.moveHero(hallManager, dirX, dirY);
             }
         } catch (Exception e) {
             System.out.println("[GameManager]: Hero movement failed");
@@ -154,7 +151,7 @@ public class GameManager {
 
     public static void handleMonsterMovement() {
         try {
-            if (!isGameOver()) {
+            if (hero.isAlive()) {
                 monsterManager.moveMonsters();
             }
         } catch (Exception e) {
@@ -165,7 +162,7 @@ public class GameManager {
     public static void handleWizardBehavior() {
         for (Monster monster : activeMonsters) {
             if (monster.getType() == Monster.MonsterType.WIZARD) {
-                monsterManager.processWizardBehavior(monster);
+                monsterManager.processWizardBehavior();
             }
         }
     }
@@ -177,7 +174,7 @@ public class GameManager {
     public static void handleEnchantmentUse(EnchantmentType enchantment, Direction direction) {
         try {
             String response = itemManager.useEnchantment(enchantment, direction);
-            messageBox.addMessage(response, 10);
+            messageBox.addMessage(response, 30);
         } catch (Exception e) {
             System.out.println("[GameManager]: Enchantment use failed");
         }
@@ -198,9 +195,7 @@ public class GameManager {
                     && currentHall.getCurrentEnchantment().getPositionY() == mouseY) {
 
                 String response = itemManager.collectEnchantment();
-                messageBox.addMessage(response, 50);
-            } else {
-                messageBox.addMessage("No enchantment at clicked location.", 3);
+                messageBox.addMessage(response, 18);
             }
         } catch (Exception e) {
             System.out.println("[GameManager]: Left click failed");
@@ -213,12 +208,10 @@ public class GameManager {
             if (clickedCell instanceof Object clickedObject) {
                 if (heroManager.isAdjacentTo(mouseX, mouseY)) {
                     String response = itemManager.interactWithObject(clickedObject);
-                    messageBox.addMessage(response, 5);
+                    messageBox.addMessage(response, 25);
                 } else {
                     messageBox.addMessage("Hero is not near the object. Move closer!", 5);
                 }
-            } else {
-                messageBox.addMessage("No enchantment at clicked location.", 3);
             }
         } catch (Exception e) {
             System.out.println("[GameManager]: Right click failed");
@@ -240,7 +233,7 @@ public class GameManager {
         enchantmentSpawnTimer = 0;
         enchantmentDurationTimer = 0;
 
-        messageBox.addMessage("You are now at the " + currentHall.getName() + ". Proceed with finding the rune!", 10);
+        messageBox.addMessage("Welcome to " + currentHall.getName() + "! Proceed with finding the rune!", 50);
     }
 
     public static void updateRemainingTime() {
@@ -371,6 +364,7 @@ public class GameManager {
 
     public static void setCloakActive(boolean cloakActive) {
         GameManager.cloakActive = cloakActive;
+        monsterManager.processCloakOfProtection(!cloakActive);
     }
 
     public static boolean isLureActive() {
@@ -380,10 +374,6 @@ public class GameManager {
     public static void setLureActive(boolean lureActive) {
         messageBox.addMessage("Activating Luring Gem! Decide the direction (A,W,S,D) to lure the Fighter Monsters.", 10);
         GameManager.lureActive = lureActive;
-    }
-
-    public static boolean isGameOver() {
-        return hero.notAlive();
     }
 
     public static Hero getHero() {

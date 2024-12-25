@@ -41,15 +41,20 @@ public class ItemManager {
         if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_TIME) {
             hero.addRemainingTime(5);
             hallGrid.removeEnchantment();
-            return "Collected Extra Time enchantment! Gained 5 extra seconds.";
+            return "Collected Extra Time! Gained 5 extra seconds.";
         } else if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_LIFE) {
             hero.incrementLives();
             hallGrid.removeEnchantment();
-            return "Collected Extra Life enchantment! Gained an extra life.";
+            return "Collected Extra Life! Gained an extra life.";
         } else {
             hero.addToInventory(currentEnchantment.getEnchantmentType());
             hallGrid.removeEnchantment();
-            return "Collected " + currentEnchantment.getEnchantmentType().getName() + " enchantment!";
+            return switch (currentEnchantment.getEnchantmentType()) {
+                case CLOAK_OF_PROTECTION -> "Collected Cloak of Protection!";
+                case REVEAL -> "Collected Reveal Enchantment!";
+                case LURING_GEM -> "Collected Luring Gem!";
+                default -> "Enchantment type not recognized!";
+            };
         }
     }
 
@@ -80,7 +85,6 @@ public class ItemManager {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION)) {
             hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
             GameManager.setCloakActive(true);
-            monsterManager.processCloakOfProtection(GameManager.CLOAK_ENCHANTMENT_DURATION);
             return "Cloak of Protection enchantment applied. Archer Monsters can't attack you.";
         } else {
             return "No Cloak of Protection enchantment available in hero's inventory.";
