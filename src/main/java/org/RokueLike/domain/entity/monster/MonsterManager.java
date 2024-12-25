@@ -100,7 +100,8 @@ public class MonsterManager {
         randomMove(fighter);
     }
 
-    public void processWizardBehavior(Monster wizard) {
+
+    public void processWizardBehavior() {
         hallGrid.changeRuneLocation();
     }
 

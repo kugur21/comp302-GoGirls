@@ -12,6 +12,8 @@ public class Hero extends EntityCell {
     private int lives;
     private int remainingTime;
     private final Inventory inventory;
+    private boolean immune = false;
+
 
     //INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.
     //MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
@@ -50,6 +52,18 @@ public class Hero extends EntityCell {
             this.lives--;
         }
     }
+    public boolean isAlive() {
+        return lives > 0 && remainingTime > 0;
+    }
+
+    public boolean isImmune() {
+        return immune;
+    }
+
+    public void setImmune(boolean immune) {
+        this.immune = immune;
+    }
+
 
     public int getRemainingTime() {
         return this.remainingTime;
