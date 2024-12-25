@@ -44,12 +44,15 @@ public class MonsterManager {
     public void processArcherBehavior(Monster archer) {
         int attackRange = 4;
 
-        // Kahraman menzil içindeyse ok at
+        // Check if the "Cloak of Protection" is active
+        if (GameManager.isCloakActive()) {
+            System.out.println("[Archer]: Cloak of Protection is active. Archer cannot attack.");
+            return;
+        }
 
-
-
+        // Check if the hero is in range and attack
         if (isHeroInRange(archer, attackRange)) {
-            Direction direction = calculateArrowDirection(archer, hero);
+            Direction direction = calculateArrowDirection(archer, GameManager.getHero());
             if (direction != null) {
                 Arrow arrow = new Arrow(archer.getPositionX(), archer.getPositionY(), direction, attackRange);
                 GameManager.getArrowManager().addArrow(arrow);
@@ -57,11 +60,10 @@ public class MonsterManager {
             }
         }
 
-
-
-        // Hareket mantığı
+        // Movement logic
         int dirX = 0;
         int dirY = 0;
+        Hero hero = GameManager.getHero();
         if (Math.abs(archer.getPositionX() - hero.getPositionX()) <= attackRange) {
             dirX = (archer.getPositionX() > hero.getPositionX()) ? 1 : -1;
         }
@@ -69,15 +71,16 @@ public class MonsterManager {
             dirY = (archer.getPositionY() > hero.getPositionY()) ? 1 : -1;
         }
 
-        // Güvenli bir alana hareket ettir
+        // Move to a safe location
         if (hallGrid.isSafeLocation(archer, dirX, dirY)) {
             archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY, true);
         } else {
             randomMove(archer);
-
         }
+
         GameManager.debugArrows();
     }
+
     private Direction calculateArrowDirection(Monster archer, Hero hero) {
         int dx = hero.getPositionX() - archer.getPositionX();
         int dy = hero.getPositionY() - archer.getPositionY();
