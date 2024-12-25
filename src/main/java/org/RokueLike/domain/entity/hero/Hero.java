@@ -1,9 +1,8 @@
-package org.RokueLike.domain.entity.hero;
 
+package org.RokueLike.domain.entity.hero;
+import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.EntityCell;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
-
-import java.util.List;
 
 public class Hero extends EntityCell {
 
@@ -12,7 +11,6 @@ public class Hero extends EntityCell {
 
     private int lives;
     private int remainingTime;
-    private boolean immune = false;
     private final Inventory inventory;
 
     //INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.
@@ -23,42 +21,6 @@ public class Hero extends EntityCell {
         this.lives = MAX_LIVES;
         this.remainingTime = MAX_TIME;
         this.inventory = new Inventory();
-    }
-
-    public void incrementLives() {
-        if (lives < MAX_LIVES) {
-            this.lives++;
-        }
-    }
-
-    public void decrementLives() {
-        if (lives > 0) {
-            this.lives--;
-        }
-    }
-
-    public int getLives() {
-        return lives;
-    }
-
-    public void addRemainingTime(int seconds) {
-        this.remainingTime += seconds;
-    }
-
-    public void decrementRemainingTime() {
-        this.remainingTime--;
-    }
-
-    public void resetRemainingTime() {
-        this.remainingTime = MAX_TIME;
-    }
-
-    public int getRemainingTime() {
-        return this.remainingTime;
-    }
-
-    public boolean isAlive() {
-        return lives > 0 && remainingTime > 0;
     }
 
     public boolean hasEnchantment(EnchantmentType enchantment) {
@@ -73,16 +35,56 @@ public class Hero extends EntityCell {
         inventory.addItem(enchantment);
     }
 
+    public int getLives() {
+        return lives;
+    }
+
+    public void incrementLives() {
+        if (lives < MAX_LIVES) {
+            this.lives++;
+        }
+    }
+
+    public void decrementLives() {
+        if (lives > 0) {
+            this.lives--;
+        }
+    }
+
+    public int getRemainingTime() {
+        return this.remainingTime;
+    }
+
+    public void addRemainingTime(int seconds) {
+        this.remainingTime += seconds;
+    }
+
+    public void decrementRemainingTime() {
+        this.remainingTime--;
+    }
+
+    public void resetRemainingTime() {
+        this.remainingTime = MAX_TIME;
+    }
+
+    public boolean notAlive() {
+        return lives <= 0 || remainingTime <= 0;
+    }
+
     public Inventory getInventory() {
         return this.inventory;
     }
 
-    public boolean isImmune() {
-        return immune;
-    }
+    public void decreaseLife() {
+        if (lives > 0) {
+            lives--;
+            System.out.println("[Hero]: Life decreased! Remaining lives: " + lives);
+        }
 
-    public void setImmune(boolean immune) {
-        this.immune = immune;
-    }
+        if (lives <= 0) {
+            System.out.println("[Hero]: Hero is dead!");
+            GameManager.reset(); // Kahraman öldüğünde oyunu sonlandırabilir
+        }
+    } // game over için buraya da bakılabilir.
 
 }

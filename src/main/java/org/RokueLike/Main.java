@@ -5,6 +5,7 @@ import org.RokueLike.ui.Window;
 
 public class Main {
 
+
     public static void main(String[] args) {
         try {
             System.out.println("[Main]: Starting...");
@@ -14,8 +15,11 @@ public class Main {
         } catch(Exception e) {
             System.err.println("\n[Main]: Uncaught exception in initialization!\n");
             System.exit(-1);
+
         }
     }
+
+
 
 }
 

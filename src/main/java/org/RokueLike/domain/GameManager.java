@@ -2,6 +2,8 @@ package org.RokueLike.domain;
 
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.hero.HeroManager;
+import org.RokueLike.domain.entity.item.Arrow;
+import org.RokueLike.domain.entity.item.ArrowManager;
 import org.RokueLike.domain.entity.item.Object;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
 import org.RokueLike.domain.entity.item.ItemManager;
@@ -50,6 +52,7 @@ public class GameManager {
     private static List<Monster> activeMonsters;
     private static MonsterManager monsterManager;
     private static ItemManager itemManager;
+    private static ArrowManager arrowManager;
 
     private static boolean revealActive;
     private static boolean cloakActive;
@@ -94,6 +97,7 @@ public class GameManager {
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
         itemManager = new ItemManager(currentHall, hero, monsterManager);
         messageBox = new MessageBox();
+        arrowManager = new ArrowManager(currentHall); // ArrowManager burada başlatılıyor.
     }
 
     public static void genericLoop() {
@@ -375,6 +379,19 @@ public class GameManager {
         messageBox.addMessage("Activating Luring Gem! Decide the direction (A,W,S,D) to lure the Fighter Monsters.", 10);
         GameManager.lureActive = lureActive;
     }
+    public static ArrowManager getArrowManager() {
+        return arrowManager;
+    }
+    public static void debugArrows() {
+        if (arrowManager == null) {
+            System.out.println("[GameManager]: ArrowManager not initialized!");
+            return;
+        }
+
+        for (Arrow arrow : arrowManager.getArrows()) {
+            System.out.println("[Arrow]: Position X=" + arrow.getX() + " Y=" + arrow.getY());
+        }}
+
 
     public static Hero getHero() {
         return hero;
@@ -404,5 +421,6 @@ public class GameManager {
         System.exit(0);
         // TODO: Resets game logic when returned to the main screen.
     }
+
 
 }

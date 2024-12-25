@@ -3,6 +3,8 @@ package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
+import org.RokueLike.domain.entity.item.Arrow;
+import org.RokueLike.domain.entity.item.ArrowManager;
 import org.RokueLike.domain.entity.item.Door;
 import org.RokueLike.domain.entity.item.Enchantment;
 import org.RokueLike.domain.entity.monster.Monster;
@@ -12,12 +14,9 @@ import org.RokueLike.domain.utils.MessageBox;
 import org.RokueLike.ui.FontLoader;
 import org.RokueLike.ui.Textures;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
-
-import static org.RokueLike.domain.GameManager.isPaused;
 
 public class PlayModeRenderer {
 
@@ -56,6 +55,10 @@ public class PlayModeRenderer {
         Textures.addSprite("exit_button", Textures.loadPNG("imagesekstra/exit.png"));
         Textures.addSprite("pause_button", Textures.loadPNG("imagesekstra/pause.png"));
         Textures.addSprite("resume_button", Textures.loadPNG("imagesekstra/resume4x.png"));
+        Textures.addSprite("arrow_right", Textures.loadPNG("imagesekstra/arrowright.png"));
+        Textures.addSprite("arrow_left", Textures.loadPNG("imagesekstra/arrowleft.png"));
+        Textures.addSprite("arrow_up", Textures.loadPNG("imagesekstra/arrowup.png"));
+        Textures.addSprite("arrow_down", Textures.loadPNG("imagesekstra/arrowdown.png"));
 
         System.out.println("[PlayModeRenderer]: Custom sprites loaded successfully!");
     }
@@ -76,11 +79,17 @@ public class PlayModeRenderer {
         renderGrid(g, currentHall);
         renderRuneRegion(g, currentHall);
         renderMonsters(g, monsters);
+        renderArrows(g, GameManager.getArrowManager());
+
+
+
+
         renderHero(g, hero);
         renderEnchantments(g, currentHall);
         renderHUD(g, hero, remainingTime);
         renderControllerButtons(g, exitButtonBounds, pauseButtonBounds);
         renderMessageBox(g, messageBox);
+
     }
 
     private void renderFloor(Graphics2D g) {
@@ -407,5 +416,26 @@ public class PlayModeRenderer {
             }
         }
     }
+    private void renderArrows(Graphics2D g, ArrowManager arrowManager) {
+        for (Arrow arrow : arrowManager.getArrows()) {
+            BufferedImage arrowSprite = null;
+
+            switch (arrow.getDirection()) {
+                case UP -> arrowSprite = Textures.getSprite("arrow_up");
+                case DOWN -> arrowSprite = Textures.getSprite("arrow_down");
+                case LEFT -> arrowSprite = Textures.getSprite("arrow_left");
+                case RIGHT -> arrowSprite = Textures.getSprite("arrow_right");
+            }
+
+            if (arrowSprite != null) {
+                g.drawImage(arrowSprite,
+                        GRID_OFFSET_X + arrow.getX() * TILE_SIZE,
+                        GRID_OFFSET_Y + arrow.getY() * TILE_SIZE,
+                        TILE_SIZE, TILE_SIZE, null);
+            }
+        }
+    }
+
+
 
 }
