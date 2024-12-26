@@ -1,6 +1,5 @@
 package org.RokueLike.ui.input;
 
-import org.RokueLike.domain.BuildManager;
 import org.RokueLike.ui.render.BuildModeRenderer;
 
 import java.awt.event.MouseEvent;
@@ -47,7 +46,7 @@ public class MouseBuild implements MouseListener {
 
     // Checks if the mouse coordinates are within the inventory chest area.
     private boolean isWithinChest(int x, int y) {
-        return x >= BUILD_INVENTORY_X && x <= WINDOW_WIDTH && y >= BUILD_INVENTORY_Y && y <= WINDOW_HEIGHT;
+        return x >= BUILD_INVENTORY_X && x <= BUILD_WINDOW_WIDTH && y >= BUILD_INVENTORY_Y && y <= BUILD_WINDOW_HEIGHT;
     }
 
     // Determines the selected object based on mouse click within the chest.

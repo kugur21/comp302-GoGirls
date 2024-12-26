@@ -19,7 +19,7 @@ public class Window {
         window = new JFrame("RoKue-Like Game");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
-        window.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        window.setSize(BUILD_WINDOW_WIDTH, BUILD_WINDOW_HEIGHT);
         window.setLocationRelativeTo(null);
 
         cardLayout = new CardLayout();

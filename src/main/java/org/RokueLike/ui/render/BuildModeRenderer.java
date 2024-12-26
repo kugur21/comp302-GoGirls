@@ -1,7 +1,6 @@
 package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.BuildManager;
-import org.RokueLike.ui.Window;
 import org.RokueLike.utils.FontLoader;
 import org.RokueLike.utils.Textures;
 
@@ -35,8 +34,8 @@ public class BuildModeRenderer {
 
     // Renders the floor background and additional decorative elements.
     private void renderBackground(Graphics2D g) {
-        int tilesWide = WINDOW_WIDTH / BUILD_TILE_SIZE;
-        int tilesHigh = WINDOW_HEIGHT / BUILD_TILE_SIZE;
+        int tilesWide = BUILD_WINDOW_WIDTH / BUILD_TILE_SIZE;
+        int tilesHigh = BUILD_WINDOW_HEIGHT / BUILD_TILE_SIZE;
 
         // Render base floor_plain tiles
         for (int y = 0; y < tilesHigh; y++) {

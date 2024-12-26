@@ -9,7 +9,6 @@ public class BuildLoop implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Check if a mouse click has been registered
         if (MouseBuild.isMouseClicked()) {
             // Get the last click coordinates
             int[] coords = MouseBuild.getLastClickCoordinates();

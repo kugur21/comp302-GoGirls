@@ -26,10 +26,10 @@ public class BuildModeScreen extends JPanel {
         this.renderer = new BuildModeRenderer();
         this.setLayout(null);
 
-        JButton randomButton = createButton("Random Assignment", (int) (WINDOW_HEIGHT * 0.75), e -> assignObjectsRandomly());
+        JButton randomButton = createButton("Random Assignment", (int) (BUILD_WINDOW_HEIGHT * 0.75), e -> assignObjectsRandomly());
         this.add(randomButton);
 
-        JButton proceedButton = createButton("Play", (int) (WINDOW_HEIGHT * 0.75) + 50, e -> proceedToPlayMode());
+        JButton proceedButton = createButton("Play", (int) (BUILD_WINDOW_HEIGHT * 0.75) + 50, e -> proceedToPlayMode());
         this.add(proceedButton);
 
         this.addMouseListener(new MouseBuild());
@@ -39,7 +39,7 @@ public class BuildModeScreen extends JPanel {
     private JButton createButton(String text, int yPosition, ActionListener action) {
         JButton button = new JButton(text);
         button.setFont(customFont);
-        button.setBounds((WINDOW_WIDTH * 3/4), yPosition, 200, 50);
+        button.setBounds((BUILD_WINDOW_WIDTH * 3/4), yPosition, 200, 50);
         button.addActionListener(action);
         return button;
     }
