@@ -2,6 +2,7 @@
 package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
+import org.RokueLike.domain.TimeManager;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.item.Arrow;
 import org.RokueLike.domain.entity.item.ArrowManager;
@@ -10,6 +11,7 @@ import org.RokueLike.domain.entity.item.Enchantment;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.utils.Direction;
 import org.RokueLike.utils.MessageBox;
 import org.RokueLike.utils.FontLoader;
 import org.RokueLike.utils.Textures;
@@ -203,10 +205,19 @@ public class PlayModeRenderer {
                 g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
             }
 
-            g.drawImage(heroSprite,
-                    PLAY_GRID_OFFSET_X + hero.getPositionX() * PLAY_TILE_SIZE,
-                    PLAY_GRID_OFFSET_Y + hero.getPositionY() * PLAY_TILE_SIZE,
-                    PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
+            if (hero.getFacing() != Direction.RIGHT) {
+                // Draw flipped horizontally for right-facing direction
+                g.drawImage(heroSprite,
+                        PLAY_GRID_OFFSET_X + (hero.getPositionX() + 1) * PLAY_TILE_SIZE, // Shift to align with flipped image
+                        PLAY_GRID_OFFSET_Y + hero.getPositionY() * PLAY_TILE_SIZE,
+                        -PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
+            } else {
+                // Normal drawing for left-facing direction
+                g.drawImage(heroSprite,
+                        PLAY_GRID_OFFSET_X + hero.getPositionX() * PLAY_TILE_SIZE,
+                        PLAY_GRID_OFFSET_Y + hero.getPositionY() * PLAY_TILE_SIZE,
+                        PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
+            }
 
             // Reset transparency
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
@@ -336,7 +347,7 @@ public class PlayModeRenderer {
     // Displays active effects like cloak and reveal timers.
     private void renderActiveEffects(Graphics2D g, int inventoryX, int inventoryY, int inventoryHeight) {
         if (GameManager.isCloakActive()) {
-            int remainingCloakTime = GameManager.remainingCloakTimer();
+            int remainingCloakTime = TimeManager.remainingCloakTimer();
             if (remainingCloakTime > 0) {
                 g.setFont(customFont);
                 g.setColor(Color.WHITE);
@@ -344,7 +355,7 @@ public class PlayModeRenderer {
             }
         }
         if (GameManager.isRevealActive()) {
-            int remainingRevealTime = GameManager.remainingRevealTimer();
+            int remainingRevealTime = TimeManager.remainingRevealTimer();
             if (remainingRevealTime > 0) {
                 g.setFont(customFont);
                 g.setColor(Color.WHITE);

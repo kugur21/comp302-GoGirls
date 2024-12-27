@@ -25,7 +25,7 @@ public class HeroManager {
 
         if (cellInFront.getName().equals("floor")) {
             if (hallGrid.isSafeLocation(cellInFront.getPositionX(), cellInFront.getPositionY())) {
-                hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY, true);
+                hero.setPosition(hero.getPositionX() + directionX, hero.getPositionY() + directionY);
             }
         } else if (cellInFront.getName().equals("door")) {
             Door door = (Door) cellInFront;
@@ -33,11 +33,9 @@ public class HeroManager {
                 if (hallManager.moveToNextHall()) {
                     HallGrid nextHall = hallManager.getCurrentHall();
                     GameManager.updateCurrentHall(nextHall);
-                    hero.resetRemainingTime();
                 } else {
-                    String message = "Congratulations, you WON!";
                     GameManager.reset();
-                    Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
+                    Window.addScreen(new GameOverScreen("Congratulations, you WON!"), "GameOverScreen", true);
                 }
             }
         }
@@ -48,11 +46,11 @@ public class HeroManager {
         int startY = hallGrid.getStartY();
 
         if (hallGrid.isSafeLocation(startX, startY)) {
-            hero.setPosition(startX, startY, false);
+            hero.setPosition(startX, startY);
         } else {
             int[] safeLocation = hallGrid.findRandomSafeCell();
             if (safeLocation != null) {
-                hero.setPosition(safeLocation[0], safeLocation[1], false);
+                hero.setPosition(safeLocation[0], safeLocation[1]);
             } else {
                 String message = "Game Over! Could not find safe location for hero";
                 GameManager.reset();

@@ -2,11 +2,9 @@ package org.RokueLike.domain;
 
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.hero.HeroManager;
-import org.RokueLike.domain.entity.item.Arrow;
-import org.RokueLike.domain.entity.item.ArrowManager;
-import org.RokueLike.domain.entity.item.Object;
+import org.RokueLike.domain.entity.item.*;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
-import org.RokueLike.domain.entity.item.ItemManager;
+import org.RokueLike.domain.entity.item.Object;
 import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.entity.monster.MonsterManager;
 import org.RokueLike.domain.hall.GridCell;
@@ -14,34 +12,15 @@ import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.hall.HallManager;
 import org.RokueLike.utils.Direction;
 import org.RokueLike.utils.MessageBox;
-import org.RokueLike.ui.Window;
-import org.RokueLike.ui.screen.GameOverScreen;
 
 
 import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.RokueLike.utils.Constants.*;
+
 public class GameManager {
-
-    private static final int GAME_DELAY = 100;
-    private static final int MONSTER_SPAWN = 8000;
-    private static final int ENCHANTMENT_SPAWN = 12000;
-    private static final int ENCHANTMENT_DURATION = 6000;
-    private static final int MONSTER_MOVEMENT_DELAY = 800;
-    private static final int WIZARD_BEHAVIOR = 5000;
-    private static final int REVEAL_ENCHANTMENT_DURATION = 10000;
-    public static final int CLOAK_ENCHANTMENT_DURATION = 20000;
-
-
-    private static int monsterSpawnTimer = 0;
-    private static int enchantmentSpawnTimer = 0;
-    private static int enchantmentDurationTimer = 0;
-    private static int wizardTimer = 0;
-    private static int monsterMovementTimer = 0;
-    private static int revealTimer = 0;
-    private static int cloakTimer = 0;
-    private static int frameCounter = 0;
 
     private static Timer timer;
     private static boolean isPaused = false;
@@ -98,15 +77,21 @@ public class GameManager {
         activeMonsters = currentHall.getMonsters();
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
         itemManager = new ItemManager(currentHall, hero, monsterManager);
+        arrowManager = new ArrowManager(currentHall);
         messageBox = new MessageBox();
-        arrowManager = new ArrowManager(currentHall); // ArrowManager burada başlatılıyor.
     }
 
-    public static void genericLoop() {
-        hero.decreaseMotionOffset();
-        for (Monster monster: activeMonsters) {
-            monster.decreaseMotionOffset();
-        }
+    public static void updateCurrentHall(HallGrid nextHall) {
+        currentHall = nextHall;
+        hero.setPosition(currentHall.getStartX(), currentHall.getStartY());
+        hero.resetRemainingTime();
+        heroManager = new HeroManager(hero, currentHall);
+        activeMonsters = currentHall.getMonsters();
+        monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
+        itemManager = new ItemManager(currentHall, hero, monsterManager);
+
+        TimeManager.hallReset();
+        messageBox.addMessage("Welcome to " + currentHall.getName() + "! Proceed with finding the rune!", 50);
     }
 
     public static void handleHeroSpawn() {
@@ -129,19 +114,16 @@ public class GameManager {
     public static void handleEnchantmentSpawn() {
         try {
             itemManager.spawnEnchantment();
-            enchantmentDurationTimer = 0;
         } catch (Exception e) {
             System.out.println("[GameManager]: Enchantment Spawn Failed");
         }
     }
 
     public static void handleEnchantmentExpiration() {
-        if (currentHall.getCurrentEnchantment() != null) {
-            enchantmentDurationTimer++;
-            if (enchantmentDurationTimer >= (ENCHANTMENT_DURATION / GAME_DELAY)) {
-                itemManager.disappearEnchantment();
-                enchantmentDurationTimer = 0;
-            }
+        try {
+            itemManager.disappearEnchantment();
+        } catch (Exception e) {
+            System.out.println("[GameManager]: Enchantment Disappear Failed");
         }
     }
 
@@ -173,6 +155,18 @@ public class GameManager {
         }
     }
 
+    public static void handleEnchantmentCollection(int mouseX, int mouseY) {
+        try {
+            GridCell clickedCell = currentHall.getCell(mouseX, mouseY);
+            if (clickedCell instanceof Enchantment) {
+                String response = itemManager.collectEnchantment();
+                messageBox.addMessage(response, 18);
+            }
+        } catch (Exception e) {
+            System.out.println("[GameManager]: Left click failed");
+        }
+    }
+
     public static void handleEnchantmentUse(EnchantmentType enchantment) {
         handleEnchantmentUse(enchantment, null);
     }
@@ -194,21 +188,7 @@ public class GameManager {
         }
     }
 
-    public static void handleLeftClick(int mouseX, int mouseY) {
-        try {
-            if (currentHall.getCurrentEnchantment() != null
-                    && currentHall.getCurrentEnchantment().getPositionX() == mouseX
-                    && currentHall.getCurrentEnchantment().getPositionY() == mouseY) {
-
-                String response = itemManager.collectEnchantment();
-                messageBox.addMessage(response, 18);
-            }
-        } catch (Exception e) {
-            System.out.println("[GameManager]: Left click failed");
-        }
-    }
-
-    public static void handleRightClick(int mouseX, int mouseY) {
+    public static void handleObjectInteraction(int mouseX, int mouseY) {
         try {
             GridCell clickedCell = currentHall.getCell(mouseX, mouseY);
             if (clickedCell instanceof Object clickedObject) {
@@ -224,38 +204,6 @@ public class GameManager {
         }
     }
 
-    public static void updateCurrentHall(HallGrid nextHall) {
-        currentHall = nextHall;
-        hero.setPosition(currentHall.getStartX(), currentHall.getStartY(), false);
-        heroManager = new HeroManager(hero, currentHall);
-        activeMonsters = currentHall.getMonsters();
-        monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
-        itemManager = new ItemManager(currentHall, hero, monsterManager);
-
-        if (!hasWizardsInCurrentHall()) {
-            wizardTimer = 0;
-        }
-        monsterSpawnTimer = 0;
-        enchantmentSpawnTimer = 0;
-        enchantmentDurationTimer = 0;
-
-        messageBox.addMessage("Welcome to " + currentHall.getName() + "! Proceed with finding the rune!", 50);
-    }
-
-    public static void updateRemainingTime() {
-        frameCounter++;
-        if (frameCounter >= (1000 / GAME_DELAY)) {
-            frameCounter = 0;
-            if (hero.getRemainingTime() > 0) {
-                hero.decrementRemainingTime();
-            } else {
-                String message = "Game Over! Time is Over";
-                GameManager.reset();
-                Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
-            }
-        }
-    }
-
     public static boolean hasWizardsInCurrentHall() {
         for (Monster monster : activeMonsters) {
             if (monster.getType() == Monster.MonsterType.WIZARD) {
@@ -265,109 +213,20 @@ public class GameManager {
         return false;
     }
 
-    public static void incrementMonsterSpawnTimer() {
-        monsterSpawnTimer++;
-    }
-
-    public static boolean isMonsterSpawnTimerReady() {
-        return monsterSpawnTimer >= (MONSTER_SPAWN / GAME_DELAY);
-    }
-
-    public static void resetMonsterSpawnTimer() {
-        monsterSpawnTimer = 0;
-    }
-
-    public static void incrementMonsterMovementTimer() {
-        monsterMovementTimer++;
-    }
-
-    public static boolean isMonsterMovementReady() {
-        return monsterMovementTimer >= (MONSTER_MOVEMENT_DELAY / GAME_DELAY);
-    }
-
-    public static void resetMonsterMovementTimer() {
-        monsterMovementTimer = 0;
-    }
-
-    public static void incrementWizardTimer() {
-        wizardTimer++;
-    }
-
-    public static void resetWizardTimer() {
-        wizardTimer = 0;
-    }
-
-    public static boolean isWizardTimerReady() {
-        return wizardTimer >= (WIZARD_BEHAVIOR / GAME_DELAY);
-    }
-
-
-    public static void incrementEnchantmentSpawnTimer() {
-        enchantmentSpawnTimer++;
-    }
-
-    public static boolean isEnchantmentSpawnTimerReady() {
-        return enchantmentSpawnTimer >= (ENCHANTMENT_SPAWN / GAME_DELAY);
-    }
-
-    public static void resetEnchantmentSpawnTimer() {
-        enchantmentSpawnTimer = 0;
-    }
-
-    public static void incrementRevealTimer() {
-        revealTimer++;
-    }
-
-    public static boolean isRevealTimerReady() {
-        return revealTimer >= (REVEAL_ENCHANTMENT_DURATION / GAME_DELAY);
-    }
-
-    public static void resetRevealTimer() {
-        revealTimer = 0;
-    }
-
-    public static int remainingRevealTimer() {
-        if (!isRevealActive()) {
-            return 0;
-        }
-
-        int elapsedTime = revealTimer * GAME_DELAY;
-        int remainingTime = (REVEAL_ENCHANTMENT_DURATION - elapsedTime) / 1000;
-        return Math.max(remainingTime, 0);
-    }
-
-    public static void incrementCloakTimer() {
-        cloakTimer++;
-    }
-
-    public static boolean isCloakTimerReady() {
-        return  cloakTimer >= (CLOAK_ENCHANTMENT_DURATION / GAME_DELAY);
-    }
-
-    public static void resetCloakTimer() {
-        cloakTimer = 0;
-    }
-
-    public static int remainingCloakTimer() {
-        if (!isCloakActive()) {
-            return 0;
-        }
-
-        int elapsedTime = cloakTimer * GAME_DELAY;
-        int remainingTime = (CLOAK_ENCHANTMENT_DURATION - elapsedTime) / 1000;
-        return Math.max(remainingTime, 0);
-    }
-
     public static boolean isRevealActive() {
         return revealActive;
     }
 
-    public static void setRevealActive(boolean revealActive) {
-        GameManager.revealActive = revealActive;
-    }
-
     public static boolean isCloakActive() {
         return cloakActive;
+    }
+
+    public static boolean isLureActive() {
+        return lureActive;
+    }
+
+    public static void setRevealActive(boolean revealActive) {
+        GameManager.revealActive = revealActive;
     }
 
     public static void setCloakActive(boolean cloakActive) {
@@ -375,14 +234,11 @@ public class GameManager {
         monsterManager.processCloakOfProtection(!cloakActive);
     }
 
-    public static boolean isLureActive() {
-        return lureActive;
-    }
-
     public static void setLureActive(boolean lureActive) {
-        messageBox.addMessage("Activating Luring Gem! Decide the direction (A,W,S,D) to lure the Fighter Monsters.", 10);
+        messageBox.addMessage("Activating Luring Gem! Decide the direction (A,W,S,D) to lure the Fighter Monsters.", 20);
         GameManager.lureActive = lureActive;
     }
+
     public static ArrowManager getArrowManager() {
         return arrowManager;
     }
@@ -394,23 +250,7 @@ public class GameManager {
 
         for (Arrow arrow : arrowManager.getArrows()) {
             System.out.println("[Arrow]: Position X=" + arrow.getX() + " Y=" + arrow.getY());
-        }}
-
-
-    public static Hero getHero() {
-        return hero;
-    }
-
-    public static HallGrid getCurrentHall() {
-        return currentHall;
-    }
-
-    public static List<Monster> getActiveMonsters() {
-        return activeMonsters;
-    }
-
-    public static MessageBox getMessageBox() {
-        return messageBox;
+        }
     }
 
     public static void togglePauseResume() {
@@ -428,17 +268,7 @@ public class GameManager {
                 timer.stop();
                 timer = null;
             }
-
-            // Reset all static variables to their default states
-            monsterSpawnTimer = 0;
-            enchantmentSpawnTimer = 0;
-            enchantmentDurationTimer = 0;
-            wizardTimer = 0;
-            monsterMovementTimer = 0;
-            revealTimer = 0;
-            cloakTimer = 0;
-            frameCounter = 0;
-
+            TimeManager.gameReset();
             isPaused = false;
             revealActive = false;
             cloakActive = false;
@@ -452,4 +282,21 @@ public class GameManager {
             System.err.println("[GameManager]: Error during reset - " + e.getMessage());
         }
     }
+
+    public static Hero getHero() {
+        return hero;
+    }
+
+    public static HallGrid getCurrentHall() {
+        return currentHall;
+    }
+
+    public static List<Monster> getActiveMonsters() {
+        return activeMonsters;
+    }
+
+    public static MessageBox getMessageBox() {
+        return messageBox;
+    }
+
 }

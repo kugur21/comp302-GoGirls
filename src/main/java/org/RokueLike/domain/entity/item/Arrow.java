@@ -1,5 +1,6 @@
 package org.RokueLike.domain.entity.item;
 
+import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.utils.Direction;
 
 public class Arrow {
@@ -9,9 +10,9 @@ public class Arrow {
     private final int range; // Okun maksimum menzili
     private int distanceTraveled; // Okun şimdiye kadar kat ettiği mesafe
 
-    public Arrow(int startX, int startY, Direction direction, int range) {
-        this.x = startX;
-        this.y = startY;
+    public Arrow(Monster archer, Direction direction, int range) {
+        this.x = archer.getPositionX();
+        this.y = archer.getPositionY();
         this.direction = direction;
         this.active = true;
         this.range = range; // Maksimum menzil atanıyor

@@ -16,45 +16,51 @@ public class GameLoop implements ActionListener {
             if (GameManager.isPaused()) {
                 return;
             }
-            GameManager.updateRemainingTime();
-            GameManager.genericLoop();
-
+            TimeManager.updateRemainingTime();
             GameManager.getArrowManager().updateArrows(GameManager.getHero());
 
-            GameManager.incrementMonsterSpawnTimer();
-            if (GameManager.isMonsterSpawnTimerReady()) {
+            TimeManager.incrementMonsterSpawnTimer();
+            if (TimeManager.isMonsterSpawnTimerReady()) {
                 GameManager.handleMonsterSpawn();
-                GameManager.resetMonsterSpawnTimer();
+                TimeManager.resetMonsterSpawnTimer();
             }
 
             if (GameManager.hasWizardsInCurrentHall()) {
-                GameManager.incrementWizardTimer();
-                if (GameManager.isWizardTimerReady()) {
+                TimeManager.incrementWizardTimer();
+                if (TimeManager.isWizardTimerReady()) {
                     GameManager.handleWizardBehavior();
-                    GameManager.resetWizardTimer();
+                    TimeManager.resetWizardTimer();
                 }
             }
 
-            GameManager.incrementEnchantmentSpawnTimer();
-            if (GameManager.isEnchantmentSpawnTimerReady()) {
+            TimeManager.incrementEnchantmentSpawnTimer();
+            if (TimeManager.isEnchantmentSpawnTimerReady()) {
                 GameManager.handleEnchantmentSpawn();
-                GameManager.resetEnchantmentSpawnTimer();
+                TimeManager.resetEnchantmentSpawnTimer();
+                TimeManager.resetEnchantmentDurationTimer();
             }
-            GameManager.handleEnchantmentExpiration();
+
+            if (GameManager.getCurrentHall().getCurrentEnchantment() != null) {
+                TimeManager.incrementEnchantmentDurationTimer();
+                if (TimeManager.isEnchantmentDurationTimerReady()) {
+                    GameManager.handleEnchantmentExpiration();
+                    TimeManager.resetEnchantmentDurationTimer();
+                }
+            }
 
             if (GameManager.isRevealActive()) {
-                GameManager.incrementRevealTimer();
-                if (GameManager.isRevealTimerReady()) {
+                TimeManager.incrementRevealTimer();
+                if (TimeManager.isRevealTimerReady()) {
                     GameManager.setRevealActive(false);
-                    GameManager.resetRevealTimer();
+                    TimeManager.resetRevealTimer();
                 }
             }
 
             if (GameManager.isCloakActive()) {
-                GameManager.incrementCloakTimer();
-                if (GameManager.isCloakTimerReady()) {
+                TimeManager.incrementCloakTimer();
+                if (TimeManager.isCloakTimerReady()) {
                     GameManager.setCloakActive(false);
-                    GameManager.resetCloakTimer();
+                    TimeManager.resetCloakTimer();
                 }
             }
 
@@ -95,11 +101,13 @@ public class GameLoop implements ActionListener {
                 GameManager.getHero().setFacing(Direction.RIGHT);
             }
             GameManager.handleLureBehaviour();
-            GameManager.incrementMonsterMovementTimer();
-            if (GameManager.isMonsterMovementReady()) {
+
+            TimeManager.incrementMonsterMovementTimer();
+            if (TimeManager.isMonsterMovementReady()) {
                 GameManager.handleMonsterMovement();
-                GameManager.resetMonsterMovementTimer();
+                TimeManager.resetMonsterMovementTimer();
             }
+
 
         } catch (Exception e) {
             System.out.println("[GameLoop] Error in GameLoop");

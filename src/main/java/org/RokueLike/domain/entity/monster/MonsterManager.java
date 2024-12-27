@@ -49,9 +49,9 @@ public class MonsterManager {
 
         // Check if the hero is in range and attack
         if (isHeroInRange(archer, attackRange)) {
-            Direction direction = calculateArrowDirection(archer, GameManager.getHero());
+            Direction direction = calculateArrowDirection(archer, hero);
             if (direction != null) {
-                Arrow arrow = new Arrow(archer.getPositionX(), archer.getPositionY(), direction, attackRange);
+                Arrow arrow = new Arrow(archer, direction, attackRange);
                 GameManager.getArrowManager().addArrow(arrow);
                 System.out.println("[Archer]: Arrow shot in direction: " + direction);
             }
@@ -60,17 +60,20 @@ public class MonsterManager {
         // Movement logic
         int dirX = 0;
         int dirY = 0;
-        Hero hero = GameManager.getHero();
         if (Math.abs(archer.getPositionX() - hero.getPositionX()) <= attackRange) {
             dirX = (archer.getPositionX() > hero.getPositionX()) ? 1 : -1;
         }
         if (Math.abs(archer.getPositionY() - hero.getPositionY()) <= attackRange) {
             dirY = (archer.getPositionY() > hero.getPositionY()) ? 1 : -1;
         }
+        // Ensure no diagonal movement
+        if (dirX != 0 && dirY != 0) {
+            dirY = 0; // Prioritize horizontal movement
+        }
 
         // Move to a safe location
         if (hallGrid.isSafeLocation(archer, dirX, dirY)) {
-            archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY, true);
+            archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY() + dirY);
         } else {
             randomMove(archer);
         }
@@ -89,9 +92,6 @@ public class MonsterManager {
         }
     }
 
-
-
-
     public void processFighterBehavior(Monster fighter) {
         int attackRange = 1;
         if (isHeroInRange(fighter, attackRange)) {
@@ -100,30 +100,38 @@ public class MonsterManager {
         randomMove(fighter);
     }
 
-
     public void processWizardBehavior() {
         hallGrid.changeRuneLocation();
-    }
-
-    private void randomMove(Monster monster) {
-        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
-        Random random = new Random();
-
-        for (int i = 0; i < directions.length; i++) {
-            int randomIndex = random.nextInt(directions.length);
-            int dirX = directions[randomIndex][0];
-            int dirY = directions[randomIndex][1];
-
-            if (hallGrid.isSafeLocation(monster, dirX, dirY)) {
-                monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY() + dirY, true);
-            }
-        }
     }
 
     public boolean isHeroInRange(Monster monster, int range) {
         int distanceX = Math.abs(monster.getPositionX() - hero.getPositionX());
         int distanceY = Math.abs(monster.getPositionY() - hero.getPositionY());
         return (distanceX + distanceY) <= range;
+    }
+
+    private void randomMove(Monster monster) {
+        int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+        Random random = new Random();
+
+        // Shuffle directions array to ensure randomness
+        for (int i = directions.length - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+            int[] temp = directions[i];
+            directions[i] = directions[j];
+            directions[j] = temp;
+        }
+
+        // Try each direction in random order
+        for (int[] dir : directions) {
+            int dirX = dir[0];
+            int dirY = dir[1];
+
+            if (hallGrid.isSafeLocation(monster, dirX, dirY)) {
+                monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY() + dirY);
+                return; // Exit after moving once
+            }
+        }
     }
 
     public void heroMonsterInteraction(Monster monster) {
@@ -140,8 +148,9 @@ public class MonsterManager {
                     }
                     GameManager.reset();
                     Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
+                } else {
+                    GameManager.handleHeroSpawn();
                 }
-                GameManager.handleHeroSpawn();
             }
         }
     }
@@ -200,7 +209,7 @@ public class MonsterManager {
             int nextY = monster.getPositionY() + deltaY;
 
             if (hallGrid.isSafeLocation(nextX, nextY)) {
-                monster.setPosition(nextX, nextY, true);
+                monster.setPosition(nextX, nextY);
             } else {
                 completedLures.add(monster);
             }

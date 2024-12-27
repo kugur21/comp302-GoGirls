@@ -39,9 +39,9 @@ public class MousePlay implements MouseListener {
 
         // Handle left and right mouse button actions
         if (e.getButton() == MouseEvent.BUTTON1) { // Left click
-            GameManager.handleLeftClick(gridX, gridY);
+            GameManager.handleEnchantmentCollection(gridX, gridY);
         } else if (e.getButton() == MouseEvent.BUTTON3) { // Right click
-            GameManager.handleRightClick(gridX, gridY);
+            GameManager.handleObjectInteraction(gridX, gridY);
         }
     }
 
