@@ -1,6 +1,7 @@
 package org.RokueLike.domain.entity.monster;
 
 import org.RokueLike.domain.entity.EntityCell;
+import org.RokueLike.utils.Direction;
 
 public class Monster extends EntityCell {
 
@@ -13,6 +14,7 @@ public class Monster extends EntityCell {
         super(type.getName() + "_monster", x, y);
         this.type = type;
         this.attackRange = type.attackRange();
+        setFacing(Direction.RIGHT);
     }
 
     public MonsterType getType() {

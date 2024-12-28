@@ -52,9 +52,9 @@ public class HeroManager {
             if (safeLocation != null) {
                 hero.setPosition(safeLocation[0], safeLocation[1]);
             } else {
-                String message = "Game Over! Could not find safe location for hero";
                 GameManager.reset();
-                Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
+                Window.addScreen(new GameOverScreen("Game Over! Could not find safe location for hero"), "GameOverScreen", true);
+                return;
             }
         }
 

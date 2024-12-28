@@ -115,8 +115,7 @@ public class ItemManager {
     public Enchantment generateRandomEnchantment(int x, int y) {
         Enchantment.EnchantmentType[] enchantmentTypes = Enchantment.EnchantmentType.values();
         Enchantment.EnchantmentType randomType = enchantmentTypes[new Random().nextInt(enchantmentTypes.length)];
-        //return new Enchantment(randomType, x, y);
-        return new Enchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION, x, y);
+        return new Enchantment(randomType, x, y);
     }
 
 }

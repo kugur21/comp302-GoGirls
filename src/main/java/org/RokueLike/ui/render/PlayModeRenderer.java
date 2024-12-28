@@ -194,39 +194,33 @@ public class PlayModeRenderer {
 
     // Renders the hero character sprite with effects like cloak or immunity
     private void renderHero(Graphics2D g, Hero hero) {
-        BufferedImage heroSprite = Textures.getSprite("player"); // Default sprite
-        if (heroSprite != null) {
-            if (GameManager.isCloakActive()) {
-                heroSprite = Textures.getSprite("protection");
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
-            } else if (hero.isImmune()) {
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% transparency
-            } else {
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
-            }
+        BufferedImage heroSprite = GameManager.isCloakActive()
+                ? Textures.getSprite("protection")
+                : Textures.getSprite("player");
 
-            if (hero.getFacing() != Direction.RIGHT) {
-                // Draw flipped horizontally for right-facing direction
-                g.drawImage(heroSprite,
-                        PLAY_GRID_OFFSET_X + (hero.getPositionX() + 1) * PLAY_TILE_SIZE, // Shift to align with flipped image
-                        PLAY_GRID_OFFSET_Y + hero.getPositionY() * PLAY_TILE_SIZE,
-                        -PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
-            } else {
-                // Normal drawing for left-facing direction
-                g.drawImage(heroSprite,
-                        PLAY_GRID_OFFSET_X + hero.getPositionX() * PLAY_TILE_SIZE,
-                        PLAY_GRID_OFFSET_Y + hero.getPositionY() * PLAY_TILE_SIZE,
-                        PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
-            }
-
-            // Reset transparency
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        if (heroSprite == null) {
+            System.err.println("[PlayModeRenderer]: Failed to load hero sprite");
+            return;
         }
+
+        // Set transparency
+        float transparency = hero.isImmune() ? 0.5f : 1f;
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency));
+
+        // Determine flipping and alignment
+        boolean shouldFlip = (GameManager.isCloakActive() && hero.getFacing() == Direction.RIGHT)
+                || (!GameManager.isCloakActive() && hero.getFacing() != Direction.RIGHT);
+
+        drawEntitySprite(g, heroSprite, hero.getPositionX(), hero.getPositionY(), shouldFlip);
+
+        // Reset transparency
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
     }
 
     // Renders all active monsters on the grid
     private void renderMonsters(Graphics2D g, List<Monster> monsters) {
         for (Monster monster : monsters) {
+            // Determine the sprite based on monster type
             String spriteName = switch (monster.getType()) {
                 case ARCHER -> "archer4x";
                 case FIGHTER -> "fighter4x";
@@ -235,12 +229,24 @@ public class PlayModeRenderer {
 
             BufferedImage monsterSprite = Textures.getSprite(spriteName);
             if (monsterSprite != null) {
-                g.drawImage(monsterSprite,
-                        PLAY_GRID_OFFSET_X + monster.getPositionX() * PLAY_TILE_SIZE,
-                        PLAY_GRID_OFFSET_Y + monster.getPositionY() * PLAY_TILE_SIZE,
-                        PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
+                // Determine if the monster is facing left or right
+                boolean shouldFlip = monster.getFacing() == Direction.RIGHT;
+
+                // Use the shared drawHeroSprite method to render the monster
+                drawEntitySprite(g, monsterSprite, monster.getPositionX(), monster.getPositionY(), !shouldFlip);
+            } else {
+                System.err.println("[PlayModeRenderer]: Failed to load monster sprite for " + monster.getType());
             }
         }
+    }
+
+    // Helper method to draw the sprite
+    private void drawEntitySprite(Graphics2D g, BufferedImage sprite, int positionX, int positionY, boolean flip) {
+        int x = PLAY_GRID_OFFSET_X + (flip ? positionX + 1 : positionX) * PLAY_TILE_SIZE;
+        int width = flip ? -PLAY_TILE_SIZE : PLAY_TILE_SIZE;
+        int y = PLAY_GRID_OFFSET_Y + positionY * PLAY_TILE_SIZE;
+
+        g.drawImage(sprite, x, y, width, PLAY_TILE_SIZE, null);
     }
 
     // Renders arrows fired by monsters
@@ -394,7 +400,6 @@ public class PlayModeRenderer {
             int textPosY = messageBox.y + ((messageBox.height - g.getFontMetrics().getHeight()) / 2) + g.getFontMetrics().getAscent();
             g.drawString(message.getMessage(), textPosX, textPosY);
         } catch (Exception e) {}
-
     }
 
 }

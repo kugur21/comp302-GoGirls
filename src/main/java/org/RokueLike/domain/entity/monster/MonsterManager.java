@@ -19,7 +19,7 @@ public class MonsterManager {
     private HallGrid hallGrid;
     private Hero hero;
     private final List<Monster> luredFighters = new ArrayList<>();
-    private final List<Arrow> activeArrows = new ArrayList<>();
+    private List<Arrow> activeArrows = new ArrayList<>();
     private Direction lureDirection;
 
     //STRATEGY PATTERN INSTANCE - The MonsterManager defines behaviors for different monster types (e.g., processArcherBehavior, processFighterBehavior) encapsulated as strategiS
@@ -54,14 +54,16 @@ public class MonsterManager {
             switch (monster.getType()) {
                 case ARCHER:
                     processArcherBehavior(monster, monster.getAttackRange());
+                    break;
                 case FIGHTER:
                     processFighterBehavior(monster, monster.getAttackRange());
+                    break;
             }
         }
     }
 
     public void processArcherBehavior(Monster archer, int attackRange) {
-        if (hero.isImmune() || GameManager.isCloakActive() || heroNotInRange(archer, attackRange)) {
+        if (hero.isImmune() || heroNotInRange(archer, attackRange) || GameManager.isCloakActive()) {
             return;
         }
         Direction direction = calculateArrowDirection(archer);
@@ -135,8 +137,8 @@ public class MonsterManager {
             arrow.move();
 
             if (arrow.getX() == hero.getPositionX() && arrow.getY() == hero.getPositionY()) {
-                arrow.deactivate();
                 killHero();
+                arrow.deactivate();
             }
             if (arrow.notActive()) {
                 iterator.remove();
@@ -147,8 +149,7 @@ public class MonsterManager {
     private Monster generateRandomMonster(int x, int y) {
         Monster.MonsterType[] monsterTypes = Monster.MonsterType.values();
         Monster.MonsterType randomType = monsterTypes[new Random().nextInt(monsterTypes.length)];
-        //return new Monster(randomType, x, y);
-        return new Monster(Monster.MonsterType.ARCHER, x, y);
+        return new Monster(randomType, x, y);
     }
 
     public static int[] getDirectionOffsets(Direction direction) {
@@ -207,6 +208,12 @@ public class MonsterManager {
 
         // Attempt to move in the prioritized direction
         if (dirX != 0 && hallGrid.isSafeLocation(archer, dirX, 0)) {
+            // Set facing direction based on horizontal movement
+            if (dirX > 0) {
+                archer.setFacing(Direction.RIGHT);
+            } else {
+                archer.setFacing(Direction.LEFT);
+            }
             archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY());
         } else if (dirY != 0 && hallGrid.isSafeLocation(archer, 0, dirY)) {
             archer.setPosition(archer.getPositionX(), archer.getPositionY() + dirY);
@@ -234,6 +241,12 @@ public class MonsterManager {
             int dirY = dir[1];
 
             if (hallGrid.isSafeLocation(monster, dirX, dirY)) {
+                // Set the facing direction based on horizontal movement
+                if (dirX > 0) {
+                    monster.setFacing(Direction.RIGHT);
+                } else if (dirX < 0) {
+                    monster.setFacing(Direction.LEFT);
+                }
                 monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY() + dirY);
                 return; // Exit after moving once
             }
@@ -243,4 +256,5 @@ public class MonsterManager {
     public List<Arrow> getArrows() {
         return activeArrows;
     }
+
 }

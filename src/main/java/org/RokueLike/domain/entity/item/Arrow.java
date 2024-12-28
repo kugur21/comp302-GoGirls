@@ -6,16 +6,16 @@ import org.RokueLike.utils.Direction;
 public class Arrow {
     private int x, y;
     private final Direction direction;
-    private boolean active;
     private final int range;
+    private boolean active;
     private int distanceTraveled;
 
     public Arrow(Monster archer, Direction direction, int range) {
         this.x = archer.getPositionX();
         this.y = archer.getPositionY();
         this.direction = direction;
-        this.active = true;
         this.range = range;
+        this.active = true;
         this.distanceTraveled = 0;
     }
 

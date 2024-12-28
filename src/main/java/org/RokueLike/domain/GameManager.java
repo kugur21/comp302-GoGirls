@@ -180,6 +180,7 @@ public class GameManager {
         }
     }
 
+    // Marks the fighter monsters that will be lured.
     public static void handleFighterLuring(Direction direction) {
         try {
             monsterManager.processLuringGem(direction);
@@ -211,7 +212,7 @@ public class GameManager {
         }
     }
 
-    // Activates lure behavior for fighter monsters.
+    // Activates lure behavior for marked fighter monsters.
     public static void handleLureBehaviour() {
         try {
             monsterManager.updateLuredMonsters();
