@@ -5,12 +5,13 @@ import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.utils.Direction;
 
 public class Arrow {
-    private int x, y;
-    private final Direction direction;
-    private final int range;
-    private final HallGrid hallGrid;
-    private boolean active;
-    private int distanceTraveled;
+
+    private int x, y; // Current position of the arrow
+    private final Direction direction; // Direction of the arrow's movement
+    private final int range; // Maximum distance the arrow can travel
+    private final HallGrid hallGrid; // The grid where the arrow exists
+    private boolean active; // Indicates if the arrow is still active
+    private int distanceTraveled; // Distance the arrow has traveled so far
 
     public Arrow(Monster archer, Direction direction, int range, HallGrid grid) {
         this.x = archer.getPositionX();
@@ -22,6 +23,8 @@ public class Arrow {
         this.distanceTraveled = 0;
     }
 
+    // Moves the arrow one step in its direction and checks for collisions or range limits.
+    // Deactivates the arrow if it hits an obstacle or exceeds its range.
     public void move() {
         switch (direction) {
             case UP -> y--;

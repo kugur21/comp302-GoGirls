@@ -28,15 +28,6 @@ public class GameLoop implements ActionListener {
                 TimeManager.resetMonsterSpawnTimer();
             }
 
-            // Wizard behavior logic
-            if (GameManager.hasWizardsInCurrentHall()) {
-                TimeManager.incrementWizardTimer();
-                if (TimeManager.isWizardTimerReady()) {
-                    GameManager.handleWizardBehavior(); // Wizards teleport runes
-                    TimeManager.resetWizardTimer();
-                }
-            }
-
             // Enchantment spawn logic
             TimeManager.incrementEnchantmentSpawnTimer();
             if (TimeManager.isEnchantmentSpawnTimerReady()) {
@@ -54,13 +45,22 @@ public class GameLoop implements ActionListener {
                 }
             }
 
-            // Handle hero-monster interactions
+            // Wizard behavior logic
+            if (GameManager.hasWizardsInCurrentHall()) {
+                TimeManager.incrementWizardTimer();
+                if (TimeManager.isWizardTimerReady()) {
+                    GameManager.handleWizardBehavior(); // Wizards teleport runes
+                    TimeManager.resetWizardTimer();
+                }
+            }
+
+            // Fighter and Archer interaction logic
             GameManager.handleMonsterHit();
 
-            // Update archer arrows (if any)
+            // Update Archer arrows (if any)
             GameManager.handleArcherArrows();
 
-            // Update lured monsters (if any)
+            // Update lured Fighters (if any)
             GameManager.handleLureBehaviour();
 
             // Hero movement logic
@@ -84,17 +84,17 @@ public class GameLoop implements ActionListener {
             }
 
             // Keyboard input for using enchantments
+            if (Keyboard.isKeyPressed("USE_LURING")) {
+                GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM); // Activate Luring Gem
+            }
             if (Keyboard.isKeyPressed("USE_REVEAL")) {
                 GameManager.handleEnchantmentUse(EnchantmentType.REVEAL); // Activate Reveal
             }
             if (Keyboard.isKeyPressed("USE_PROTECTION")) {
                 GameManager.handleEnchantmentUse(EnchantmentType.CLOAK_OF_PROTECTION); // Activate Cloak of Protection
             }
-            if (Keyboard.isKeyPressed("USE_LURING")) {
-                GameManager.handleEnchantmentUse(EnchantmentType.LURING_GEM); // Activate Luring Gem
-            }
 
-            // Luring gem logic
+            // Luring Gem logic
             if (GameManager.isLureActive()) {
                 if (Keyboard.isKeyPressed("LURE_UP")) {
                     GameManager.handleFighterLuring(Direction.UP);
@@ -111,7 +111,7 @@ public class GameLoop implements ActionListener {
                 }
             }
 
-            // Reveal enchantment logic
+            // Reveal logic
             if (GameManager.isRevealActive()) {
                 TimeManager.incrementRevealTimer();
                 if (TimeManager.isRevealTimerReady()) {
@@ -128,7 +128,6 @@ public class GameLoop implements ActionListener {
                     TimeManager.resetCloakTimer();
                 }
             }
-
         } catch (Exception e) {
             System.out.println("[GameLoop] Error in GameLoop");
             System.exit(-1);

@@ -5,14 +5,14 @@ import org.RokueLike.utils.Direction;
 
 public class EntityCell extends GridCell {
 
-    private Direction facing;
+    private Direction facing; // Direction the entity is facing
 
-
+    // Represents a grid cell occupied dynamic/moving being.
     public EntityCell(String name, int x, int y) {
         super(name, x, y);
-        this.facing = Direction.LEFT;
     }
 
+    // Updates the position of the entity.
     public void setPosition(int dirX, int dirY) {
         setPositionX(dirX);
         setPositionY(dirY);

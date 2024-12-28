@@ -35,10 +35,9 @@ public class BuildManager {
         System.out.println("[BuildManager]: All halls initialized.");
     }
 
+    //// The BuildManager class demonstrates the CREATOR PATTERN by taking responsibility for creating and initializing the halls (createEmptyHall)
     // Creates an empty hall with walls and floor.
     private static String[][] createEmptyHall() {
-        //The BuildManager class demonstrates the CREATOR PATTERN by taking responsibility for creating and initializing the halls (createEmptyHall)
-
         String[][] hall = new String[GRID_HEIGHT][GRID_WIDTH];
         for (int y = 0; y < GRID_HEIGHT; y++) {
             for (int x = 0; x < GRID_WIDTH; x++) {

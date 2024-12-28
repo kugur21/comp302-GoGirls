@@ -12,21 +12,25 @@ import java.util.Random;
 
 public class HallGrid {
 
+    // Hero's starting coordinates
     private int startX;
     private int startY;
-    private String name;
 
-    private GridCell[][] grid;
-    private List<Monster> monsters;
-    private List<Object> objects;
-    private Enchantment currentEnchantment;
+    private final String name; // Name of the hall
+    private final GridCell[][] grid; // 2D array representing the grid layout
+    private List<Monster> monsters; // List of monsters in the hall
+    private List<Object> objects; // List of objects in the hall
+    private Enchantment currentEnchantment; // Uncollected enchantment in the hall
+    private final Random random = new Random();
 
+    // Initializes the hall with the provided grid data and name.
     public HallGrid(String[][] gridData, String name) {
         this.name = name;
         grid = new GridCell[gridData.length][gridData[0].length];
         initGrid(gridData);
     }
 
+    // Parses grid data to initialize walls, floors, doors, and objects.
     private void initGrid(String[][] gridData) {
         this.objects = new ArrayList<>();
         this.monsters = new ArrayList<>();
@@ -58,7 +62,7 @@ public class HallGrid {
                                 int objectType = Integer.parseInt(cellValue.substring(1)); // Extract object type
                                 if (objectType >= 1 && objectType <= 6) {
                                     String objectName = "object" + objectType; // Create object name
-                                    Object object = new Object(objectName, j, i); // Initialize Object
+                                    Object object = new Object(objectName, j, i); // Initialize object
                                     grid[i][j] = object;
                                     objects.add(object);
                                 } else {
@@ -80,15 +84,17 @@ public class HallGrid {
         initRune();
     }
 
+    // Randomly places a rune in one of the objects.
     public void initRune() {
         if (objects.isEmpty()) {
             throw new IllegalStateException("No objects available for placing the rune.");
         }
-        Object randomObject = objects.get(new Random().nextInt(objects.size()));
+        Object randomObject = objects.get(random.nextInt(objects.size()));
         randomObject.setContainedRune();
         System.out.println("Rune initialized in object at (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
     }
 
+    // Opens a door if it is closed.
     public void openDoor() {
         boolean doorOpened = false;
 
@@ -105,13 +111,12 @@ public class HallGrid {
                 }
             }
         }
-
         if (!doorOpened) {
             System.out.println("Door already unlocked, proceed to the next hall.");
         }
-
     }
 
+    // Relocates the rune to another object, wizard behaviour calls this function.
     public void changeRuneLocation() {
         boolean runeAvailable = false;
         for (Object object : objects) {
@@ -122,18 +127,18 @@ public class HallGrid {
             }
         }
         if (runeAvailable) {
-            Object randomObject = objects.get(new Random().nextInt(objects.size()));
+            Object randomObject = objects.get(random.nextInt(objects.size()));
             randomObject.setContainedRune();
         }
     }
 
+    // Returns a region containing the rune with a bounded area.
     public int[][] findRuneRegion(int bound) {
         for (Object object : objects) {
             if (object.containsRune()) {
                 int runeX = object.getPositionX();
                 int runeY = object.getPositionY();
 
-                Random random = new Random();
                 int startX = Math.max(0, runeX - random.nextInt(bound));
                 int startY = Math.max(0, runeY - random.nextInt(bound));
                 int endX = Math.min(getWidth() - 1, startX + 3);
@@ -158,37 +163,39 @@ public class HallGrid {
         return null;
     }
 
-    public GridCell getCell(int x, int y) {
-        if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight()) {
-            return grid[y][x];
+    // Retrieves a grid cell at the specified coordinates.
+    public GridCell getCell(int positionX, int positionY) {
+        if (positionX >= 0 && positionX < getWidth() && positionY >= 0 && positionY < getHeight()) {
+            return grid[positionY][positionX];
         }
-        throw new IllegalArgumentException("Coordinates out of bounds: (" + x + ", " + y + ")");
+        throw new IllegalArgumentException("Coordinates out of bounds: (" + positionX + ", " + positionY + ")");
     }
 
     public GridCell getCellInFront(EntityCell entity, int directionX, int directionY) {
         return getCell(entity.getPositionX() + directionX, entity.getPositionY() + directionY);
     }
 
+    // Checks if a location is safe.
     public boolean isSafeLocation(int positionX, int positionY) {
-        return getCell(positionX, positionY).getName().equals("floor") && isThereMonster(positionX, positionY);
+        return getCell(positionX, positionY).getName().equals("floor") && noMonsterThere(positionX, positionY);
     }
 
     public boolean isSafeLocation(EntityCell entity, int directionX, int directionY) {
         return isSafeLocation(entity.getPositionX() + directionX, entity.getPositionY() + directionY);
     }
 
+    // Finds a random safe cell.
     public int[] findRandomSafeCell() {
         Random random = new Random();
         List<int[]> floorTiles = new ArrayList<>();
 
         for (int y = 0; y < getHeight(); y++) {
             for (int x = 0; x < getWidth(); x++) {
-                if (getCell(x, y).getName().equals("floor") && isThereMonster(x, y) && notInFrontOfTheDoor(x, y)) {
+                if (getCell(x, y).getName().equals("floor") && noMonsterThere(x, y) && notInFrontOfTheDoor(x, y)) {
                     floorTiles.add(new int[]{x, y});
                 }
             }
         }
-
         if (!floorTiles.isEmpty()) {
             return floorTiles.get(random.nextInt(floorTiles.size()));
         }
@@ -199,11 +206,21 @@ public class HallGrid {
         monsters.add(monster);
     }
 
-    public List<Monster> getMonsters() {
-        return monsters;
+    public Enchantment getCurrentEnchantment() {
+        return currentEnchantment;
     }
 
-    public boolean isThereMonster(int x, int y) {
+    public void addEnchantment(Enchantment enchantment) {
+        grid[enchantment.getPositionY()][enchantment.getPositionX()] = enchantment;
+        currentEnchantment = enchantment;
+    }
+
+    public void removeEnchantment() {
+        grid[currentEnchantment.getPositionY()][currentEnchantment.getPositionX()] = new GridCell("floor", currentEnchantment.getPositionX(), currentEnchantment.getPositionY());
+        currentEnchantment = null;
+    }
+
+    private boolean noMonsterThere(int x, int y) {
         for (Monster monster: monsters) {
             if (monster.getPositionX() == x && monster.getPositionY() == y) {
                 return false;
@@ -229,20 +246,6 @@ public class HallGrid {
         return true; // Tile is not in front of any door
     }
 
-    public Enchantment getCurrentEnchantment() {
-        return currentEnchantment;
-    }
-
-    public void addEnchantment(Enchantment enchantment) {
-        grid[enchantment.getPositionY()][enchantment.getPositionX()] = enchantment;
-        currentEnchantment = enchantment;
-    }
-
-    public void removeEnchantment() {
-        grid[currentEnchantment.getPositionY()][currentEnchantment.getPositionX()] = new GridCell("floor", currentEnchantment.getPositionX(), currentEnchantment.getPositionY());
-        currentEnchantment = null;
-    }
-
     public int getStartX() {
         return startX;
     }
@@ -262,4 +265,10 @@ public class HallGrid {
     public String getName() {
         return name;
     }
+
+    public List<Monster> getMonsters() {
+        return monsters;
+    }
+
+
 }

@@ -4,22 +4,20 @@ import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.entity.hero.Hero;
 import org.RokueLike.domain.entity.monster.MonsterManager;
 import org.RokueLike.domain.hall.HallGrid;
-import org.RokueLike.utils.Direction;
 
 import java.util.Random;
 
 public class ItemManager {
 
-    private HallGrid hallGrid;
-    private Hero hero;
-    private MonsterManager monsterManager;
+    private final HallGrid hallGrid; // The current hall grid
+    private final Hero hero; // The hero instance
 
     public ItemManager(HallGrid hallGrid, Hero hero, MonsterManager monsterManager) {
         this.hallGrid = hallGrid;
         this.hero = hero;
-        this.monsterManager = monsterManager;
     }
 
+    // Spawns a random enchantment at a safe location in the hall.
     public void spawnEnchantment() {
         int[] location = hallGrid.findRandomSafeCell();
         if (location == null) {
@@ -29,12 +27,14 @@ public class ItemManager {
         hallGrid.addEnchantment(enchantment);
     }
 
+    // Removes the current enchantment from the hall.
     public void disappearEnchantment() {
         if (hallGrid.getCurrentEnchantment() != null) {
             hallGrid.removeEnchantment();
         }
     }
 
+    // Collects the current enchantment and applies its effect to the hero.
     public String collectEnchantment() {
         Enchantment currentEnchantment = hallGrid.getCurrentEnchantment();
 
@@ -58,15 +58,17 @@ public class ItemManager {
         }
     }
 
-    public String useEnchantment(Enchantment.EnchantmentType enchantment) {
+    // Uses a specific enchantment from the hero's inventory.
+    public String useEnchantment(Enchantment.EnchantmentType enchantment, MonsterManager monsterManager) {
         return switch (enchantment) {
             case REVEAL -> applyReveal();
-            case CLOAK_OF_PROTECTION -> applyCloakOfProtection();
+            case CLOAK_OF_PROTECTION -> applyCloakOfProtection(monsterManager);
             case LURING_GEM -> applyLuringGem();
             default -> "Invalid enchantment type.";
         };
     }
 
+    // Applies the Reveal enchantment, revealing the rune's region.
     public String applyReveal() {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)) {
             hero.useEnchantment(Enchantment.EnchantmentType.REVEAL);
@@ -81,7 +83,8 @@ public class ItemManager {
         }
     }
 
-    public String applyCloakOfProtection() {
+    // Applies the Cloak of Protection enchantment, preventing archer attacks.
+    public String applyCloakOfProtection(MonsterManager monsterManager) {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION)) {
             hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
             GameManager.setCloakActive(true);
@@ -92,7 +95,7 @@ public class ItemManager {
         }
     }
 
-
+    // Applies the Luring Gem enchantment, allowing the hero to lure nearby fighter monsters.
     public String applyLuringGem() {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.LURING_GEM)) {
             hero.useEnchantment(Enchantment.EnchantmentType.LURING_GEM);
@@ -103,6 +106,7 @@ public class ItemManager {
         }
     }
 
+    // Interacts with an object on the grid, unlocking the door if it contains a rune.
     public String interactWithObject(Object object) {
         if (object.containsRune()) {
             object.removeContainedRune();
@@ -113,11 +117,11 @@ public class ItemManager {
         return null;
     }
 
+    // Generates a random enchantment at a specific position.
     public Enchantment generateRandomEnchantment(int x, int y) {
         Enchantment.EnchantmentType[] enchantmentTypes = Enchantment.EnchantmentType.values();
         Enchantment.EnchantmentType randomType = enchantmentTypes[new Random().nextInt(enchantmentTypes.length)];
-        //return new Enchantment(randomType, x, y);
-        return new Enchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION, x, y);
+        return new Enchantment(randomType, x, y);
     }
 
 }

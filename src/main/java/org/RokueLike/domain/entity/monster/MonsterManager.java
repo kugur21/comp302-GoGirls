@@ -15,20 +15,24 @@ import java.util.Random;
 
 public class MonsterManager {
 
-    private List<Monster> monsters;
-    private HallGrid hallGrid;
-    private Hero hero;
-    private final List<Monster> luredFighters = new ArrayList<>();
-    private List<Arrow> activeArrows = new ArrayList<>();
-    private Direction lureDirection;
+    private final List<Monster> monsters; // List of all monsters in the hall
+    private final HallGrid hallGrid; // The current hall grid
+    private final Hero hero; // The hero being interacted with
+    private final List<Arrow> activeArrows; // List of active arrows shot by archers
+    private final List<Monster> luredFighters; // List of lured fighter monsters
+    private Direction lureDirection; // Direction of the lure for fighter monsters
 
-    //STRATEGY PATTERN INSTANCE - The MonsterManager defines behaviors for different monster types (e.g., processArcherBehavior, processFighterBehavior) encapsulated as strategiS
+    //// STRATEGY PATTERN INSTANCE - The MonsterManager defines behaviors for different monster types (e.g., processArcherBehavior, processFighterBehavior) encapsulated as strategies
+
     public MonsterManager(List<Monster> monsters, HallGrid hallGrid, Hero hero) {
         this.monsters = monsters;
         this.hallGrid = hallGrid;
         this.hero = hero;
+        luredFighters = new ArrayList<>();
+        activeArrows = new ArrayList<>();
     }
 
+    // Spawns a random monster at a safe location in the hall.
     public void spawnMonster() {
         int[] location = hallGrid.findRandomSafeCell();
         if (location == null) {
@@ -38,12 +42,12 @@ public class MonsterManager {
         hallGrid.addMonster(newMonster);
     }
 
+    // Moves all monsters randomly or based on their behavior type.
     public void moveMonsters() {
         for (Monster monster : monsters) {
             switch (monster.getType()) {
                 case ARCHER:
-                    //randomMoveAway(monster, monster.getAttackRange());
-                    randomMove(monster);
+                    moveKeepingDistance(monster, monster.getAttackRange());
                     break;
                 case FIGHTER:
                     randomMove(monster);
@@ -52,6 +56,7 @@ public class MonsterManager {
         }
     }
 
+    // Processes interactions between monsters and the hero.
     public void heroMonsterInteraction() {
         for (Monster monster : monsters) {
             switch (monster.getType()) {
@@ -65,6 +70,7 @@ public class MonsterManager {
         }
     }
 
+    // Handles archer behavior by shooting arrows if the hero is in range.
     public void processArcherBehavior(Monster archer, int attackRange) {
         if (hero.isImmune() || heroNotInRange(archer, attackRange) || GameManager.isCloakActive()) {
             return;
@@ -76,6 +82,7 @@ public class MonsterManager {
         }
     }
 
+    // Handles fighter behavior by attacking the hero if in range.
     public void processFighterBehavior(Monster fighter, int attackRange) {
         if (hero.isImmune() || heroNotInRange(fighter, attackRange)) {
             return;
@@ -83,6 +90,7 @@ public class MonsterManager {
         killHero();
     }
 
+    // Handles wizard behavior by relocating the rune.
     public void processWizardBehavior() {
         for (Monster monster : monsters) {
             if (monster.getType() == Monster.MonsterType.WIZARD) {
@@ -91,6 +99,7 @@ public class MonsterManager {
         }
     }
 
+    // Processes the luring gem's effect by attracting nearby fighters in a direction, called when Luring Gem is activated.
     public void processLuringGem(Direction direction) {
         lureDirection = direction;
         luredFighters.clear();
@@ -102,6 +111,7 @@ public class MonsterManager {
         }
     }
 
+    // Updates the position of lured fighter monsters, called in the GameLoop.
     public void updateLuredMonsters() {
         if (luredFighters.isEmpty() || lureDirection == null) {
             return;
@@ -129,6 +139,7 @@ public class MonsterManager {
         }
     }
 
+    // Updates the position and activity of archer arrows.
     public void updateArcherArrows() {
         if (GameManager.isCloakActive()) {
             return;
@@ -150,13 +161,15 @@ public class MonsterManager {
         }
     }
 
+    // Generates a random monster at a specified position.
     private Monster generateRandomMonster(int x, int y) {
         Monster.MonsterType[] monsterTypes = Monster.MonsterType.values();
         Monster.MonsterType randomType = monsterTypes[new Random().nextInt(monsterTypes.length)];
         return new Monster(randomType, x, y);
     }
 
-    public static int[] getDirectionOffsets(Direction direction) {
+    // Gets offsets for a specific direction.
+    private static int[] getDirectionOffsets(Direction direction) {
         return switch (direction) {
             case LEFT -> new int[]{-1, 0};
             case RIGHT -> new int[]{1, 0};
@@ -166,6 +179,7 @@ public class MonsterManager {
         };
     }
 
+    // Reduces the hero's lives and checks for game over conditions.
     private void killHero() {
         hero.decrementLives();
         if (!hero.isAlive()) {
@@ -182,6 +196,7 @@ public class MonsterManager {
         }
     }
 
+    // Calculates the direction of an arrow shot by an archer.
     private Direction calculateArrowDirection(Monster archer) {
         int dx = hero.getPositionX() - archer.getPositionX();
         int dy = hero.getPositionY() - archer.getPositionY();
@@ -193,6 +208,7 @@ public class MonsterManager {
         }
     }
 
+    // Checks if the hero is outside the range of a monster.
     private boolean heroNotInRange(Monster monster, int range) {
         int distanceX = monster.getPositionX() - hero.getPositionX();
         int distanceY = monster.getPositionY() - hero.getPositionY();
@@ -208,7 +224,8 @@ public class MonsterManager {
         return true; // Hero is not in the specified range
     }
 
-    public void randomMoveAway(Monster archer, int attackRange) {
+    // Moves a monster by keeping the distance with the hero, used by archer monster.
+    private void moveKeepingDistance(Monster archer, int attackRange) {
         int dirX = 0;
         int dirY = 0;
 
@@ -236,6 +253,7 @@ public class MonsterManager {
         }
     }
 
+    // Moves a monster randomly to a safe location, used by fighter monster.
     private void randomMove(Monster monster) {
         int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         Random random = new Random();

@@ -5,16 +5,15 @@ import org.RokueLike.utils.Direction;
 
 public class Monster extends EntityCell {
 
-    private final MonsterType type;
-    private final int attackRange;
+    private final MonsterType type; // The type of the monster (e.g., Archer, Fighter, Wizard)
+    private final int attackRange; // The range at which the monster can attack
 
-    //MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
+    //// MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
 
     public Monster(MonsterType type, int x, int y) {
         super(type.getName() + "_monster", x, y);
         this.type = type;
         this.attackRange = type.attackRange();
-        setFacing(Direction.RIGHT);
     }
 
     public MonsterType getType() {
@@ -23,6 +22,7 @@ public class Monster extends EntityCell {
 
     public int getAttackRange() {return attackRange;}
 
+    // Enum representing the different types of monsters.
     public enum MonsterType {
         ARCHER("archer", 4),
         FIGHTER("fighter", 1),
@@ -31,6 +31,7 @@ public class Monster extends EntityCell {
         private final String name;
         private final int attackRange;
 
+        // Constructs a MonsterType with a name and attack range.
         MonsterType(String name, int attackRange) {
             this.name = name;
             this.attackRange = attackRange;
@@ -41,6 +42,7 @@ public class Monster extends EntityCell {
         }
 
         public int attackRange() {return attackRange;}
+
     }
 
 }

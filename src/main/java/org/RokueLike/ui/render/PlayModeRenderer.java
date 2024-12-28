@@ -322,7 +322,7 @@ public class PlayModeRenderer {
         int itemStartX = inventoryX + 35;
         int itemStartY = inventoryY + 100;
 
-        List<Enchantment.EnchantmentType> heroInventory = GameManager.getHero().getInventory().getItems();
+        List<Enchantment.EnchantmentType> heroInventory = GameManager.getHero().getInventory().getEnchantments();
         for (int i = 0; i < heroInventory.size(); i++) {
             g.setColor(new Color(80, 80, 100));
             g.fillRect(itemStartX + (i % 3) * (slotSize + gap),

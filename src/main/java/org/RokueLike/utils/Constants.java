@@ -47,5 +47,9 @@ public class Constants {
     public static final int WIZARD_BEHAVIOR = 5000;
     public static final int REVEAL_ENCHANTMENT_DURATION = 10000;
     public static final int CLOAK_ENCHANTMENT_DURATION = 20000;
+    public static final int IMMUNE_TIME = 3000;
+
+    public static final int MAX_TIME = 60;
+    public static final int MAX_LIVES = 4;
 
 }

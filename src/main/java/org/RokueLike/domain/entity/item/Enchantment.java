@@ -1,65 +1,37 @@
 
 package org.RokueLike.domain.entity.item;
 
-public class Enchantment extends Item {
+import org.RokueLike.domain.hall.GridCell;
 
-    private final EnchantmentType type;
-    private int duration;
-    private boolean isActive;
+public class Enchantment extends GridCell {
+
+    private final EnchantmentType type; // Type of the enchantment
 
     public Enchantment(EnchantmentType type, int x, int y) {
-        super(type.getName(), x, y, ItemType.ENCHANTMENT);
+        super(type.getName(), x, y);
         this.type = type;
-        this.duration = type.getDuration();
-        this.isActive = false;
     }
 
     public EnchantmentType getEnchantmentType() {
         return type;
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void activate() {
-        this.isActive = true;
-    }
-
-    public void deactivate() {
-        this.isActive = false;
-    }
-
     public enum EnchantmentType {
-        EXTRA_TIME("extra_time", 0),
-        EXTRA_LIFE("extra_life", 0),
-        REVEAL("reveal", 10),
-        CLOAK_OF_PROTECTION("cloak_of_protection", 20),
-        LURING_GEM("luring_gem", 0);
+        EXTRA_TIME("extra_time"), // Adds extra time for the hero
+        EXTRA_LIFE("extra_life"), // Adds extra life for the hero
+        REVEAL("reveal"), // Reveals hidden rune region
+        CLOAK_OF_PROTECTION("cloak_of_protection"), // Provides protection from archer attacks
+        LURING_GEM("luring_gem"); // Lures the fighter monsters in a specified direction
 
         private final String name;
-        private final int duration;
 
-        EnchantmentType(String name, int duration) {
+        EnchantmentType(String name) {
             this.name = name;
-            this.duration = duration;
         }
 
-        // Revised for PlayModeRenderer by Sarp
         public String getName() {
             return this.name;
         }
-
-        public int getDuration() {
-            return duration;
-        }
     }
+
 }

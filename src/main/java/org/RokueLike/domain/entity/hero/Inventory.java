@@ -7,26 +7,29 @@ import java.util.List;
 
 public class Inventory {
 
-    private final List<EnchantmentType> items;
+    private final List<EnchantmentType> enchantments; // List of enchantments in the inventory
 
     public Inventory() {
-        this.items = new ArrayList<>();
+        this.enchantments = new ArrayList<>();
     }
 
+    // Checks if a specific enchantment is in the inventory.
     public boolean hasEnchantment(EnchantmentType enchantment) {
-        return items.contains(enchantment);
+        return enchantments.contains(enchantment);
     }
 
+    // Adds an enchantment to the inventory.
     public void addItem(EnchantmentType enchantment) {
-        items.add(enchantment);
+        enchantments.add(enchantment);
     }
 
+    // Removes an enchantment from the inventory.
     public void removeItem(EnchantmentType enchantment) {
-        items.remove(enchantment);
+        enchantments.remove(enchantment);
     }
 
-    public List<EnchantmentType> getItems() {
-        return items;
+    public List<EnchantmentType> getEnchantments() {
+        return enchantments;
     }
 
 }

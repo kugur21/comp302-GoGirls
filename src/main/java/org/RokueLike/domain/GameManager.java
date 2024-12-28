@@ -205,7 +205,7 @@ public class GameManager {
     // Handles using enchantments, optionally with direction.
     public static void handleEnchantmentUse(EnchantmentType enchantment) {
         try {
-            String response = itemManager.useEnchantment(enchantment);
+            String response = itemManager.useEnchantment(enchantment, monsterManager);
             messageBox.addMessage(response, 30);
         } catch (Exception e) {
             System.out.println("[GameManager]: Enchantment use failed");

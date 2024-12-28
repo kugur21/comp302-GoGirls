@@ -1,11 +1,13 @@
 package org.RokueLike.domain.entity.item;
 
-public class Door extends Item {
+import org.RokueLike.domain.hall.GridCell;
 
-    private boolean isOpen;
+public class Door extends GridCell {
+
+    private boolean isOpen; // Indicates if the door is open
 
     public Door(int x, int y) {
-        super("door", x, y, ItemType.DOOR);
+        super("door", x, y);
         this.isOpen = false;
     }
 

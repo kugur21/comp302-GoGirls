@@ -1,26 +1,14 @@
 package org.RokueLike.domain.entity.item;
 
-public class Object extends Item {
+import org.RokueLike.domain.hall.GridCell;
 
-    private boolean isOpen;
-    private boolean containsRune;
+public class Object extends GridCell {
+
+    private boolean containsRune; // Indicates if the object contains a rune
 
     public Object(String name, int x, int y) {
-        super(name, x, y, ItemType.OBJECT);
-        this.isOpen = false;
+        super(name, x, y);
         this.containsRune = false;
-    }
-
-    public boolean isOpen() {
-        return isOpen;
-    }
-
-    public void open() {
-        this.isOpen = true;
-    }
-
-    public void close() {
-        this.isOpen = false;
     }
 
     public boolean containsRune() {

@@ -1,24 +1,19 @@
-
 package org.RokueLike.domain.entity.hero;
-import org.RokueLike.domain.GameManager;
+
 import org.RokueLike.domain.entity.EntityCell;
 import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
-import org.RokueLike.ui.Window;
-import org.RokueLike.ui.screen.GameOverScreen;
+import static org.RokueLike.utils.Constants.*;
 
 public class Hero extends EntityCell {
 
-    private static final int MAX_LIVES = 4;
-    private static final int MAX_TIME = 60;
-
-    private int lives;
-    private int remainingTime;
-    private final Inventory inventory;
-    private boolean immune = false;
+    private int lives; // Current number of lives
+    private int remainingTime; // Remaining time for the hero
+    private final Inventory inventory; // Hero's inventory for enchantments
+    private boolean immune = false; // Immunity status of the hero
 
 
-    //INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.
-    //MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
+    //// INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.
+    //// MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
 
     public Hero(int x, int y) {
         super("hero", x, y);
@@ -27,18 +22,7 @@ public class Hero extends EntityCell {
         this.inventory = new Inventory();
     }
 
-    public boolean hasEnchantment(EnchantmentType enchantment) {
-        return inventory.hasEnchantment(enchantment);
-    }
-
-    public void useEnchantment(EnchantmentType enchantment) {
-        inventory.removeItem(enchantment);
-    }
-
-    public void addToInventory(EnchantmentType enchantment) {
-        inventory.addItem(enchantment);
-    }
-
+    // Remaining lives modifications
     public int getLives() {
         return lives;
     }
@@ -54,19 +38,8 @@ public class Hero extends EntityCell {
             this.lives--;
         }
     }
-    public boolean isAlive() {
-        return lives > 0 && remainingTime > 0;
-    }
 
-    public boolean isImmune() {
-        return immune;
-    }
-
-    public void setImmune(boolean immune) {
-        this.immune = immune;
-    }
-
-
+    // Remaining time modifications
     public int getRemainingTime() {
         return this.remainingTime;
     }
@@ -83,8 +56,35 @@ public class Hero extends EntityCell {
         this.remainingTime = MAX_TIME;
     }
 
+    // Inventory modifications
     public Inventory getInventory() {
         return this.inventory;
+    }
+
+    public boolean hasEnchantment(EnchantmentType enchantment) {
+        return inventory.hasEnchantment(enchantment);
+    }
+
+    public void useEnchantment(EnchantmentType enchantment) {
+        inventory.removeItem(enchantment);
+    }
+
+    public void addToInventory(EnchantmentType enchantment) {
+        inventory.addItem(enchantment);
+    }
+
+
+    public boolean isImmune() {
+        return immune;
+    }
+
+    public void setImmune(boolean immune) {
+        this.immune = immune;
+    }
+
+    // Checks if the hero is still alive based on lives and remaining time.
+    public boolean isAlive() {
+        return lives > 0 && remainingTime > 0;
     }
 
 }
