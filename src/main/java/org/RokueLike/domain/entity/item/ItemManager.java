@@ -7,6 +7,8 @@ import org.RokueLike.domain.hall.HallGrid;
 
 import java.util.Random;
 
+import static org.RokueLike.utils.Constants.*;
+
 public class ItemManager {
 
     private final HallGrid hallGrid; // The current hall grid
@@ -39,7 +41,7 @@ public class ItemManager {
         Enchantment currentEnchantment = hallGrid.getCurrentEnchantment();
 
         if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_TIME) {
-            hero.addRemainingTime(5);
+            hero.addRemainingTime(EXTRA_TIME);
             hallGrid.removeEnchantment();
             return "Collected Extra Time! Gained 5 extra seconds.";
         } else if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_LIFE) {
@@ -89,9 +91,9 @@ public class ItemManager {
             hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
             GameManager.setCloakActive(true);
             monsterManager.clearArrows();
-            return "Cloak of Protection enchantment applied. Archer Monsters can't attack you.";
+            return "Cloak of Protection active. Archers can't attack you.";
         } else {
-            return "No Cloak of Protection enchantment available in hero's inventory.";
+            return "Hero does not have a Cloak of Protection.";
         }
     }
 
@@ -100,9 +102,9 @@ public class ItemManager {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.LURING_GEM)) {
             hero.useEnchantment(Enchantment.EnchantmentType.LURING_GEM);
             GameManager.setLureActive(true);
-            return "Activating Luring Gem! Decide the direction (A,W,S,D) to lure the Fighter Monsters.";
+            return "Activating Luring Gem! Choose the direction (A,W,S,D)";
         } else {
-            return "No Luring Gem enchantment available in hero's inventory.";
+            return "Hero does not have a Luring Gem.";
         }
     }
 
@@ -112,7 +114,7 @@ public class ItemManager {
             object.removeContainedRune();
             hallGrid.openDoor();
             // TODO: Play a sound indicating the door is open
-            return "Congratulations! You found the rune, door is unlocked!";
+            return "You found the rune! Door is unlocked.";
         }
         return null;
     }

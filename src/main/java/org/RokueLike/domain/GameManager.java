@@ -82,6 +82,8 @@ public class GameManager {
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
         itemManager = new ItemManager(currentHall, hero, monsterManager);
         messageBox = new MessageBox();
+
+        messageBox.addMessage("Welcome to Hall of Earth! Find the rune to unlock the door.", 3);
     }
 
     // Updates the game state when transitioning to a new hall.
@@ -95,14 +97,14 @@ public class GameManager {
         itemManager = new ItemManager(currentHall, hero, monsterManager);
 
         TimeManager.hallReset(); // Reset timers
-        messageBox.addMessage("Welcome to " + currentHall.getName() + "! Proceed with finding the rune!", 50);
+        messageBox.addMessage("Welcome to " + currentHall.getName() + "! Find the rune to unlock the door.", 3);
     }
 
     // Handles hero respawn after death.
     public static void handleHeroSpawn() {
         try {
             heroManager.respawnHero();
-            messageBox.addMessage(hero.getLives() + " lives left! You have 5 seconds immunity.", 35);
+            messageBox.addMessage(hero.getLives() + " lives left! You have " + (IMMUNE_TIME / 1000) + " seconds immunity.", 4);
         } catch (Exception e) {
             System.out.println("[GameManager]: Hero Respawn Failed");
         }
@@ -195,7 +197,7 @@ public class GameManager {
             GridCell clickedCell = currentHall.getCell(mouseX, mouseY);
             if (clickedCell instanceof Enchantment) {
                 String response = itemManager.collectEnchantment();
-                messageBox.addMessage(response, 18);
+                messageBox.addMessage(response, 2);
             }
         } catch (Exception e) {
             System.out.println("[GameManager]: Left click failed");
@@ -206,7 +208,7 @@ public class GameManager {
     public static void handleEnchantmentUse(EnchantmentType enchantment) {
         try {
             String response = itemManager.useEnchantment(enchantment, monsterManager);
-            messageBox.addMessage(response, 30);
+            messageBox.addMessage(response, 4);
         } catch (Exception e) {
             System.out.println("[GameManager]: Enchantment use failed");
         }
@@ -228,13 +230,14 @@ public class GameManager {
             if (clickedCell instanceof Object clickedObject) {
                 if (heroManager.isAdjacentTo(mouseX, mouseY)) {
                     String response = itemManager.interactWithObject(clickedObject);
-                    messageBox.addMessage(response, 25);
+                    messageBox.addMessage(response, 3);
                 } else {
-                    messageBox.addMessage("Hero is not near the object. Move closer!", 5);
+                    messageBox.addMessage("Hero is not near the object. Move closer!", 2);
                 }
             }
         } catch (Exception e) {
             System.out.println("[GameManager]: Right click failed");
+            e.printStackTrace();
         }
     }
 

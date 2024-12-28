@@ -24,13 +24,14 @@ import static org.RokueLike.utils.Constants.*;
 
 public class PlayModeRenderer {
 
+    private final MessageBoxRenderer messageBoxRenderer;
     private final Font customFont;
-    public static final Rectangle messageBox = new Rectangle(200, 480, 600, 50);
 
     ////MODEL-VIEW SEPARATION PRINCIPLE: Renderer classes (BuildModeRenderer, PlayModeRenderer) manage graphical representation and rendering tasks without interfering with the model logic.
 
     public PlayModeRenderer() {
-        customFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f); // Piksel font
+        customFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f);
+        messageBoxRenderer = new MessageBoxRenderer(12f);
     }
 
     // Renders the entire Play Mode.
@@ -48,11 +49,11 @@ public class PlayModeRenderer {
         renderRuneRegion(g, currentHall);
         renderHUD(g, hero, hero.getRemainingTime());
         renderControllerButtons(g, exitButtonBounds, pauseButtonBounds);
-        renderMessageBox(g, messageBox);
         renderHero(g, hero);
         renderMonsters(g, monsters);
         renderArrows(g, GameManager.getMonsterManager());
 
+        messageBoxRenderer.renderMessageBox(g, GameManager.getMessageBox());
     }
 
     // Renders the floor background.
@@ -381,25 +382,6 @@ public class PlayModeRenderer {
         if (pauseSprite != null) {
             g.drawImage(pauseSprite, pauseButtonBounds.x, pauseButtonBounds.y, pauseButtonBounds.width, pauseButtonBounds.height, null);
         }
-    }
-
-    // TODO: The delay is unacceptable, needs fixing.
-    // Renders the message box with the current message.
-    public void renderMessageBox(Graphics2D g, MessageBox message) {
-        if(message.getMessage() == null || message.getTime() <= 0)
-            return;
-
-        g.setColor(Color.BLACK);
-        g.fillRoundRect(messageBox.x, messageBox.y, messageBox.width, messageBox.height, 10, 10);
-        g.setColor(Color.WHITE);
-        g.drawRoundRect(messageBox.x, messageBox.y, messageBox.width, messageBox.height, 10, 10);
-
-        g.setFont(new Font("Dialog", Font.PLAIN, 20));
-        try {
-            int textPosX = messageBox.x + (messageBox.width - g.getFontMetrics().stringWidth(message.getMessage())) / 2;
-            int textPosY = messageBox.y + ((messageBox.height - g.getFontMetrics().getHeight()) / 2) + g.getFontMetrics().getAscent();
-            g.drawString(message.getMessage(), textPosX, textPosY);
-        } catch (Exception e) {}
     }
 
 }

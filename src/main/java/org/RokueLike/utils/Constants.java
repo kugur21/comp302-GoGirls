@@ -51,5 +51,6 @@ public class Constants {
 
     public static final int MAX_TIME = 60;
     public static final int MAX_LIVES = 4;
+    public static final int EXTRA_TIME = 5;
 
 }

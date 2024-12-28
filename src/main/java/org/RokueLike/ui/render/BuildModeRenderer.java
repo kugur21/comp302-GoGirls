@@ -11,6 +11,7 @@ import static org.RokueLike.utils.Constants.*;
 
 public class BuildModeRenderer {
 
+    private final MessageBoxRenderer messageBoxRenderer;
     private static int selectedObject = 1; // Currently selected object in the inventory
     private final Font customFont;
 
@@ -18,6 +19,7 @@ public class BuildModeRenderer {
 
     public BuildModeRenderer() {
         customFont =  FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f); // Piksel font
+        messageBoxRenderer = new MessageBoxRenderer(12f);
     }
 
     // Renders the entire Build Mode, including halls and inventory.
@@ -30,6 +32,8 @@ public class BuildModeRenderer {
         renderHall(g, halls[1], BUILD_AIR_X, BUILD_AIR_Y, "Hall Of Air");
         renderHall(g, halls[2], BUILD_WATER_X, BUILD_WATER_Y, "Hall Of Water");
         renderHall(g, halls[3], BUILD_FIRE_X, BUILD_FIRE_Y, "Hall Of Fire");
+
+        messageBoxRenderer.renderMessageBox(g, BuildManager.getMessageBox());
     }
 
     // Renders the floor background and additional decorative elements.

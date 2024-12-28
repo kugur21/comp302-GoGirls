@@ -91,28 +91,20 @@ public class HallGrid {
         }
         Object randomObject = objects.get(random.nextInt(objects.size()));
         randomObject.setContainedRune();
-        System.out.println("Rune initialized in object at (" + randomObject.getPositionX() + ", " + randomObject.getPositionY() + ")");
     }
 
     // Opens a door if it is closed.
     public void openDoor() {
-        boolean doorOpened = false;
-
         for (int y = 0; y < getHeight(); y++) {
             for (int x = 0; x < getWidth(); x++) {
                 GridCell cell = grid[y][x];
-
                 if (cell instanceof Door door) {
                     if (!door.isOpen()) {
                         door.open(); // Open the door
-                        System.out.println("Door opened at (" + x + ", " + y + ").");
-                        doorOpened = true;
+                        return;
                     }
                 }
             }
-        }
-        if (!doorOpened) {
-            System.out.println("Door already unlocked, proceed to the next hall.");
         }
     }
 

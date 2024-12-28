@@ -1,40 +1,69 @@
 package org.RokueLike.utils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Deque;
+import java.util.LinkedList;
 
 public class MessageBox {
 
-    private List<String> messageQueue;
-    private List<Integer> times;
+    private static class Message {
+        private final String content;
+        private int timeRemaining;
 
-    public MessageBox() {
-        this.messageQueue = new ArrayList<>();
-        this.times = new ArrayList<>();
-    }
+        public Message(String content, int seconds) {
+            this.content = content;
+            this.timeRemaining = seconds * 1000;
+        }
 
-    public void addMessage(String message, int time) {
-        this.messageQueue.add(message);
-        this.times.add(time*100);
-    }
+        public String getContent() {
+            return content;
+        }
 
-    public String getMessage() {
-        try {
-            this.times.set(0, this.times.get(0)-1);
+        public int getTimeRemaining() {
+            return timeRemaining;
+        }
 
-            if(this.times.get(0) <= 0) {
-                this.times.removeFirst();
-                this.messageQueue.removeFirst();
-            }
-
-            return this.messageQueue.get(0);
-        } catch(IndexOutOfBoundsException e) {
-            return null;
+        public void decrementTime() {
+            this.timeRemaining--;
         }
     }
 
-    public int getTime() {
-        return this.times.getFirst();
+    private final Deque<Message> messageQueue;
+
+    public MessageBox() {
+        this.messageQueue = new LinkedList<>();
+    }
+
+    public void addMessage(String message, int time) {
+        if (message == null || time <= 0) {
+            return;
+        }
+        // Clear the current message if there is one
+        if (!messageQueue.isEmpty()) {
+            messageQueue.clear(); // Discard the current message and all waiting messages
+        }
+        this.messageQueue.addLast(new Message(message, time));
+    }
+
+    public String getMessage() {
+        if (messageQueue.isEmpty()) {
+            return null; // No messages
+        }
+
+        Message currentMessage = messageQueue.peekFirst();
+        currentMessage.decrementTime();
+
+        if (currentMessage.getTimeRemaining() <= 0) {
+            messageQueue.pollFirst(); // Remove the message when its time expires
+        }
+
+        return currentMessage.getContent();
+    }
+
+    public Integer getTime() {
+        if (messageQueue.isEmpty()) {
+            return null; // No messages
+        }
+        return messageQueue.peekFirst().getTimeRemaining();
     }
 
 }

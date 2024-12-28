@@ -1,5 +1,7 @@
 package org.RokueLike.domain;
 
+import org.RokueLike.utils.MessageBox;
+
 import javax.swing.*;
 import java.util.Random;
 
@@ -13,11 +15,14 @@ public class BuildManager {
     private static String[][] hallOfWater;
     private static String[][] hallOfFire;
 
+    private static MessageBox messageBox;
     private static final Random random = new Random();
 
     // Initializes all halls and their elements.
     public static void init() {
         System.out.println("[BuildManager]: Initializing build mode...");
+        messageBox = new MessageBox();
+
         hallOfEarth = createEmptyHall();
         hallOfAir = createEmptyHall();
         hallOfWater = createEmptyHall();
@@ -29,9 +34,9 @@ public class BuildManager {
         placeDoor(hallOfWater);
         placeDoor(hallOfFire);
 
+
         Timer timer = new Timer(10, new BuildLoop());
         timer.start();
-
         System.out.println("[BuildManager]: All halls initialized.");
     }
 
@@ -96,13 +101,12 @@ public class BuildManager {
 
         int placedObjects = getObjectCount(hallName);
         if (placedObjects >= objectLimit) {
-            System.out.println("[BuildManager]: Cannot place object. Hall is at full capacity.");
+            messageBox.addMessage("Can't place object. Hall is at full capacity.", 1);
             return;
         }
 
         if (x > 0 && x < GRID_WIDTH - 1 && y > 0 && y < GRID_HEIGHT - 1 && hall[y][x].equals(".") && notInFrontOfDoor(hall, x, y)) {
             hall[y][x] = "o" + objectType;
-            System.out.println("[BuildManager]: Object type " + objectType + " placed at (" + x + ", " + y + ") in " + hallName);
         } else {
             System.out.println("[BuildManager]: Invalid position or cell not empty.");
         }
@@ -172,6 +176,10 @@ public class BuildManager {
     // Returns all halls as a 3D array.
     public static String[][][] getAllHalls() {
         return new String[][][] {hallOfEarth, hallOfAir, hallOfWater, hallOfFire};
+    }
+
+    public static MessageBox getMessageBox() {
+        return messageBox;
     }
 
     // Checks if a position is not adjacent to a door.

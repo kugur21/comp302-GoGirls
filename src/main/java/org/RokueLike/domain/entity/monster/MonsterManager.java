@@ -47,10 +47,10 @@ public class MonsterManager {
         for (Monster monster : monsters) {
             switch (monster.getType()) {
                 case ARCHER:
-                    moveKeepingDistance(monster, monster.getAttackRange());
+                    moveAwayFromHero(monster, monster.getAttackRange());
                     break;
                 case FIGHTER:
-                    randomMove(monster);
+                    moveRandom(monster);
                     break;
             }
         }
@@ -225,36 +225,36 @@ public class MonsterManager {
     }
 
     // Moves a monster by keeping the distance with the hero, used by archer monster.
-    private void moveKeepingDistance(Monster archer, int attackRange) {
+    private void moveAwayFromHero(Monster monster, int attackRange) {
         int dirX = 0;
         int dirY = 0;
 
         // Prioritize horizontal or vertical movement (no diagonal movement allowed)
-        if (Math.abs(archer.getPositionX() - hero.getPositionX()) <= attackRange) {
-            dirX = (archer.getPositionX() > hero.getPositionX()) ? 1 : -1; // Move left or right
-        } else if (Math.abs(archer.getPositionY() - hero.getPositionY()) <= attackRange) {
-            dirY = (archer.getPositionY() > hero.getPositionY()) ? 1 : -1; // Move up or down
+        if (Math.abs(monster.getPositionX() - hero.getPositionX()) <= attackRange) {
+            dirX = (monster.getPositionX() > hero.getPositionX()) ? 1 : -1; // Move left or right
+        } else if (Math.abs(monster.getPositionY() - hero.getPositionY()) <= attackRange) {
+            dirY = (monster.getPositionY() > hero.getPositionY()) ? 1 : -1; // Move up or down
         }
 
         // Attempt to move in the prioritized direction
-        if (dirX != 0 && hallGrid.isSafeLocation(archer, dirX, 0)) {
+        if (dirX != 0 && hallGrid.isSafeLocation(monster, dirX, 0)) {
             // Set facing direction based on horizontal movement
             if (dirX > 0) {
-                archer.setFacing(Direction.RIGHT);
+                monster.setFacing(Direction.RIGHT);
             } else {
-                archer.setFacing(Direction.LEFT);
+                monster.setFacing(Direction.LEFT);
             }
-            archer.setPosition(archer.getPositionX() + dirX, archer.getPositionY());
-        } else if (dirY != 0 && hallGrid.isSafeLocation(archer, 0, dirY)) {
-            archer.setPosition(archer.getPositionX(), archer.getPositionY() + dirY);
+            monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY());
+        } else if (dirY != 0 && hallGrid.isSafeLocation(monster, 0, dirY)) {
+            monster.setPosition(monster.getPositionX(), monster.getPositionY() + dirY);
         } else {
             // If no safe prioritized direction, move randomly
-            randomMove(archer);
+            moveRandom(monster);
         }
     }
 
     // Moves a monster randomly to a safe location, used by fighter monster.
-    private void randomMove(Monster monster) {
+    private void moveRandom(Monster monster) {
         int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
         Random random = new Random();
 
