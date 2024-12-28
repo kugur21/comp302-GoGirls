@@ -42,9 +42,12 @@ public class MonsterManager {
         for (Monster monster : monsters) {
             switch (monster.getType()) {
                 case ARCHER:
-                    randomMoveAway(monster, monster.getAttackRange());
+                    //randomMoveAway(monster, monster.getAttackRange());
+                    randomMove(monster);
+                    break;
                 case FIGHTER:
                     randomMove(monster);
+                    break;
             }
         }
     }
@@ -68,7 +71,7 @@ public class MonsterManager {
         }
         Direction direction = calculateArrowDirection(archer);
         if (direction != null) {
-            Arrow arrow = new Arrow(archer, direction, attackRange);
+            Arrow arrow = new Arrow(archer, direction, attackRange, hallGrid);
             activeArrows.add(arrow);
         }
     }
@@ -136,11 +139,12 @@ public class MonsterManager {
             Arrow arrow = iterator.next();
             arrow.move();
 
-            if (arrow.getX() == hero.getPositionX() && arrow.getY() == hero.getPositionY()) {
-                killHero();
-                arrow.deactivate();
-            }
-            if (arrow.notActive()) {
+            if (arrow.isActive()) {
+                if (arrow.getX() == hero.getPositionX() && arrow.getY() == hero.getPositionY()) {
+                    killHero();
+                    arrow.deactivate();
+                }
+            } else {
                 iterator.remove();
             }
         }
@@ -190,9 +194,18 @@ public class MonsterManager {
     }
 
     private boolean heroNotInRange(Monster monster, int range) {
-        int distanceX = Math.abs(monster.getPositionX() - hero.getPositionX());
-        int distanceY = Math.abs(monster.getPositionY() - hero.getPositionY());
-        return (distanceX + distanceY) > range;
+        int distanceX = monster.getPositionX() - hero.getPositionX();
+        int distanceY = monster.getPositionY() - hero.getPositionY();
+
+        // Check if the hero is in the same row (horizontal) or column (vertical) within the range
+        if (distanceX == 0 && Math.abs(distanceY) <= range) {
+            // Hero is exactly north or south
+            return false;
+        } else if (distanceY == 0 && Math.abs(distanceX) <= range) {
+            // Hero is exactly east or west
+            return false;
+        }
+        return true; // Hero is not in the specified range
     }
 
     public void randomMoveAway(Monster archer, int attackRange) {
@@ -251,6 +264,10 @@ public class MonsterManager {
                 return; // Exit after moving once
             }
         }
+    }
+
+    public void clearArrows() {
+        activeArrows.clear();
     }
 
     public List<Arrow> getArrows() {

@@ -85,6 +85,7 @@ public class ItemManager {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION)) {
             hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
             GameManager.setCloakActive(true);
+            monsterManager.clearArrows();
             return "Cloak of Protection enchantment applied. Archer Monsters can't attack you.";
         } else {
             return "No Cloak of Protection enchantment available in hero's inventory.";
@@ -115,7 +116,8 @@ public class ItemManager {
     public Enchantment generateRandomEnchantment(int x, int y) {
         Enchantment.EnchantmentType[] enchantmentTypes = Enchantment.EnchantmentType.values();
         Enchantment.EnchantmentType randomType = enchantmentTypes[new Random().nextInt(enchantmentTypes.length)];
-        return new Enchantment(randomType, x, y);
+        //return new Enchantment(randomType, x, y);
+        return new Enchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION, x, y);
     }
 
 }

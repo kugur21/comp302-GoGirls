@@ -40,7 +40,7 @@ public class Constants {
     public static final int PLAY_GRID_OFFSET_Y = 50; // Y-offset for hall rendering
 
     public static final int GAME_DELAY = 100;
-    public static final int MONSTER_MOVEMENT_DELAY = 1000;
+    public static final int MONSTER_MOVEMENT_DELAY = 500;
     public static final int MONSTER_SPAWN = 8000;
     public static final int ENCHANTMENT_SPAWN = 12000;
     public static final int ENCHANTMENT_DURATION = 6000;
