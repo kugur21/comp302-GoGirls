@@ -2,8 +2,9 @@ package org.RokueLike.domain.hall;
 
 public class GridCell {
 
-    private String name;
+    private final String name; // Name of the cell (e.g., wall, floor, etc.)
 
+    // Coordinates of the cell
     protected int positionX;
     protected int positionY;
 
@@ -32,4 +33,5 @@ public class GridCell {
     public void setPositionY(int positionY) {
         this.positionY = positionY;
     }
+
 }

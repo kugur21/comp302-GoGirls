@@ -1,4 +1,4 @@
-package org.RokueLike.domain.utils;
+package org.RokueLike.utils;
 
 public enum Direction {
     LEFT,

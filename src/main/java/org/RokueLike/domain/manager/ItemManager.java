@@ -1,25 +1,26 @@
-package org.RokueLike.domain.entity.item;
+package org.RokueLike.domain.manager;
 
 import org.RokueLike.domain.GameManager;
-import org.RokueLike.domain.entity.hero.Hero;
-import org.RokueLike.domain.entity.monster.MonsterManager;
+import org.RokueLike.domain.model.entity.hero.Hero;
+import org.RokueLike.domain.model.item.Enchantment;
+import org.RokueLike.domain.model.item.Object;
 import org.RokueLike.domain.hall.HallGrid;
-import org.RokueLike.domain.utils.Direction;
 
 import java.util.Random;
 
+import static org.RokueLike.utils.Constants.*;
+
 public class ItemManager {
 
-    private HallGrid hallGrid;
-    private Hero hero;
-    private MonsterManager monsterManager;
+    private final HallGrid hallGrid; // The current hall grid
+    private final Hero hero; // The hero instance
 
     public ItemManager(HallGrid hallGrid, Hero hero, MonsterManager monsterManager) {
         this.hallGrid = hallGrid;
         this.hero = hero;
-        this.monsterManager = monsterManager;
     }
 
+    // Spawns a random enchantment at a safe location in the hall.
     public void spawnEnchantment() {
         int[] location = hallGrid.findRandomSafeCell();
         if (location == null) {
@@ -29,17 +30,19 @@ public class ItemManager {
         hallGrid.addEnchantment(enchantment);
     }
 
+    // Removes the current enchantment from the hall.
     public void disappearEnchantment() {
         if (hallGrid.getCurrentEnchantment() != null) {
             hallGrid.removeEnchantment();
         }
     }
 
+    // Collects the current enchantment and applies its effect to the hero.
     public String collectEnchantment() {
         Enchantment currentEnchantment = hallGrid.getCurrentEnchantment();
 
         if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_TIME) {
-            hero.addRemainingTime(5);
+            hero.addRemainingTime(EXTRA_TIME);
             hallGrid.removeEnchantment();
             return "Collected Extra Time! Gained 5 extra seconds.";
         } else if (currentEnchantment.getEnchantmentType() == Enchantment.EnchantmentType.EXTRA_LIFE) {
@@ -58,15 +61,17 @@ public class ItemManager {
         }
     }
 
-    public String useEnchantment(Enchantment.EnchantmentType enchantment, Direction direction) {
+    // Uses a specific enchantment from the hero's inventory.
+    public String useEnchantment(Enchantment.EnchantmentType enchantment, MonsterManager monsterManager) {
         return switch (enchantment) {
             case REVEAL -> applyReveal();
-            case CLOAK_OF_PROTECTION -> applyCloakOfProtection();
-            case LURING_GEM -> applyLuringGem(direction);
+            case CLOAK_OF_PROTECTION -> applyCloakOfProtection(monsterManager);
+            case LURING_GEM -> applyLuringGem();
             default -> "Invalid enchantment type.";
         };
     }
 
+    // Applies the Reveal enchantment, revealing the rune's region.
     public String applyReveal() {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)) {
             hero.useEnchantment(Enchantment.EnchantmentType.REVEAL);
@@ -81,37 +86,41 @@ public class ItemManager {
         }
     }
 
-    public String applyCloakOfProtection() {
+    // Applies the Cloak of Protection enchantment, preventing archer attacks.
+    public String applyCloakOfProtection(MonsterManager monsterManager) {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION)) {
             hero.useEnchantment(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
             GameManager.setCloakActive(true);
-            return "Cloak of Protection enchantment applied. Archer Monsters can't attack you.";
+            monsterManager.clearArrows();
+            return "Cloak of Protection active. Archers can't attack you.";
         } else {
-            return "No Cloak of Protection enchantment available in hero's inventory.";
+            return "Hero does not have a Cloak of Protection.";
         }
     }
 
-
-    public String applyLuringGem(Direction direction) {
+    // Applies the Luring Gem enchantment, allowing the hero to lure nearby fighter monsters.
+    public String applyLuringGem() {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.LURING_GEM)) {
             hero.useEnchantment(Enchantment.EnchantmentType.LURING_GEM);
-            monsterManager.processLuringGem(direction);
-            return "Luring Fighter Monsters in the direction " + direction.name();
+            GameManager.setLureActive(true);
+            return "Activating Luring Gem! Choose the direction (A,W,S,D)";
         } else {
-            return "No Luring Gem enchantment available in hero's inventory.";
+            return "Hero does not have a Luring Gem.";
         }
     }
 
+    // Interacts with an object on the grid, unlocking the door if it contains a rune.
     public String interactWithObject(Object object) {
         if (object.containsRune()) {
             object.removeContainedRune();
             hallGrid.openDoor();
             // TODO: Play a sound indicating the door is open
-            return "Congratulations! You found the rune, door is unlocked!";
+            return "You found the rune! Door is unlocked.";
         }
         return null;
     }
 
+    // Generates a random enchantment at a specific position.
     public Enchantment generateRandomEnchantment(int x, int y) {
         Enchantment.EnchantmentType[] enchantmentTypes = Enchantment.EnchantmentType.values();
         Enchantment.EnchantmentType randomType = enchantmentTypes[new Random().nextInt(enchantmentTypes.length)];

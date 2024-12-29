@@ -1,153 +1,115 @@
-
 package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
-import org.RokueLike.domain.entity.hero.Hero;
-import org.RokueLike.domain.entity.item.Arrow;
-import org.RokueLike.domain.entity.item.ArrowManager;
-import org.RokueLike.domain.entity.item.Door;
-import org.RokueLike.domain.entity.item.Enchantment;
-import org.RokueLike.domain.entity.monster.Monster;
+import org.RokueLike.domain.manager.TimeManager;
+import org.RokueLike.domain.model.entity.hero.Hero;
+import org.RokueLike.domain.model.entity.monster.Arrow;
+import org.RokueLike.domain.model.item.Door;
+import org.RokueLike.domain.model.item.Enchantment;
+import org.RokueLike.domain.model.entity.monster.Monster;
+import org.RokueLike.domain.manager.MonsterManager;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
-import org.RokueLike.domain.utils.MessageBox;
-import org.RokueLike.ui.FontLoader;
-import org.RokueLike.ui.Textures;
+import org.RokueLike.utils.Direction;
+import org.RokueLike.utils.MessageBox;
+import org.RokueLike.utils.FontLoader;
+import org.RokueLike.utils.Textures;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import static org.RokueLike.utils.Constants.*;
+
 public class PlayModeRenderer {
 
-    private static final int TILE_SIZE = 36;  // Tile size
-    private static final int GRID_OFFSET_X = 70;  // Grid X başlangıcı (100'den 70'e kaydırıldı)
-    private static final int GRID_OFFSET_Y = 50;  // Grid Y başlangıcı
-    private static final int WINDOW_WIDTH = 1150;  // Pencere genişliği
-    private static final int WINDOW_HEIGHT = 850;  // Pencere yüksekliği
-    private Font pixelFont; // Özel piksel fontu
-
-    public static final Rectangle messageBox = new Rectangle(200, 480, 600, 50);
-
-    public PlayModeRenderer() {
-        // Textures ve font yükleme
-        //Textures.init(); // Main de initialize edildiği için burada tekrar çağırılmasına gerek yok
-        addCustomSprites();
-        pixelFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f); // Piksel font
-    }
+    private final MessageBoxRenderer messageBoxRenderer;
+    private final Font customFont;
 
     ////MODEL-VIEW SEPARATION PRINCIPLE: Renderer classes (BuildModeRenderer, PlayModeRenderer) manage graphical representation and rendering tasks without interfering with the model logic.
 
-    /**
-     * Özel sprite'ları Textures sınıfına ekler.
-     */
-    private void addCustomSprites() {
-        Textures.addSprite("player", Textures.loadPNG("imagesekstra/player.png"));
-        Textures.addSprite("player_cloak", Textures.loadPNG("imagesekstra/player_cloak.png"));
-        Textures.addSprite("archer", Textures.loadPNG("imagesekstra/archer4x.png"));
-        Textures.addSprite("wizard", Textures.loadPNG("imagesekstra/wizard4x.png"));
-        Textures.addSprite("heart", Textures.loadPNG("imagesekstra/heart.png"));
-        Textures.addSprite("extra_time", Textures.loadPNG("imagesekstra/extra_time_1_.png"));
-        Textures.addSprite("extra_life", Textures.loadPNG("imagesekstra/extraheart.png"));
-        Textures.addSprite("reveal", Textures.loadPNG("imagesekstra/reveal.png"));
-        Textures.addSprite("cloak_of_protection", Textures.loadPNG("imagesekstra/protection.png"));
-        Textures.addSprite("luring_gem", Textures.loadPNG("imagesekstra/luringgem.png"));
-        Textures.addSprite("exit_button", Textures.loadPNG("imagesekstra/exit.png"));
-        Textures.addSprite("pause_button", Textures.loadPNG("imagesekstra/pause.png"));
-        Textures.addSprite("resume_button", Textures.loadPNG("imagesekstra/resume4x.png"));
-        Textures.addSprite("arrow_right", Textures.loadPNG("imagesekstra/arrowright.png"));
-        Textures.addSprite("arrow_left", Textures.loadPNG("imagesekstra/arrowleft.png"));
-        Textures.addSprite("arrow_up", Textures.loadPNG("imagesekstra/arrowup.png"));
-        Textures.addSprite("arrow_down", Textures.loadPNG("imagesekstra/arrowdown.png"));
-
-        System.out.println("[PlayModeRenderer]: Custom sprites loaded successfully!");
+    public PlayModeRenderer() {
+        customFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 12f);
+        messageBoxRenderer = new MessageBoxRenderer(12f);
     }
 
+    // Renders the entire Play Mode.
     public void renderPlayMode(Graphics2D g, Rectangle exitButtonBounds, Rectangle pauseButtonBounds) {
         HallGrid currentHall = GameManager.getCurrentHall();
         Hero hero = GameManager.getHero();
         List<Monster> monsters = GameManager.getActiveMonsters();
         MessageBox messageBox = GameManager.getMessageBox();
-
         if (currentHall == null || hero == null) return;
-        int remainingTime = hero.getRemainingTime();
-
 
         // High Cohesion and Low Coupling
         renderFloor(g);
         renderMudClusters(g);
         renderGrid(g, currentHall);
         renderRuneRegion(g, currentHall);
-        renderMonsters(g, monsters);
-        renderArrows(g, GameManager.getArrowManager());
-
-
-
-
-        renderHero(g, hero);
-        renderEnchantments(g, currentHall);
-        renderHUD(g, hero, remainingTime);
+        renderHUD(g, hero, hero.getRemainingTime());
         renderControllerButtons(g, exitButtonBounds, pauseButtonBounds);
-        renderMessageBox(g, messageBox);
+        renderHero(g, hero);
+        renderMonsters(g, monsters);
+        renderArrows(g, GameManager.getMonsterManager());
 
+        messageBoxRenderer.renderMessageBox(g, GameManager.getMessageBox());
     }
 
+    // Renders the floor background.
     private void renderFloor(Graphics2D g) {
         BufferedImage floorPlainImage = Textures.getSprite("floor_plain");
         if (floorPlainImage != null) {
-            for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y++) {
-                for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x++) {
-                    g.drawImage(floorPlainImage, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+            for (int y = 0; y < PLAY_WINDOW_HEIGHT / PLAY_TILE_SIZE; y++) {
+                for (int x = 0; x < PLAY_WINDOW_WIDTH / PLAY_TILE_SIZE; x++) {
+                    g.drawImage(floorPlainImage, x * PLAY_TILE_SIZE, y * PLAY_TILE_SIZE, PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
                 }
             }
         }
     }
 
+    // Renders mud clusters for visual diversity.
     private void renderMudClusters(Graphics2D g) {
-        for (int y = 0; y < WINDOW_HEIGHT / TILE_SIZE; y += 12) {
-            for (int x = 0; x < WINDOW_WIDTH / TILE_SIZE; x += 12) {
+        for (int y = 0; y < PLAY_WINDOW_HEIGHT / PLAY_TILE_SIZE; y += 12) {
+            for (int x = 0; x < PLAY_WINDOW_WIDTH / PLAY_TILE_SIZE; x += 12) {
                 renderMudPattern(g, x, y);
             }
         }
     }
 
+    // Draws a single mud cluster.
     private void renderMudPattern(Graphics2D g, int clusterX, int clusterY) {
-
-        g.drawImage(Textures.getSprite("floor_mud_nw"), clusterX * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_n_1"), (clusterX + 1) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_n_2"), (clusterX + 2) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_ne"), (clusterX + 3) * TILE_SIZE, clusterY * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-
-
-        g.drawImage(Textures.getSprite("floor_mud_w"), clusterX * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_mid_1"), (clusterX + 1) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_mid_2"), (clusterX + 2) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_e"), (clusterX + 3) * TILE_SIZE, (clusterY + 1) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-
-
-        g.drawImage(Textures.getSprite("floor_mud_sw"), clusterX * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_s_1"), (clusterX + 1) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_s_2"), (clusterX + 2) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
-        g.drawImage(Textures.getSprite("floor_mud_se"), (clusterX + 3) * TILE_SIZE, (clusterY + 2) * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+        String[][] clusterSprites = {
+                {"floor_mud_nw", "floor_mud_n_1", "floor_mud_n_2", "floor_mud_ne"}, // Top row
+                {"floor_mud_w", "floor_mud_mid_1", "floor_mud_mid_2", "floor_mud_e"}, // Middle row
+                {"floor_mud_sw", "floor_mud_s_1", "floor_mud_s_2", "floor_mud_se"} // Bottom row
+        };
+        for (int row = 0; row < clusterSprites.length; row++) {
+            for (int col = 0; col < clusterSprites[row].length; col++) {
+                String spriteName = clusterSprites[row][col];
+                BufferedImage sprite = Textures.getSprite(spriteName);
+                if (sprite != null) {
+                    int x = (clusterX + col) * BUILD_TILE_SIZE;
+                    int y = (clusterY + row) * BUILD_TILE_SIZE;
+                    g.drawImage(sprite, x, y, BUILD_TILE_SIZE, BUILD_TILE_SIZE, null);
+                } else {
+                    System.err.println("[BuildModeRenderer]: Sprite not found - " + spriteName);
+                }
+            }
+        }
     }
 
-
-
+    // Renders the hall grid, tiles, and decorations.
     private void renderGrid(Graphics2D g, HallGrid hall) {
         BufferedImage floorImage = Textures.getSprite("floor_plain");
-
         for (int y = 0; y < hall.getHeight(); y++) {
             for (int x = 0; x < hall.getWidth(); x++) {
                 // Render floor_plain first
                 if (floorImage != null) {
-                    g.drawImage(floorImage, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+                    g.drawImage(floorImage, PLAY_GRID_OFFSET_X + x * PLAY_TILE_SIZE, PLAY_GRID_OFFSET_Y + y * PLAY_TILE_SIZE, PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
                 }
-
-
                 if ((x % 6 == 0 && y % 6 == 0)) {
-                    renderMudPattern(g, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE);
+                    renderMudPattern(g, PLAY_GRID_OFFSET_X + x * PLAY_TILE_SIZE, PLAY_GRID_OFFSET_Y + y * PLAY_TILE_SIZE);
                 }
-
 
                 GridCell cell = hall.getCell(x, y);
                 drawTile(g, cell, x, y);
@@ -155,8 +117,7 @@ public class PlayModeRenderer {
         }
     }
 
-
-
+    // Draws specific tiles like walls, doors, and interactive objects.
     private void drawTile(Graphics2D g, GridCell cell, int x, int y) {
         if (cell == null) {
             System.err.println("[PlayModeRenderer]: Null cell at (" + x + ", " + y + ")");
@@ -171,11 +132,11 @@ public class PlayModeRenderer {
                 img = Textures.getSprite("door_closed");
             }
 
-            int doorSize = TILE_SIZE + 12; // Kapının boyutunu artırmak için ekleme yapıldı
+            int doorSize = PLAY_TILE_SIZE + 12;
             if (img != null) {
                 g.drawImage(img,
-                        GRID_OFFSET_X + x * TILE_SIZE - (doorSize - TILE_SIZE) / 2,
-                        GRID_OFFSET_Y + y * TILE_SIZE - (doorSize - TILE_SIZE) / 2,
+                        PLAY_GRID_OFFSET_X + x * PLAY_TILE_SIZE - (doorSize - PLAY_TILE_SIZE) / 2,
+                        PLAY_GRID_OFFSET_Y + y * PLAY_TILE_SIZE - (doorSize - PLAY_TILE_SIZE) / 2,
                         doorSize, doorSize, null);
             }
             return;
@@ -187,96 +148,152 @@ public class PlayModeRenderer {
                 case "object4" -> Textures.getSprite("torch_4");
                 case "object5" -> Textures.getSprite("box");
                 case "object6" -> Textures.getSprite("boxes_stacked");
-                case "skull" -> Textures.getSprite("skull");
                 case "wall" -> Textures.getSprite("wall_center");
                 case "floor" -> Textures.getSprite("floor_plain");
-                case "extra_time_enchantment" -> Textures.getSprite("extra_time");
-                case "extra_life_enchantment" -> Textures.getSprite("extra_life");
-                case "reveal_enchantment" -> Textures.getSprite("reveal");
-                case "luring_gem_enchantment" -> Textures.getSprite("luring_gem");
+                case "extra_time" -> Textures.getSprite("extra_time_1_");
+                case "extra_life" -> Textures.getSprite("extraheart");
+                case "reveal" -> Textures.getSprite("reveal");
+                case "luring_gem" -> Textures.getSprite("luringgem");
+                case "cloak_of_protection" -> Textures.getSprite("protection");
                 default -> Textures.getSprite("black");
             };
         }
         if (img != null) {
-            g.drawImage(img, GRID_OFFSET_X + x * TILE_SIZE, GRID_OFFSET_Y + y * TILE_SIZE, TILE_SIZE, TILE_SIZE, null);
+            g.drawImage(img, PLAY_GRID_OFFSET_X + x * PLAY_TILE_SIZE, PLAY_GRID_OFFSET_Y + y * PLAY_TILE_SIZE, PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
         } else {
             System.err.println("[Textures]: Missing sprite for " + cell.getName());
         }
     }
 
-
-
+    // Highlights rune regions when reveal power is active
     private void renderRuneRegion(Graphics2D g, HallGrid hall) {
         if (!GameManager.isRevealActive()) {
             return;
         }
 
-        //Activation Check above
-
-        int[][] runeRegion = hall.findRuneRegion(4); // Adjust the bound parameter as needed
+        int[][] runeRegion = hall.findRuneRegion(4);
         if (runeRegion == null) {
             return; // Exit if no rune region is defined
         }
-        //
         // Rune region looping starts below
         for (int[] coord : runeRegion) {
             int x = coord[0];
             int y = coord[1];
 
             // Calculate position
-            int renderX = GRID_OFFSET_X + x * TILE_SIZE;
-            int renderY = GRID_OFFSET_Y + y * TILE_SIZE;
+            int renderX = PLAY_GRID_OFFSET_X + x * PLAY_TILE_SIZE;
+            int renderY = PLAY_GRID_OFFSET_Y + y * PLAY_TILE_SIZE;
 
             //Color setting to make it highlighted
             g.setColor(new Color(222, 222, 176, 128)); // Light yellow with high transparency
-            g.drawRect(renderX, renderY, TILE_SIZE, TILE_SIZE);
-
-
+            g.drawRect(renderX, renderY, PLAY_TILE_SIZE, PLAY_TILE_SIZE);
             g.setColor(new Color(225, 225, 183, 64)); // Even lighter yellow
-            g.fillRect(renderX + 2, renderY + 2, TILE_SIZE - 4, TILE_SIZE - 4);
-
+            g.fillRect(renderX + 2, renderY + 2, PLAY_TILE_SIZE - 4, PLAY_TILE_SIZE - 4);
         }
-
     }
 
-    private void renderEnchantments(Graphics2D g, HallGrid hall) {
-        for (int y = 0; y < hall.getHeight(); y++) {
-            for (int x = 0; x < hall.getWidth(); x++) {
-                GridCell cell = hall.getCell(x, y);
-                if (cell instanceof Enchantment enchantment) {
-                    BufferedImage img = Textures.getSprite(enchantment.getEnchantmentType().getName());
-                    if (img != null) {
-                        g.drawImage(img,
-                                GRID_OFFSET_X + x * TILE_SIZE,
-                                GRID_OFFSET_Y + y * TILE_SIZE,
-                                TILE_SIZE, TILE_SIZE, null);
-                    }
-                }
+    // Renders the hero character sprite with effects like cloak or immunity
+    private void renderHero(Graphics2D g, Hero hero) {
+        BufferedImage heroSprite = GameManager.isCloakActive()
+                ? Textures.getSprite("protection")
+                : Textures.getSprite("player");
+
+        if (heroSprite == null) {
+            System.err.println("[PlayModeRenderer]: Failed to load hero sprite");
+            return;
+        }
+
+        // Set transparency
+        float transparency = hero.isImmune() ? 0.5f : 1f;
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, transparency));
+
+        // Determine flipping and alignment
+        boolean shouldFlip = (GameManager.isCloakActive() && hero.getFacing() == Direction.RIGHT)
+                || (!GameManager.isCloakActive() && hero.getFacing() != Direction.RIGHT);
+
+        drawEntitySprite(g, heroSprite, hero.getPositionX(), hero.getPositionY(), shouldFlip);
+
+        // Reset transparency
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+    }
+
+    // Renders all active monsters on the grid
+    private void renderMonsters(Graphics2D g, List<Monster> monsters) {
+        for (Monster monster : monsters) {
+            // Determine the sprite based on monster type
+            String spriteName = switch (monster.getType()) {
+                case ARCHER -> "archer4x";
+                case FIGHTER -> "fighter4x";
+                case WIZARD -> "wizard4x";
+            };
+
+            BufferedImage monsterSprite = Textures.getSprite(spriteName);
+            if (monsterSprite != null) {
+                // Determine if the monster is facing left or right
+                boolean shouldFlip = monster.getFacing() == Direction.RIGHT;
+
+                // Use the shared drawHeroSprite method to render the monster
+                drawEntitySprite(g, monsterSprite, monster.getPositionX(), monster.getPositionY(), !shouldFlip);
+            } else {
+                System.err.println("[PlayModeRenderer]: Failed to load monster sprite for " + monster.getType());
             }
         }
     }
 
+    // Helper method to draw the sprite
+    private void drawEntitySprite(Graphics2D g, BufferedImage sprite, int positionX, int positionY, boolean flip) {
+        int x = PLAY_GRID_OFFSET_X + (flip ? positionX + 1 : positionX) * PLAY_TILE_SIZE;
+        int width = flip ? -PLAY_TILE_SIZE : PLAY_TILE_SIZE;
+        int y = PLAY_GRID_OFFSET_Y + positionY * PLAY_TILE_SIZE;
+
+        g.drawImage(sprite, x, y, width, PLAY_TILE_SIZE, null);
+    }
+
+    // Renders arrows fired by monsters
+    private void renderArrows(Graphics2D g, MonsterManager monsterManager) {
+        for (Arrow arrow : monsterManager.getArrows()) {
+            BufferedImage arrowSprite = null;
+
+            switch (arrow.getDirection()) {
+                case UP -> arrowSprite = Textures.getSprite("arrowup");
+                case DOWN -> arrowSprite = Textures.getSprite("arrowdown");
+                case LEFT -> arrowSprite = Textures.getSprite("arrowleft");
+                case RIGHT -> arrowSprite = Textures.getSprite("arrowright");
+            }
+
+            if (arrowSprite != null) {
+                g.drawImage(arrowSprite,
+                        PLAY_GRID_OFFSET_X + arrow.getX() * PLAY_TILE_SIZE,
+                        PLAY_GRID_OFFSET_Y + arrow.getY() * PLAY_TILE_SIZE,
+                        PLAY_TILE_SIZE, PLAY_TILE_SIZE, null);
+            }
+        }
+    }
+
+    // Draws the HUD (heads-up display) showing the hero's status.
     private void renderHUD(Graphics2D g, Hero hero, int remainingTime) {
-        int HUD_X = GRID_OFFSET_X + GameManager.getCurrentHall().getWidth() * TILE_SIZE + 30; // Daha sola kaydırıldı
-        int HUD_Y = GRID_OFFSET_Y;
+        int HUD_X = PLAY_GRID_OFFSET_X + GameManager.getCurrentHall().getWidth() * PLAY_TILE_SIZE + 30;
+        int HUD_Y = PLAY_GRID_OFFSET_Y;
         int HUD_WIDTH = 200;
 
         HallGrid currentHall = GameManager.getCurrentHall();
-        int gridHeight = currentHall.getHeight() * TILE_SIZE;
+        int gridHeight = currentHall.getHeight() * PLAY_TILE_SIZE;
 
-        g.setColor(new Color(163, 137, 134)); // Yeni morumsu ve buğdayımsı renk
+        // Background of the HUD
+        g.setColor(new Color(163, 137, 134)); // A soft purple-beige color
         g.fillRoundRect(HUD_X, HUD_Y, HUD_WIDTH, gridHeight, 20, 20);
 
-        g.setFont(pixelFont);
+        // Display remaining time
+        g.setFont(customFont);
         g.setColor(Color.LIGHT_GRAY);
         g.drawString("Time:", HUD_X + 15, HUD_Y + 90);
         g.drawString(remainingTime + " seconds", HUD_X + 15, HUD_Y + 110);
 
-        renderHearts(g, hero, HUD_X + 15, HUD_Y + 150);
-        renderInventory(g, HUD_X + 15, HUD_Y + 190);
-
+        renderHearts(g, hero, HUD_X + 15, HUD_Y + 150); // Render hero's lives
+        renderInventory(g, HUD_X + 15, HUD_Y + 190); // Render inventory items
     }
 
+    // Renders hero's lives as heart icons.
     private void renderHearts(Graphics2D g, Hero hero, int heartX, int heartY) {
         BufferedImage heartImg = Textures.getSprite("heart");
         if (heartImg != null) {
@@ -288,29 +305,39 @@ public class PlayModeRenderer {
         }
     }
 
+    // Draws the inventory UI and items collected by the hero.
     private void renderInventory(Graphics2D g, int inventoryX, int inventoryY) {
         BufferedImage inventoryBg = Textures.getSprite("Inventory");
         int inventoryWidth = 180;
         int inventoryHeight = 270;
 
+        // Background for the inventory
         if (inventoryBg != null) {
             g.drawImage(inventoryBg, inventoryX, inventoryY, inventoryWidth, inventoryHeight, null);
         }
 
+        // Render individual items in the inventory
         int slotSize = 30;
         int gap = 10;
         int itemStartX = inventoryX + 35;
         int itemStartY = inventoryY + 100;
 
-        List<Enchantment.EnchantmentType> heroInventory = GameManager.getHero().getInventory().getItems();
-
+        List<Enchantment.EnchantmentType> heroInventory = GameManager.getHero().getInventory().getEnchantments();
         for (int i = 0; i < heroInventory.size(); i++) {
             g.setColor(new Color(80, 80, 100));
             g.fillRect(itemStartX + (i % 3) * (slotSize + gap),
                     itemStartY + (i / 3) * (slotSize + gap),
                     slotSize, slotSize);
 
-            BufferedImage itemImg = Textures.getSprite(heroInventory.get(i).getName());
+            BufferedImage itemImg;
+            switch (heroInventory.get(i).getName()) {
+                case "extra_time" -> itemImg = Textures.getSprite("extra_time_1_");
+                case "extra_life" -> itemImg = Textures.getSprite("extraheart");
+                case "reveal" -> itemImg = Textures.getSprite("reveal");
+                case "luring_gem" -> itemImg = Textures.getSprite("luringgem");
+                case "cloak_of_protection" -> itemImg = Textures.getSprite("protection");
+                default -> itemImg = Textures.getSprite("black");
+            }
             if (itemImg != null) {
                 g.drawImage(itemImg,
                         itemStartX + (i % 3) * (slotSize + gap),
@@ -318,124 +345,42 @@ public class PlayModeRenderer {
                         slotSize, slotSize, null);
             }
         }
+
+        // Display active effects (cloak and reveal timers)
+        renderActiveEffects(g, inventoryX, inventoryY, inventoryHeight);
+    }
+
+    // Displays active effects like cloak and reveal timers.
+    private void renderActiveEffects(Graphics2D g, int inventoryX, int inventoryY, int inventoryHeight) {
         if (GameManager.isCloakActive()) {
-            int remainingCloakTime = GameManager.remainingCloakTimer();
+            int remainingCloakTime = TimeManager.remainingCloakTimer();
             if (remainingCloakTime > 0) {
-                g.setFont(pixelFont);
+                g.setFont(customFont);
                 g.setColor(Color.WHITE);
-
-                int cloakTextX = inventoryX + 10;
-                int cloakTextY = inventoryY + inventoryHeight + 20;
-
-                g.drawString("Cloak: " + remainingCloakTime + "s", cloakTextX, cloakTextY);
+                g.drawString("Cloak: " + remainingCloakTime + "s", inventoryX + 10, inventoryY + inventoryHeight + 20);
             }
         }
         if (GameManager.isRevealActive()) {
-            int remainingRevealTime = GameManager.remainingRevealTimer();
+            int remainingRevealTime = TimeManager.remainingRevealTimer();
             if (remainingRevealTime > 0) {
-                g.setFont(pixelFont);
+                g.setFont(customFont);
                 g.setColor(Color.WHITE);
-
-                int cloakTextX = inventoryX + 10;
-                int cloakTextY = inventoryY + inventoryHeight + 20;
-
-                g.drawString("Reveal: " + remainingRevealTime + "s", cloakTextX, cloakTextY);
+                g.drawString("Reveal: " + remainingRevealTime + "s", inventoryX + 10, inventoryY + inventoryHeight + 40);
             }
         }
     }
 
+    // Draws exit and pause buttons.
     public void renderControllerButtons(Graphics2D g, Rectangle exitButtonBounds, Rectangle pauseButtonBounds) {
-        BufferedImage exitSprite = Textures.getSprite("exit_button");
+        BufferedImage exitSprite = Textures.getSprite("exit");
         if (exitSprite != null) {
             g.drawImage(exitSprite, exitButtonBounds.x, exitButtonBounds.y, exitButtonBounds.width, exitButtonBounds.height, null);
         }
-        String spriteName = GameManager.isPaused() ? "resume_button" : "pause_button";
+        String spriteName = GameManager.isPaused() ? "resume4x" : "pause";
         BufferedImage pauseSprite = Textures.getSprite(spriteName);
         if (pauseSprite != null) {
             g.drawImage(pauseSprite, pauseButtonBounds.x, pauseButtonBounds.y, pauseButtonBounds.width, pauseButtonBounds.height, null);
         }
     }
-
-    public void renderMessageBox(Graphics2D g, MessageBox message) {
-        if(message.getMessage() == null || message.getTime() <= 0)
-            return;
-
-        g.setColor(Color.BLACK);
-        g.fillRoundRect(messageBox.x, messageBox.y, messageBox.width, messageBox.height, 10, 10);
-        g.setColor(Color.WHITE);
-        g.drawRoundRect(messageBox.x, messageBox.y, messageBox.width, messageBox.height, 10, 10);
-
-        g.setFont(new Font("Dialog", Font.PLAIN, 20));
-
-        try {
-            int textPosX = messageBox.x + (messageBox.width - g.getFontMetrics().stringWidth(message.getMessage())) / 2;
-            int textPosY = messageBox.y + ((messageBox.height - g.getFontMetrics().getHeight()) / 2) + g.getFontMetrics().getAscent();
-            g.drawString(message.getMessage(), textPosX, textPosY);
-        } catch(NullPointerException e) {
-        }
-    }
-
-    private void renderHero(Graphics2D g, Hero hero) {
-        BufferedImage heroSprite = Textures.getSprite("player"); // Default sprite
-        if (heroSprite != null) {
-            if (GameManager.isCloakActive()) {
-                heroSprite = Textures.getSprite("cloak_of_protection");
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
-            } else if (hero.isImmune()) {
-                // 50% transparency
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f)); // 50% transparency
-            } else {
-                // Full opaque
-                g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f)); // Full opacity
-            }
-
-            g.drawImage(heroSprite,
-                    GRID_OFFSET_X + hero.getPositionX() * TILE_SIZE,
-                    GRID_OFFSET_Y + hero.getPositionY() * TILE_SIZE,
-                    TILE_SIZE, TILE_SIZE, null);
-
-            // Reset transparency
-            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-        }
-    }
-
-    private void renderMonsters(Graphics2D g, List<Monster> monsters) {
-        for (Monster monster : monsters) {
-            String spriteName = switch (monster.getType()) {
-                case ARCHER -> "archer";
-                case FIGHTER -> "fighter4x";
-                case WIZARD -> "wizard";
-            };
-
-            BufferedImage monsterSprite = Textures.getSprite(spriteName);
-            if (monsterSprite != null) {
-                g.drawImage(monsterSprite,
-                        GRID_OFFSET_X + monster.getPositionX() * TILE_SIZE,
-                        GRID_OFFSET_Y + monster.getPositionY() * TILE_SIZE,
-                        TILE_SIZE, TILE_SIZE, null);
-            }
-        }
-    }
-    private void renderArrows(Graphics2D g, ArrowManager arrowManager) {
-        for (Arrow arrow : arrowManager.getArrows()) {
-            BufferedImage arrowSprite = null;
-
-            switch (arrow.getDirection()) {
-                case UP -> arrowSprite = Textures.getSprite("arrow_up");
-                case DOWN -> arrowSprite = Textures.getSprite("arrow_down");
-                case LEFT -> arrowSprite = Textures.getSprite("arrow_left");
-                case RIGHT -> arrowSprite = Textures.getSprite("arrow_right");
-            }
-
-            if (arrowSprite != null) {
-                g.drawImage(arrowSprite,
-                        GRID_OFFSET_X + arrow.getX() * TILE_SIZE,
-                        GRID_OFFSET_Y + arrow.getY() * TILE_SIZE,
-                        TILE_SIZE, TILE_SIZE, null);
-            }
-        }
-    }
-
-
 
 }

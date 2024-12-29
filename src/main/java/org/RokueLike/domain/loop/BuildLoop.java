@@ -1,5 +1,6 @@
-package org.RokueLike.domain;
+package org.RokueLike.domain.loop;
 
+import org.RokueLike.domain.manager.BuildManager;
 import org.RokueLike.ui.render.BuildModeRenderer;
 import org.RokueLike.ui.input.MouseBuild;
 import java.awt.event.ActionEvent;
@@ -9,7 +10,6 @@ public class BuildLoop implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // Check if a mouse click has been registered
         if (MouseBuild.isMouseClicked()) {
             // Get the last click coordinates
             int[] coords = MouseBuild.getLastClickCoordinates();
@@ -25,4 +25,5 @@ public class BuildLoop implements ActionListener {
             MouseBuild.resetMouseClick();
         }
     }
+
 }

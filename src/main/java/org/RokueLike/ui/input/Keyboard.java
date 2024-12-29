@@ -7,8 +7,9 @@ import java.util.HashMap;
 
 public class Keyboard implements KeyListener {
 
-    private static boolean[] keys;
+    private static boolean[] keys; // Tracks the pressed state of all keys
 
+    // Maps action names to corresponding key codes
     private static final Map<String, Integer> keyBindings = new HashMap<>();
     static {
         keyBindings.put("UP", KeyEvent.VK_UP);
@@ -25,21 +26,19 @@ public class Keyboard implements KeyListener {
     }
 
     //Classes like MouseBuild, MousePlay, and Keyboard bridge input events from the UI to the GameManager
-
     public Keyboard() {
         keys = new boolean[256];
     }
 
-    @Override
-    public void keyTyped(KeyEvent e) {}
+    // Checks if a specific action's key is currently pressed
+    public static boolean isKeyPressed(String action) {
+        Integer keyCode = keyBindings.get(action);
+        return keyCode != null && keys[keyCode];
+    }
 
     @Override
     public void keyPressed(KeyEvent e) {
         keys[e.getKeyCode()] = true;
-
-        if (e.getKeyCode() == keyBindings.get("USE_LURING")) {
-            System.out.println("Luring mode activated. Choose a direction (A, D, W, S).");
-        }
     }
 
     @Override
@@ -47,9 +46,7 @@ public class Keyboard implements KeyListener {
         keys[e.getKeyCode()] = false;
     }
 
-    public static boolean isKeyPressed(String action) {
-        Integer keyCode = keyBindings.get(action);
-        return keyCode != null && keys[keyCode];
-    }
+    @Override
+    public void keyTyped(KeyEvent e) {}
 
 }

@@ -234,11 +234,11 @@ CodeHeap 'non-nmethods': size=5712Kb used=1524Kb max_used=1569Kb free=4187Kb
  full_count=0
 
 Compilation events (20 events):
-Event: 363.230 Thread 0x000000013e957e00 5738       3       org.RokueLike.domain.entity.item.Object::setContainedRune (6 bytes)
+Event: 363.230 Thread 0x000000013e957e00 5738       3       org.RokueLike.domain.model.item.Object::setContainedRune (6 bytes)
 Event: 363.230 Thread 0x000000013e957e00 nmethod 5738 0x000000010f01a790 code [0x000000010f01a900, 0x000000010f01aa20]
 Event: 370.338 Thread 0x000000013e957e00 5778       3       org.RokueLike.domain.hall.HallGrid::changeRuneLocation (123 bytes)
 Event: 370.351 Thread 0x000000013e957e00 nmethod 5778 0x000000010f01aa90 code [0x000000010f01b500, 0x000000010f01f4b8]
-Event: 370.351 Thread 0x000000013e957e00 5777       3       org.RokueLike.domain.entity.monster.MonsterManager::processWizardBehavior (10 bytes)
+Event: 370.351 Thread 0x000000013e957e00 5777       3       org.RokueLike.domain.manager.MonsterManager::processWizardBehavior (10 bytes)
 Event: 370.352 Thread 0x000000013e957e00 nmethod 5777 0x000000010f020a90 code [0x000000010f020c40, 0x000000010f020de0]
 Event: 376.445 Thread 0x000000013e957e00 5812       3       java.util.Random::seedUniquifier (29 bytes)
 Event: 376.446 Thread 0x000000013e957e00 nmethod 5812 0x000000010f020f10 code [0x000000010f0210c0, 0x000000010f0212e0]
