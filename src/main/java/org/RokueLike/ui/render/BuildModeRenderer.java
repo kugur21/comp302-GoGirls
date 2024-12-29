@@ -1,6 +1,6 @@
 package org.RokueLike.ui.render;
 
-import org.RokueLike.domain.BuildManager;
+import org.RokueLike.domain.manager.BuildManager;
 import org.RokueLike.utils.FontLoader;
 import org.RokueLike.utils.Textures;
 

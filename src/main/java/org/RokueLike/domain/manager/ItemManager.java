@@ -1,8 +1,9 @@
-package org.RokueLike.domain.entity.item;
+package org.RokueLike.domain.manager;
 
 import org.RokueLike.domain.GameManager;
-import org.RokueLike.domain.entity.hero.Hero;
-import org.RokueLike.domain.entity.monster.MonsterManager;
+import org.RokueLike.domain.model.entity.hero.Hero;
+import org.RokueLike.domain.model.item.Enchantment;
+import org.RokueLike.domain.model.item.Object;
 import org.RokueLike.domain.hall.HallGrid;
 
 import java.util.Random;

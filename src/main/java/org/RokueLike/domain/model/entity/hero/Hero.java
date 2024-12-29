@@ -1,7 +1,7 @@
-package org.RokueLike.domain.entity.hero;
+package org.RokueLike.domain.model.entity.hero;
 
-import org.RokueLike.domain.entity.EntityCell;
-import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
+import org.RokueLike.domain.model.entity.EntityCell;
+import org.RokueLike.domain.model.item.Enchantment.EnchantmentType;
 import static org.RokueLike.utils.Constants.*;
 
 public class Hero extends EntityCell {

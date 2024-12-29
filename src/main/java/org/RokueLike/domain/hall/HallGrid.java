@@ -1,10 +1,10 @@
 package org.RokueLike.domain.hall;
 
-import org.RokueLike.domain.entity.EntityCell;
-import org.RokueLike.domain.entity.item.Door;
-import org.RokueLike.domain.entity.item.Enchantment;
-import org.RokueLike.domain.entity.item.Object;
-import org.RokueLike.domain.entity.monster.Monster;
+import org.RokueLike.domain.model.entity.EntityCell;
+import org.RokueLike.domain.model.item.Door;
+import org.RokueLike.domain.model.item.Enchantment;
+import org.RokueLike.domain.model.item.Object;
+import org.RokueLike.domain.model.entity.monster.Monster;
 
 import java.util.ArrayList;
 import java.util.List;

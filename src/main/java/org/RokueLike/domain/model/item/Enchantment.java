@@ -1,5 +1,5 @@
 
-package org.RokueLike.domain.entity.item;
+package org.RokueLike.domain.model.item;
 
 import org.RokueLike.domain.hall.GridCell;
 

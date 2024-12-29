@@ -1,5 +1,6 @@
-package org.RokueLike.domain;
+package org.RokueLike.domain.manager;
 
+import org.RokueLike.domain.loop.BuildLoop;
 import org.RokueLike.utils.MessageBox;
 
 import javax.swing.*;

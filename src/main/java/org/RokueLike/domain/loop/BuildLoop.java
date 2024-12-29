@@ -1,5 +1,6 @@
-package org.RokueLike.domain;
+package org.RokueLike.domain.loop;
 
+import org.RokueLike.domain.manager.BuildManager;
 import org.RokueLike.ui.render.BuildModeRenderer;
 import org.RokueLike.ui.input.MouseBuild;
 import java.awt.event.ActionEvent;

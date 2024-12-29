@@ -1,15 +1,19 @@
 package org.RokueLike.domain;
 
-import org.RokueLike.domain.entity.hero.Hero;
-import org.RokueLike.domain.entity.hero.HeroManager;
-import org.RokueLike.domain.entity.item.*;
-import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
-import org.RokueLike.domain.entity.item.Object;
-import org.RokueLike.domain.entity.monster.Monster;
-import org.RokueLike.domain.entity.monster.MonsterManager;
+import org.RokueLike.domain.loop.GameLoop;
+import org.RokueLike.domain.model.entity.hero.Hero;
+import org.RokueLike.domain.manager.HeroManager;
+import org.RokueLike.domain.model.item.*;
+import org.RokueLike.domain.model.item.Enchantment.EnchantmentType;
+import org.RokueLike.domain.model.item.Object;
+import org.RokueLike.domain.model.entity.monster.Monster;
+import org.RokueLike.domain.manager.MonsterManager;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
-import org.RokueLike.domain.hall.HallManager;
+import org.RokueLike.domain.manager.HallManager;
+import org.RokueLike.domain.manager.BuildManager;
+import org.RokueLike.domain.manager.ItemManager;
+import org.RokueLike.domain.manager.TimeManager;
 import org.RokueLike.utils.Direction;
 import org.RokueLike.utils.MessageBox;
 
@@ -97,6 +101,9 @@ public class GameManager {
         itemManager = new ItemManager(currentHall, hero, monsterManager);
 
         TimeManager.hallReset(); // Reset timers
+        GameManager.setLureActive(false);
+        GameManager.setRevealActive(false);
+        GameManager.setCloakActive(false);
         messageBox.addMessage("Welcome to " + currentHall.getName() + "! Find the rune to unlock the door.", 3);
     }
 

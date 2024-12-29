@@ -1,6 +1,6 @@
 package org.RokueLike.ui.screen;
 
-import org.RokueLike.domain.BuildManager;
+import org.RokueLike.domain.manager.BuildManager;
 import org.RokueLike.ui.Window;
 import org.RokueLike.ui.input.MouseBuild;
 import org.RokueLike.ui.render.BuildModeRenderer;

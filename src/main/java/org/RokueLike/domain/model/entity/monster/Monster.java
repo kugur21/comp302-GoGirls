@@ -1,7 +1,6 @@
-package org.RokueLike.domain.entity.monster;
+package org.RokueLike.domain.model.entity.monster;
 
-import org.RokueLike.domain.entity.EntityCell;
-import org.RokueLike.utils.Direction;
+import org.RokueLike.domain.model.entity.EntityCell;
 
 public class Monster extends EntityCell {
 

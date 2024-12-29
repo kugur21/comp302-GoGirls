@@ -2,13 +2,13 @@
 package org.RokueLike.ui.render;
 
 import org.RokueLike.domain.GameManager;
-import org.RokueLike.domain.TimeManager;
-import org.RokueLike.domain.entity.hero.Hero;
-import org.RokueLike.domain.entity.item.Arrow;
-import org.RokueLike.domain.entity.item.Door;
-import org.RokueLike.domain.entity.item.Enchantment;
-import org.RokueLike.domain.entity.monster.Monster;
-import org.RokueLike.domain.entity.monster.MonsterManager;
+import org.RokueLike.domain.manager.TimeManager;
+import org.RokueLike.domain.model.entity.hero.Hero;
+import org.RokueLike.domain.model.entity.monster.Arrow;
+import org.RokueLike.domain.model.item.Door;
+import org.RokueLike.domain.model.item.Enchantment;
+import org.RokueLike.domain.model.entity.monster.Monster;
+import org.RokueLike.domain.manager.MonsterManager;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.utils.Direction;

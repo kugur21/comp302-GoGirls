@@ -1,6 +1,5 @@
-package org.RokueLike.domain.entity.item;
+package org.RokueLike.domain.model.entity.monster;
 
-import org.RokueLike.domain.entity.monster.Monster;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.utils.Direction;
 

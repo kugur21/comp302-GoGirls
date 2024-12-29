@@ -1,4 +1,4 @@
-package org.RokueLike.domain.entity;
+package org.RokueLike.domain.model.entity;
 
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.utils.Direction;

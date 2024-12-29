@@ -1,8 +1,9 @@
-package org.RokueLike.domain.entity.monster;
+package org.RokueLike.domain.manager;
 
 import org.RokueLike.domain.GameManager;
-import org.RokueLike.domain.entity.hero.Hero;
-import org.RokueLike.domain.entity.item.Arrow;
+import org.RokueLike.domain.model.entity.hero.Hero;
+import org.RokueLike.domain.model.entity.monster.Arrow;
+import org.RokueLike.domain.model.entity.monster.Monster;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.utils.Direction;
 import org.RokueLike.ui.Window;

@@ -1,6 +1,6 @@
-package org.RokueLike.domain.entity.hero;
+package org.RokueLike.domain.model.entity.hero;
 
-import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
+import org.RokueLike.domain.model.item.Enchantment.EnchantmentType;
 
 import java.util.ArrayList;
 import java.util.List;

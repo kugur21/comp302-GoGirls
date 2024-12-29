@@ -1,5 +1,6 @@
-package org.RokueLike.domain;
+package org.RokueLike.domain.manager;
 
+import org.RokueLike.domain.GameManager;
 import org.RokueLike.ui.Window;
 import org.RokueLike.ui.screen.GameOverScreen;
 
@@ -130,14 +131,15 @@ public class TimeManager {
         monsterSpawnTimer = 0;
         enchantmentSpawnTimer = 0;
         enchantmentDurationTimer = 0;
+
+        revealTimer = 0;
+        cloakTimer = 0;
     }
 
     // Resets all the components
     public static void gameReset() {
         hallReset();
         monsterMovementTimer = 0;
-        revealTimer = 0;
-        cloakTimer = 0;
         frameCounter = 0;
     }
 

@@ -1,4 +1,6 @@
-package org.RokueLike.domain.hall;
+package org.RokueLike.domain.manager;
+
+import org.RokueLike.domain.hall.HallGrid;
 
 import java.util.List;
 

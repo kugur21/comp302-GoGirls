@@ -1,6 +1,8 @@
-package org.RokueLike.domain;
+package org.RokueLike.domain.loop;
 
-import org.RokueLike.domain.entity.item.Enchantment.EnchantmentType;
+import org.RokueLike.domain.GameManager;
+import org.RokueLike.domain.model.item.Enchantment.EnchantmentType;
+import org.RokueLike.domain.manager.TimeManager;
 import org.RokueLike.utils.Direction;
 import org.RokueLike.ui.input.Keyboard;
 
