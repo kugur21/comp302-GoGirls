@@ -86,11 +86,10 @@ public class HallGrid {
 
     // Randomly places a rune in one of the objects.
     public void initRune() {
-        if (objects.isEmpty()) {
-            throw new IllegalStateException("No objects available for placing the rune.");
+        if (!objects.isEmpty()) {
+            Object randomObject = objects.get(random.nextInt(objects.size()));
+            randomObject.setContainedRune();
         }
-        Object randomObject = objects.get(random.nextInt(objects.size()));
-        randomObject.setContainedRune();
     }
 
     // Opens a door if it is closed.
@@ -260,6 +259,10 @@ public class HallGrid {
 
     public List<Monster> getMonsters() {
         return monsters;
+    }
+
+    public void setMonsters(List<Monster> monsters) {
+        this.monsters = monsters;
     }
 
 }

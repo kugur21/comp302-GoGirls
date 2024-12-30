@@ -11,7 +11,6 @@ import org.RokueLike.domain.manager.MonsterManager;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.utils.Direction;
-import org.RokueLike.utils.MessageBox;
 import org.RokueLike.utils.FontLoader;
 import org.RokueLike.utils.Textures;
 
@@ -23,6 +22,8 @@ import static org.RokueLike.utils.Constants.*;
 
 public class PlayModeRenderer {
 
+    private HallGrid currentHall;
+    private Hero hero;
     private final MessageBoxRenderer messageBoxRenderer;
     private final Font customFont;
 
@@ -35,11 +36,10 @@ public class PlayModeRenderer {
 
     // Renders the entire Play Mode.
     public void renderPlayMode(Graphics2D g, Rectangle exitButtonBounds, Rectangle pauseButtonBounds) {
-        HallGrid currentHall = GameManager.getCurrentHall();
-        Hero hero = GameManager.getHero();
-        List<Monster> monsters = GameManager.getActiveMonsters();
-        MessageBox messageBox = GameManager.getMessageBox();
+        currentHall = GameManager.getCurrentHall();
+        hero = GameManager.getHero();
         if (currentHall == null || hero == null) return;
+        List<Monster> monsters = currentHall.getMonsters();
 
         // High Cohesion and Low Coupling
         renderFloor(g);
@@ -272,11 +272,10 @@ public class PlayModeRenderer {
 
     // Draws the HUD (heads-up display) showing the hero's status.
     private void renderHUD(Graphics2D g, Hero hero, int remainingTime) {
-        int HUD_X = PLAY_GRID_OFFSET_X + GameManager.getCurrentHall().getWidth() * PLAY_TILE_SIZE + 30;
+        int HUD_X = PLAY_GRID_OFFSET_X + currentHall.getWidth() * PLAY_TILE_SIZE + 30;
         int HUD_Y = PLAY_GRID_OFFSET_Y;
         int HUD_WIDTH = 200;
 
-        HallGrid currentHall = GameManager.getCurrentHall();
         int gridHeight = currentHall.getHeight() * PLAY_TILE_SIZE;
 
         // Background of the HUD
@@ -322,7 +321,7 @@ public class PlayModeRenderer {
         int itemStartX = inventoryX + 35;
         int itemStartY = inventoryY + 100;
 
-        List<Enchantment.EnchantmentType> heroInventory = GameManager.getHero().getInventory().getEnchantments();
+        List<Enchantment.EnchantmentType> heroInventory = hero.getInventory().getEnchantments();
         for (int i = 0; i < heroInventory.size(); i++) {
             g.setColor(new Color(80, 80, 100));
             g.fillRect(itemStartX + (i % 3) * (slotSize + gap),

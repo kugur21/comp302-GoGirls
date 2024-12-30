@@ -15,6 +15,7 @@ public class BuildManager {
     private static String[][] hallOfAir;
     private static String[][] hallOfWater;
     private static String[][] hallOfFire;
+    private static String[][] closureHall;
 
     private static MessageBox messageBox;
     private static final Random random = new Random();
@@ -28,6 +29,7 @@ public class BuildManager {
         hallOfAir = createEmptyHall();
         hallOfWater = createEmptyHall();
         hallOfFire = createEmptyHall();
+        closureHall = createEmptyHall();
 
         // Add doors
         placeDoor(hallOfEarth);
@@ -137,6 +139,7 @@ public class BuildManager {
             case "air" -> hallOfAir;
             case "water" -> hallOfWater;
             case "fire" -> hallOfFire;
+            case "closure" -> closureHall;
             default -> {
                 System.out.println("[BuildManager]: Invalid hall name: " + hallName);
                 yield null;

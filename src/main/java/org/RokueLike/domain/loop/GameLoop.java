@@ -10,6 +10,8 @@ import org.RokueLike.ui.input.Keyboard;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static org.RokueLike.utils.Constants.*;
+
 public class GameLoop implements ActionListener {
 
     @Override
@@ -49,11 +51,8 @@ public class GameLoop implements ActionListener {
 
             // Wizard behavior logic
             if (GameManager.hasWizardsInCurrentHall()) {
-                TimeManager.incrementWizardTimer();
-                if (TimeManager.isWizardTimerReady()) {
-                    GameManager.handleWizardBehavior(); // Wizards teleport runes
-                    TimeManager.resetWizardTimer();
-                }
+                GameManager.updateWizardBehaviour();
+                GameManager.handleWizardBehavior();
             }
 
             // Fighter and Archer interaction logic
