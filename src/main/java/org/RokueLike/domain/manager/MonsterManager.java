@@ -10,6 +10,8 @@ import org.RokueLike.utils.Direction;
 import org.RokueLike.ui.Window;
 import org.RokueLike.ui.screen.GameOverScreen;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +19,9 @@ import java.util.Random;
 
 import static org.RokueLike.utils.Constants.*;
 
-public class MonsterManager {
+public class MonsterManager implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     private final List<Monster> monsters; // List of all monsters in the hall
     private final HallGrid hallGrid; // The current hall grid
@@ -25,7 +29,7 @@ public class MonsterManager {
     private final List<Arrow> activeArrows; // List of active arrows shot by archers
     private final List<Monster> luredFighters; // List of lured fighter monsters
     private Direction lureDirection; // Direction of the lure for fighter monsters
-    private final boolean spawn;
+    private final boolean spawn; // Whether to spawn monsters or not
 
     //// STRATEGY PATTERN INSTANCE - The MonsterManager defines behaviors for different monster types (e.g., processArcherBehavior, processFighterBehavior) encapsulated as strategies
 
@@ -213,14 +217,8 @@ public class MonsterManager {
     private void killHero() {
         hero.decrementLives();
         if (!hero.isAlive()) {
-            String message;
-            if (hero.getLives() > 0) {
-                message = "You ran out of time. Game Over!";
-            } else {
-                message = "You ran out of lives. Game Over!";
-            }
-            GameManager.reset();
-            Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
+            GameManager.reset(true);
+            Window.addScreen(new GameOverScreen("Game Over! You died."), "GameOverScreen", true);
         } else {
             GameManager.handleHeroSpawn();
         }
@@ -317,13 +315,10 @@ public class MonsterManager {
     private void wizardBehaviour(Monster wizard) {
         double remainingTimePercentage = 100 * ((double) hero.getRemainingTime() / MAX_TIME);
         if (remainingTimePercentage > WIZARD_TELEPORT_PERCENTAGE) {
-            System.out.println("Setting wizard behaviour to Teleport");
             wizard.setBehaviour(new Teleport(hallGrid));
         } else if (remainingTimePercentage > WIZARD_DISAPPEAR_PERCENTAGE) {
-            System.out.println("Setting wizard behaviour to Indecisive");
             wizard.setBehaviour(new Indecisive());
         } else {
-            System.out.println("Setting wizard behaviour to Closer");
             wizard.setBehaviour(new Closer());
         }
     }

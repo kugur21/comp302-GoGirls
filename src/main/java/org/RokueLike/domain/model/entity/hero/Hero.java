@@ -9,7 +9,7 @@ public class Hero extends EntityCell {
     private int lives; // Current number of lives
     private int remainingTime; // Remaining time for the hero
     private final Inventory inventory; // Hero's inventory for enchantments
-    private boolean immune = false; // Immunity status of the hero
+    private transient boolean immune = false; // Immunity status of the hero
 
 
     //// INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.

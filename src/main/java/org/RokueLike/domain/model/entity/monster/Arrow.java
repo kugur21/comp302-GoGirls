@@ -3,7 +3,12 @@ package org.RokueLike.domain.model.entity.monster;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.utils.Direction;
 
-public class Arrow {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Arrow implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     private int x, y; // Current position of the arrow
     private final Direction direction; // Direction of the arrow's movement

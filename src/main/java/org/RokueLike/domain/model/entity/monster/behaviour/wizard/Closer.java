@@ -4,7 +4,12 @@ import org.RokueLike.domain.GameManager;
 import org.RokueLike.domain.model.entity.monster.Monster;
 import org.RokueLike.domain.model.entity.monster.behaviour.IMonsterBehaviour;
 
-public class Closer implements IMonsterBehaviour {
+import java.io.Serial;
+import java.io.Serializable;
+
+public class Closer implements IMonsterBehaviour, Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     public Closer() {
     }
@@ -12,6 +17,5 @@ public class Closer implements IMonsterBehaviour {
     @Override
     public void behaviour(Monster monster) {
         GameManager.setWizardClosureActive(true);
-        System.out.println("Closer behaviour by wizard.");
     }
 }

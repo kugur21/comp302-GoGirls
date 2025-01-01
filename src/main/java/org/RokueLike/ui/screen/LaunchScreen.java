@@ -15,22 +15,26 @@ public class LaunchScreen extends JPanel {
     // Constructs the launch screen, initializes the layout, and adds buttons.
     public LaunchScreen() {
         backgroundImage = new ImageIcon(Objects.requireNonNull(getClass().getResource("/images/Rokue-like logo 4.png"))).getImage();
-        customFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 24f);
+        customFont = FontLoader.loadFont("fonts/PressStart2P-Regular.ttf", 18f);
         this.setLayout(null);
 
-        JButton playButton = createStyledButton("PLAY", 350, 550);
-        JButton helpButton = createStyledButton("HELP", 150, 550);
-        JButton exitButton = createStyledButton("EXIT", 550, 550);
+        JButton helpButton = createStyledButton("HELP", 50, 550);
+        JButton playButton = createStyledButton("NEW GAME", 230, 550);
+        JButton loadGameButton = createStyledButton("LOAD GAME", 460, 550);
+        JButton exitButton = createStyledButton("EXIT", 650, 550);
 
-        // Starts the game by adding a BuildModeScreen
-        playButton.addActionListener(e -> Window.addScreen(new BuildModeScreen(), "BuildModeScreen", true));
         // Opens the HelpScreen by showing the HelpScreen
         helpButton.addActionListener(e -> Window.showScreen("HelpScreen"));
+        // Starts the game by adding a BuildModeScreen
+        playButton.addActionListener(e -> Window.addScreen(new BuildModeScreen(), "BuildModeScreen", true));
+        // Opens the LoadGameScreen by adding a LoadGameScreen
+        loadGameButton.addActionListener(e -> Window.addScreen(new LoadGameScreen(), "LoadGameScreen", true));
         // Exits the game
         exitButton.addActionListener(e -> System.exit(0));
 
-        this.add(playButton);
         this.add(helpButton);
+        this.add(playButton);
+        this.add(loadGameButton);
         this.add(exitButton);
     }
 

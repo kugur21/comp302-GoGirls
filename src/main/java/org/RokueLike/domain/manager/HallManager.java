@@ -2,9 +2,13 @@ package org.RokueLike.domain.manager;
 
 import org.RokueLike.domain.hall.HallGrid;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
-public class HallManager {
+public class HallManager implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     private final List<HallGrid> halls; // List of all halls
     private int currentHallIndex; // Index of the current hall

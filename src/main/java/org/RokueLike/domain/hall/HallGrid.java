@@ -6,11 +6,15 @@ import org.RokueLike.domain.model.item.Enchantment;
 import org.RokueLike.domain.model.item.Object;
 import org.RokueLike.domain.model.entity.monster.Monster;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class HallGrid {
+public class HallGrid implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     // Hero's starting coordinates
     private int startX;
@@ -263,6 +267,10 @@ public class HallGrid {
 
     public void setMonsters(List<Monster> monsters) {
         this.monsters = monsters;
+    }
+
+    public void setCell(int positionX, int positionY, GridCell cell) {
+        grid[positionY][positionX] = cell;
     }
 
 }

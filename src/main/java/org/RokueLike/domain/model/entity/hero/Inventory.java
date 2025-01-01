@@ -2,10 +2,14 @@ package org.RokueLike.domain.model.entity.hero;
 
 import org.RokueLike.domain.model.item.Enchantment.EnchantmentType;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Inventory {
+public class Inventory implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     private final List<EnchantmentType> enchantments; // List of enchantments in the inventory
 

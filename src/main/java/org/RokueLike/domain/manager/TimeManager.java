@@ -24,9 +24,8 @@ public class TimeManager {
             if (GameManager.getHero().getRemainingTime() > 0) {
                 GameManager.getHero().decrementRemainingTime();
             } else {
-                String message = "Game Over! Time is Over";
-                GameManager.reset();
-                Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
+                GameManager.reset(true);
+                Window.addScreen(new GameOverScreen("Game Over! Time is up."), "GameOverScreen", true);
             }
         }
     }

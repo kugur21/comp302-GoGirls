@@ -186,6 +186,10 @@ public class BuildManager {
         return messageBox;
     }
 
+    public static void addMessageToMessageBox(String message, int time) {
+        messageBox.addMessage(message, time);
+    }
+
     // Checks if a position is not adjacent to a door.
     private static boolean notInFrontOfDoor(String[][] hall, int x, int y) {
         return (x <= 0 || !"d".equals(hall[y][x - 1])) && // Left of door

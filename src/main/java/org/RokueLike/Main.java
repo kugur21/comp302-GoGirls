@@ -16,7 +16,6 @@ public class Main {
         Locale.setDefault(Locale.ENGLISH);
         try {
             System.out.println("[Main]: Starting...");
-
             // Initialize textures required for the game
             Textures.init();
             // Create the main application window

@@ -6,15 +6,19 @@ import org.RokueLike.domain.model.item.Enchantment;
 import org.RokueLike.domain.model.item.Object;
 import org.RokueLike.domain.hall.HallGrid;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Random;
 
 import static org.RokueLike.utils.Constants.*;
 
-public class ItemManager {
+public class ItemManager implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     private final HallGrid hallGrid; // The current hall grid
     private final Hero hero; // The hero instance
-    private final boolean spawn;
+    private final boolean spawn; // Whether to spawn enchantments or not
 
     public ItemManager(HallGrid hallGrid, Hero hero, MonsterManager monsterManager, boolean spawn) {
         this.hallGrid = hallGrid;
