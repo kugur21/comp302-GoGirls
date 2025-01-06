@@ -193,8 +193,7 @@ public class MonsterManager {
     private Monster generateRandomMonster(int x, int y) {
         Monster.MonsterType[] monsterTypes = Monster.MonsterType.values();
         Monster.MonsterType randomType = monsterTypes[new Random().nextInt(monsterTypes.length)];
-        //return new Monster(randomType, x, y);
-        return new Monster(Monster.MonsterType.WIZARD, x, y);
+        return new Monster(randomType, x, y);
     }
 
     // Gets offsets for a specific direction.
@@ -204,7 +203,6 @@ public class MonsterManager {
             case RIGHT -> new int[]{1, 0};
             case UP -> new int[]{0, -1};
             case DOWN -> new int[]{0, 1};
-            default -> throw new IllegalArgumentException("Unknown direction: " + direction);
         };
     }
 
@@ -243,14 +241,11 @@ public class MonsterManager {
         int distanceY = monster.getPositionY() - hero.getPositionY();
 
         // Check if the hero is in the same row (horizontal) or column (vertical) within the range
+        // Hero is exactly east or west
         if (distanceX == 0 && Math.abs(distanceY) <= range) {
             // Hero is exactly north or south
             return false;
-        } else if (distanceY == 0 && Math.abs(distanceX) <= range) {
-            // Hero is exactly east or west
-            return false;
-        }
-        return true; // Hero is not in the specified range
+        } else return distanceY != 0 || Math.abs(distanceX) > range;// Hero is not in the specified range
     }
 
     // Moves a monster by keeping the distance with the hero, used by archer monster.
