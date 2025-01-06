@@ -50,16 +50,20 @@ public class GameManager {
 
     private static boolean wizardClosureActive = false;
     private static double lastWizardThreshold = -1; // Tracks the last percentage category
+    private static String currentSaveFileName; // Name of the currently saved file
 
     //// LOW COUPLING INSTANCE - The GameManager centralizes game logic and ensures the UI and domain layers remain loosely coupled by delegating tasks to managers and game entities.
     //// CONTROLLER PATTERN INSTANCE - The GameManager class acts as a controller for system operations such as handling enchantment usage, hero movement, and monster spawning
 
     // Initializes the game, setting up halls, play mode, and starting the game loop.
-    public static void init() {
+    public static void init(String fileName) {
         System.out.println("[GameManager]: Starting game...");
 
-        initHalls(); // Prepare halls for the game
-        initPlayMode(); // Initialize core game entities
+        currentSaveFileName = fileName;
+        if (!currentSaveFileName.endsWith(".dat")) {
+            initHalls(); // Prepare halls for the game
+            initPlayMode(); // Initialize core game entities
+        }
 
         timer = new Timer(GAME_DELAY, new GameLoop()); // Start main game loop
         timer.start();
@@ -390,6 +394,14 @@ public class GameManager {
 
     public static MessageBox getMessageBox() {
         return messageBox;
+    }
+
+    public static void saveGame(String fileName) {
+        //TODO
+    }
+
+    public static void loadGame(String s) {
+        //TODO
     }
 
 }

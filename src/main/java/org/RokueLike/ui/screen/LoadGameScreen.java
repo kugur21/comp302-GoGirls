@@ -65,8 +65,8 @@ public class LoadGameScreen extends JPanel {
         playButton.addActionListener(e -> {
             String selectedFile = fileList.getSelectedValue();
             if (selectedFile != null) {
-                //GameManager.loadGame("src/main/resources/saves/" + selectedFile);
-                //Window.addScreen(new PlayModeScreen(selectedFile), "PlayModeScreen", true);
+                GameManager.loadGame("src/main/resources/saves/" + selectedFile);
+                Window.addScreen(new PlayModeScreen(selectedFile), "PlayModeScreen", true);
             } else {
                 messageBox = new MessageBox();
                 messageBox.addMessage("Please select a save file to load.", 1);
