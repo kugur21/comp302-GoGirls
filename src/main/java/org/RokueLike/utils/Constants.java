@@ -42,9 +42,12 @@ public class Constants {
     public static final int GAME_DELAY = 100;
     public static final int MONSTER_MOVEMENT_DELAY = 500;
     public static final int MONSTER_SPAWN = 8000;
+    public static final int WIZARD_TELEPORT = 3000;
+    public static final int WIZARD_TELEPORT_PERCENTAGE = 70;
+    public static final int WIZARD_DISAPPEAR = 2000;
+    public static final int WIZARD_DISAPPEAR_PERCENTAGE = 30;
     public static final int ENCHANTMENT_SPAWN = 12000;
     public static final int ENCHANTMENT_DURATION = 6000;
-    public static final int WIZARD_BEHAVIOR = 5000;
     public static final int REVEAL_ENCHANTMENT_DURATION = 10000;
     public static final int CLOAK_ENCHANTMENT_DURATION = 20000;
     public static final int IMMUNE_TIME = 3000;

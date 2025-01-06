@@ -8,6 +8,7 @@ import org.RokueLike.domain.model.item.Enchantment.EnchantmentType;
 import org.RokueLike.domain.model.item.Object;
 import org.RokueLike.domain.model.entity.monster.Monster;
 import org.RokueLike.domain.manager.MonsterManager;
+import org.RokueLike.domain.model.entity.monster.behaviour.wizard.Indecisive;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.manager.HallManager;
@@ -21,6 +22,7 @@ import org.RokueLike.utils.MessageBox;
 import javax.swing.Timer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import static org.RokueLike.utils.Constants.*;
 
@@ -39,11 +41,15 @@ public class GameManager {
     private static MonsterManager monsterManager;
     private static ItemManager itemManager;
     private static MessageBox messageBox;
+    private static HallGrid closureHall;
 
     // State for enchantments
     private static boolean revealActive;
     private static boolean cloakActive;
     private static boolean lureActive;
+
+    private static boolean wizardClosureActive = false;
+    private static double lastWizardThreshold = -1; // Tracks the last percentage category
 
     //// LOW COUPLING INSTANCE - The GameManager centralizes game logic and ensures the UI and domain layers remain loosely coupled by delegating tasks to managers and game entities.
     //// CONTROLLER PATTERN INSTANCE - The GameManager class acts as a controller for system operations such as handling enchantment usage, hero movement, and monster spawning
@@ -74,6 +80,16 @@ public class GameManager {
             halls.add(hall);
         }
         hallManager = new HallManager(halls);
+
+        String[][] closureHallData = BuildManager.getHall("closure");
+        if (closureHallData != null) {
+            closureHall = new HallGrid(closureHallData, "Closure Hall");
+            Monster wizard = new Monster(Monster.MonsterType.WIZARD, 5, 5);
+            wizard.setBehaviour(new Indecisive());
+            closureHall.setMonsters(new ArrayList<>(List.of(wizard)));
+        } else {
+            throw new RuntimeException("Hall closure not found");
+        }
     }
 
     //// GameManager creates the hero, HeroManager, MonsterManager, and ItemManager during the game initialization, showcasing a Creator pattern.
@@ -83,8 +99,8 @@ public class GameManager {
         hero = new Hero(currentHall.getStartX(), currentHall.getStartY());
         heroManager = new HeroManager(hero, currentHall);
         activeMonsters = currentHall.getMonsters();
-        monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
-        itemManager = new ItemManager(currentHall, hero, monsterManager);
+        monsterManager = new MonsterManager(activeMonsters, currentHall, hero, true);
+        itemManager = new ItemManager(currentHall, hero, monsterManager, true);
         messageBox = new MessageBox();
 
         messageBox.addMessage("Welcome to Hall of Earth! Find the rune to unlock the door.", 3);
@@ -97,8 +113,8 @@ public class GameManager {
         hero.resetRemainingTime();
         heroManager = new HeroManager(hero, currentHall);
         activeMonsters = currentHall.getMonsters();
-        monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
-        itemManager = new ItemManager(currentHall, hero, monsterManager);
+        monsterManager = new MonsterManager(activeMonsters, currentHall, hero, true);
+        itemManager = new ItemManager(currentHall, hero, monsterManager, true);
 
         TimeManager.hallReset(); // Reset timers
         GameManager.setLureActive(false);
@@ -106,6 +122,21 @@ public class GameManager {
         GameManager.setCloakActive(false);
         messageBox.addMessage("Welcome to " + currentHall.getName() + "! Find the rune to unlock the door.", 3);
     }
+
+    // Updates the game state when transitioning to a new hall.
+    public static void updateClosureHall() {
+        currentHall = closureHall;
+        hero.setPosition(7, 7);
+        heroManager = new HeroManager(hero, currentHall);
+        activeMonsters = currentHall.getMonsters();
+        monsterManager = new MonsterManager(activeMonsters, currentHall, hero, false);
+        itemManager = new ItemManager(currentHall, hero, monsterManager, false);
+        GameManager.setLureActive(false);
+        GameManager.setRevealActive(false);
+        GameManager.setCloakActive(false);
+        messageBox.addMessage("Wizard has trapped you. No way out.", 3);
+    }
+
 
     // Handles hero respawn after death.
     public static void handleHeroSpawn() {
@@ -168,6 +199,23 @@ public class GameManager {
             monsterManager.heroMonsterInteraction();
         } catch (Exception e) {
             System.out.println("[GameManager]: Monster hit failed");
+        }
+    }
+
+    public static void updateWizardBehaviour() {
+        try {
+            double remainingTimePercentage = 100 * ((double) hero.getRemainingTime() / MAX_TIME);
+            double newThreshold = (remainingTimePercentage < WIZARD_DISAPPEAR_PERCENTAGE) ? 0 :
+                    (remainingTimePercentage > WIZARD_TELEPORT_PERCENTAGE) ? WIZARD_TELEPORT_PERCENTAGE : WIZARD_DISAPPEAR_PERCENTAGE;
+            // Check if we have moved to a new percentage category
+            if (newThreshold != lastWizardThreshold) {
+                System.out.println("New percentage area: " + remainingTimePercentage + "%");
+                lastWizardThreshold = newThreshold; // Update the threshold tracker
+                // Call monsterManager to set the new behavior
+                monsterManager.setWizardBehaviour();
+            }
+        } catch (Exception e) {
+            System.out.println("[GameManager]: Wizard behaviour update failed");
         }
     }
 
@@ -244,7 +292,6 @@ public class GameManager {
             }
         } catch (Exception e) {
             System.out.println("[GameManager]: Right click failed");
-            e.printStackTrace();
         }
     }
 
@@ -271,6 +318,7 @@ public class GameManager {
             revealActive = false;
             cloakActive = false;
             lureActive = false;
+            wizardClosureActive = false;
 
             System.out.println("[GameManager]: Reset successful. Ready for a new game.");
 
@@ -299,6 +347,10 @@ public class GameManager {
         return lureActive;
     }
 
+    public static boolean isWizardClosureActive() {
+        return wizardClosureActive;
+    }
+
     public static void setRevealActive(boolean revealActive) {
         GameManager.revealActive = revealActive;
     }
@@ -311,6 +363,11 @@ public class GameManager {
         GameManager.lureActive = lureActive;
     }
 
+    public static void setWizardClosureActive(boolean wizardClosureActive) {
+        GameManager.wizardClosureActive = wizardClosureActive;
+        GameManager.updateClosureHall();
+    }
+
     public static MonsterManager getMonsterManager() {
         return monsterManager;
     }
@@ -321,6 +378,10 @@ public class GameManager {
 
     public static HallGrid getCurrentHall() {
         return currentHall;
+    }
+
+    public static HallGrid getClosureHall() {
+        return closureHall;
     }
 
     public static List<Monster> getActiveMonsters() {
