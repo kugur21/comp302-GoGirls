@@ -10,7 +10,6 @@ public class TimeManager {
 
     private static int monsterSpawnTimer = 0;
     private static int monsterMovementTimer = 0;
-    private static int wizardTimer = 0;
     private static int enchantmentSpawnTimer = 0;
     private static int enchantmentDurationTimer = 0;
     private static int revealTimer = 0;
@@ -52,17 +51,6 @@ public class TimeManager {
     }
     public static void resetMonsterMovementTimer() {
         monsterMovementTimer = 0;
-    }
-
-    // Wizard Behaviour Clock
-    public static void incrementWizardTimer() {
-        wizardTimer++;
-    }
-    public static void resetWizardTimer() {
-        wizardTimer = 0;
-    }
-    public static boolean isWizardTimerReady() {
-        return wizardTimer >= (WIZARD_BEHAVIOR / GAME_DELAY);
     }
 
     // Enchantment Spawn Clock
@@ -127,7 +115,6 @@ public class TimeManager {
 
     // Resets the spawn and behaviour timers
     public static void hallReset() {
-        wizardTimer = 0;
         monsterSpawnTimer = 0;
         enchantmentSpawnTimer = 0;
         enchantmentDurationTimer = 0;

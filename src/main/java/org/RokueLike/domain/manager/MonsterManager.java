@@ -5,9 +5,12 @@ import org.RokueLike.domain.model.entity.hero.Hero;
 import org.RokueLike.domain.model.entity.monster.Arrow;
 import org.RokueLike.domain.model.entity.monster.Monster;
 import org.RokueLike.domain.hall.HallGrid;
+import org.RokueLike.domain.model.entity.monster.behaviour.wizard.*;
 import org.RokueLike.utils.Direction;
 import org.RokueLike.ui.Window;
 import org.RokueLike.ui.screen.GameOverScreen;
+
+import static org.RokueLike.utils.Constants.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,24 +25,32 @@ public class MonsterManager {
     private final List<Arrow> activeArrows; // List of active arrows shot by archers
     private final List<Monster> luredFighters; // List of lured fighter monsters
     private Direction lureDirection; // Direction of the lure for fighter monsters
+    private final boolean spawn;
 
     //// STRATEGY PATTERN INSTANCE - The MonsterManager defines behaviors for different monster types (e.g., processArcherBehavior, processFighterBehavior) encapsulated as strategies
 
-    public MonsterManager(List<Monster> monsters, HallGrid hallGrid, Hero hero) {
+    public MonsterManager(List<Monster> monsters, HallGrid hallGrid, Hero hero, boolean spawn) {
         this.monsters = monsters;
         this.hallGrid = hallGrid;
         this.hero = hero;
-        luredFighters = new ArrayList<>();
-        activeArrows = new ArrayList<>();
+        this.luredFighters = new ArrayList<>();
+        this.activeArrows = new ArrayList<>();
+        this.spawn = spawn;
     }
 
     // Spawns a random monster at a safe location in the hall.
     public void spawnMonster() {
+        if (!spawn) {
+            return;
+        }
         int[] location = hallGrid.findRandomSafeCell();
         if (location == null) {
             return;
         }
         Monster newMonster = generateRandomMonster(location[0], location[1]);
+        if (newMonster.getType() == Monster.MonsterType.WIZARD) {
+            wizardBehaviour(newMonster);
+        }
         hallGrid.addMonster(newMonster);
     }
 
@@ -93,9 +104,25 @@ public class MonsterManager {
 
     // Handles wizard behavior by relocating the rune.
     public void processWizardBehavior() {
+        List<Monster> toRemove = new ArrayList<>(); // Temporary list for deferred removal
+
         for (Monster monster : monsters) {
             if (monster.getType() == Monster.MonsterType.WIZARD) {
-                hallGrid.changeRuneLocation();
+                monster.applyBehaviour();
+                // If the behavior decides the monster should be removed, add it to the list
+                if (monster.isMarkedForRemoval()) {
+                    toRemove.add(monster);
+                }
+            }
+        }
+        // Safely remove all marked monsters after iteration
+        monsters.removeAll(toRemove);
+    }
+
+    public void setWizardBehaviour() {
+        for (Monster monster : monsters) {
+            if (monster.getType() == Monster.MonsterType.WIZARD) {
+                wizardBehaviour(monster);
             }
         }
     }
@@ -282,6 +309,20 @@ public class MonsterManager {
                 monster.setPosition(monster.getPositionX() + dirX, monster.getPositionY() + dirY);
                 return; // Exit after moving once
             }
+        }
+    }
+
+    private void wizardBehaviour(Monster wizard) {
+        double remainingTimePercentage = 100 * ((double) hero.getRemainingTime() / MAX_TIME);
+        if (remainingTimePercentage > WIZARD_TELEPORT_PERCENTAGE) {
+            System.out.println("Setting wizard behaviour to Teleport");
+            wizard.setBehaviour(new Teleport(hallGrid));
+        } else if (remainingTimePercentage > WIZARD_DISAPPEAR_PERCENTAGE) {
+            System.out.println("Setting wizard behaviour to Indecisive");
+            wizard.setBehaviour(new Indecisive());
+        } else {
+            System.out.println("Setting wizard behaviour to Closer");
+            wizard.setBehaviour(new Closer());
         }
     }
 

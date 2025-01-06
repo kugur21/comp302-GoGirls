@@ -14,14 +14,19 @@ public class ItemManager {
 
     private final HallGrid hallGrid; // The current hall grid
     private final Hero hero; // The hero instance
+    private final boolean spawn;
 
-    public ItemManager(HallGrid hallGrid, Hero hero, MonsterManager monsterManager) {
+    public ItemManager(HallGrid hallGrid, Hero hero, MonsterManager monsterManager, boolean spawn) {
         this.hallGrid = hallGrid;
         this.hero = hero;
+        this.spawn = spawn;
     }
 
     // Spawns a random enchantment at a safe location in the hall.
     public void spawnEnchantment() {
+        if (!spawn) {
+            return;
+        }
         int[] location = hallGrid.findRandomSafeCell();
         if (location == null) {
             return;

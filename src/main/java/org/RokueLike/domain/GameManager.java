@@ -83,7 +83,7 @@ public class GameManager {
         hero = new Hero(currentHall.getStartX(), currentHall.getStartY());
         heroManager = new HeroManager(hero, currentHall);
         activeMonsters = currentHall.getMonsters();
-        monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
+        monsterManager = new MonsterManager(activeMonsters, currentHall, hero, true);
         itemManager = new ItemManager(currentHall, hero, monsterManager);
         messageBox = new MessageBox();
 
@@ -97,7 +97,7 @@ public class GameManager {
         hero.resetRemainingTime();
         heroManager = new HeroManager(hero, currentHall);
         activeMonsters = currentHall.getMonsters();
-        monsterManager = new MonsterManager(activeMonsters, currentHall, hero);
+        monsterManager = new MonsterManager(activeMonsters, currentHall, hero, true);
         itemManager = new ItemManager(currentHall, hero, monsterManager);
 
         TimeManager.hallReset(); // Reset timers
