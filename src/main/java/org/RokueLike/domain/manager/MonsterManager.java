@@ -193,7 +193,8 @@ public class MonsterManager {
     private Monster generateRandomMonster(int x, int y) {
         Monster.MonsterType[] monsterTypes = Monster.MonsterType.values();
         Monster.MonsterType randomType = monsterTypes[new Random().nextInt(monsterTypes.length)];
-        return new Monster(randomType, x, y);
+        //return new Monster(randomType, x, y);
+        return new Monster(Monster.MonsterType.WIZARD, x, y);
     }
 
     // Gets offsets for a specific direction.
@@ -315,13 +316,10 @@ public class MonsterManager {
     private void wizardBehaviour(Monster wizard) {
         double remainingTimePercentage = 100 * ((double) hero.getRemainingTime() / MAX_TIME);
         if (remainingTimePercentage > WIZARD_TELEPORT_PERCENTAGE) {
-            System.out.println("Setting wizard behaviour to Teleport");
             wizard.setBehaviour(new Teleport(hallGrid));
         } else if (remainingTimePercentage > WIZARD_DISAPPEAR_PERCENTAGE) {
-            System.out.println("Setting wizard behaviour to Indecisive");
             wizard.setBehaviour(new Indecisive());
         } else {
-            System.out.println("Setting wizard behaviour to Closer");
             wizard.setBehaviour(new Closer());
         }
     }

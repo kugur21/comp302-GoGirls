@@ -7,7 +7,6 @@ public class Closer implements IMonsterBehaviour {
     }
     @Override
     public void behaviour(Monster monster) {
-        //GameManager.setWizardClosureActive(true);
-        System.out.println("Closer behaviour by wizard.");
+        GameManager.setWizardClosureActive(true);
     }
 }

@@ -49,7 +49,7 @@ public class GameLoop implements ActionListener {
 
             // Wizard behavior logic
             if (GameManager.hasWizardsInCurrentHall()) {
-              //  GameManager.updateWizardBehaviour();
+                GameManager.updateWizardBehaviour();
                 GameManager.handleWizardBehavior();
             }
 

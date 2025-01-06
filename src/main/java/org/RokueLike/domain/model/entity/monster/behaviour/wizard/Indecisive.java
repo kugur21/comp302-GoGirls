@@ -11,7 +11,6 @@ public class Indecisive implements IMonsterBehaviour {
         timeElapsed += GAME_DELAY;
         if (timeElapsed >= WIZARD_DISAPPEAR) { // 2 seconds have passed
             monster.markForRemoval(); // Mark the monster for removal
-            System.out.println("Monster disappears after being indecisive.");
         }
     }
 }

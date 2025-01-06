@@ -14,7 +14,6 @@ public class Teleport implements IMonsterBehaviour {
         timeAccumulator += GAME_DELAY;
         if (timeAccumulator >= WIZARD_TELEPORT) { // 3 seconds have passed
             hallGrid.changeRuneLocation();
-            System.out.println("Rune location changed.");
             timeAccumulator = 0; // Reset timer
         }
     }
