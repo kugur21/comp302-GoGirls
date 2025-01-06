@@ -11,7 +11,6 @@ import org.RokueLike.domain.manager.MonsterManager;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.utils.Direction;
-import org.RokueLike.utils.MessageBox;
 import org.RokueLike.utils.FontLoader;
 import org.RokueLike.utils.Textures;
 
@@ -23,10 +22,10 @@ import static org.RokueLike.utils.Constants.*;
 
 public class PlayModeRenderer {
 
-    private final MessageBoxRenderer messageBoxRenderer;
-    private final Font customFont;
     private HallGrid currentHall;
     private Hero hero;
+    private final MessageBoxRenderer messageBoxRenderer;
+    private final Font customFont;
 
     ////MODEL-VIEW SEPARATION PRINCIPLE: Renderer classes (BuildModeRenderer, PlayModeRenderer) manage graphical representation and rendering tasks without interfering with the model logic.
 

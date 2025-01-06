@@ -43,7 +43,7 @@ public class PlayModeScreen extends JPanel {
             fileName += saveFileName + ".dat";
         }
         GameManager.saveGame(fileName);
-        //GameManager.reset(false);
+        GameManager.reset(false);
         Window.addScreen(new LaunchScreen(), "LaunchScreen", true);
     }
 

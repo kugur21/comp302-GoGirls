@@ -3,12 +3,12 @@ package org.RokueLike.domain;
 import org.RokueLike.domain.loop.GameLoop;
 import org.RokueLike.domain.model.entity.hero.Hero;
 import org.RokueLike.domain.manager.HeroManager;
+import org.RokueLike.domain.model.entity.monster.behaviour.wizard.Indecisive;
 import org.RokueLike.domain.model.item.*;
 import org.RokueLike.domain.model.item.Enchantment.EnchantmentType;
 import org.RokueLike.domain.model.item.Object;
 import org.RokueLike.domain.model.entity.monster.Monster;
 import org.RokueLike.domain.manager.MonsterManager;
-import org.RokueLike.domain.model.entity.monster.behaviour.wizard.Indecisive;
 import org.RokueLike.domain.hall.GridCell;
 import org.RokueLike.domain.hall.HallGrid;
 import org.RokueLike.domain.manager.HallManager;
@@ -20,13 +20,15 @@ import org.RokueLike.utils.MessageBox;
 
 
 import javax.swing.Timer;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Collections;
 
 import static org.RokueLike.utils.Constants.*;
 
-public class GameManager {
+public class GameManager implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     // Timer for controlling game loop
     private static Timer timer;
@@ -35,22 +37,37 @@ public class GameManager {
     // Core game components
     private static HallManager hallManager;
     private static HallGrid currentHall;
+    private static HallGrid closureHall;
     private static Hero hero;
     private static HeroManager heroManager;
     private static List<Monster> activeMonsters;
     private static MonsterManager monsterManager;
     private static ItemManager itemManager;
     private static MessageBox messageBox;
-    private static HallGrid closureHall;
 
     // State for enchantments
     private static boolean revealActive;
     private static boolean cloakActive;
     private static boolean lureActive;
 
-    private static boolean wizardClosureActive = false;
+    private static boolean wizardClosureActive;
     private static double lastWizardThreshold = -1; // Tracks the last percentage category
+
     private static String currentSaveFileName; // Name of the currently saved file
+
+    //// Singleton Pattern
+    private static GameManager instance;
+
+    public static GameManager getInstance() {
+        if (instance == null) {
+            instance = new GameManager();
+        }
+        return instance;
+    }
+
+    public static void restoreInstance(GameManager loadedState) {
+        instance = loadedState;
+    }
 
     //// LOW COUPLING INSTANCE - The GameManager centralizes game logic and ensures the UI and domain layers remain loosely coupled by delegating tasks to managers and game entities.
     //// CONTROLLER PATTERN INSTANCE - The GameManager class acts as a controller for system operations such as handling enchantment usage, hero movement, and monster spawning
@@ -58,13 +75,11 @@ public class GameManager {
     // Initializes the game, setting up halls, play mode, and starting the game loop.
     public static void init(String fileName) {
         System.out.println("[GameManager]: Starting game...");
-
         currentSaveFileName = fileName;
         if (!currentSaveFileName.endsWith(".dat")) {
             initHalls(); // Prepare halls for the game
             initPlayMode(); // Initialize core game entities
         }
-
         timer = new Timer(GAME_DELAY, new GameLoop()); // Start main game loop
         timer.start();
     }
@@ -105,8 +120,9 @@ public class GameManager {
         activeMonsters = currentHall.getMonsters();
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero, true);
         itemManager = new ItemManager(currentHall, hero, monsterManager, true);
-        messageBox = new MessageBox();
+        wizardClosureActive = false;
 
+        messageBox = new MessageBox();
         messageBox.addMessage("Welcome to Hall of Earth! Find the rune to unlock the door.", 3);
     }
 
@@ -119,6 +135,7 @@ public class GameManager {
         activeMonsters = currentHall.getMonsters();
         monsterManager = new MonsterManager(activeMonsters, currentHall, hero, true);
         itemManager = new ItemManager(currentHall, hero, monsterManager, true);
+        wizardClosureActive = false;
 
         TimeManager.hallReset(); // Reset timers
         GameManager.setLureActive(false);
@@ -140,7 +157,6 @@ public class GameManager {
         GameManager.setCloakActive(false);
         messageBox.addMessage("Wizard has trapped you. No way out.", 3);
     }
-
 
     // Handles hero respawn after death.
     public static void handleHeroSpawn() {
@@ -211,10 +227,11 @@ public class GameManager {
             double remainingTimePercentage = 100 * ((double) hero.getRemainingTime() / MAX_TIME);
             double newThreshold = (remainingTimePercentage < WIZARD_DISAPPEAR_PERCENTAGE) ? 0 :
                     (remainingTimePercentage > WIZARD_TELEPORT_PERCENTAGE) ? WIZARD_TELEPORT_PERCENTAGE : WIZARD_DISAPPEAR_PERCENTAGE;
+
             // Check if we have moved to a new percentage category
             if (newThreshold != lastWizardThreshold) {
-                System.out.println("New percentage area: " + remainingTimePercentage + "%");
                 lastWizardThreshold = newThreshold; // Update the threshold tracker
+
                 // Call monsterManager to set the new behavior
                 monsterManager.setWizardBehaviour();
             }
@@ -310,7 +327,7 @@ public class GameManager {
     }
 
     // Resets the game to its initial state.
-    public static void reset() {
+    public static void reset(boolean deleteFile) {
         try {
             // Stop and dispose of the timer safely
             if (timer != null) {
@@ -323,6 +340,22 @@ public class GameManager {
             cloakActive = false;
             lureActive = false;
             wizardClosureActive = false;
+
+            // Delete the saved file
+            if (deleteFile) {
+                String pathName = "src/main/resources/saves/";
+                if (currentSaveFileName.endsWith(".dat")) {
+                    pathName += currentSaveFileName;
+                } else {
+                    pathName += currentSaveFileName + ".dat";
+                }
+                File saveFile = new File(pathName);
+                if (saveFile.exists() && saveFile.delete()) {
+                    System.out.println("[GameManager]: Save file " + currentSaveFileName + " deleted.");
+                } else {
+                    System.out.println("[GameManager]: Failed to delete save file " + currentSaveFileName);
+                }
+            }
 
             System.out.println("[GameManager]: Reset successful. Ready for a new game.");
 
@@ -349,10 +382,6 @@ public class GameManager {
 
     public static boolean isLureActive() {
         return lureActive;
-    }
-
-    public static boolean isWizardClosureActive() {
-        return wizardClosureActive;
     }
 
     public static void setRevealActive(boolean revealActive) {
@@ -384,24 +413,77 @@ public class GameManager {
         return currentHall;
     }
 
-    public static HallGrid getClosureHall() {
-        return closureHall;
-    }
-
-    public static List<Monster> getActiveMonsters() {
-        return activeMonsters;
-    }
-
     public static MessageBox getMessageBox() {
         return messageBox;
     }
 
+    // Method to save the game state to a file
     public static void saveGame(String fileName) {
-        //TODO
+        try {
+            // Ensure the directory structure exists
+            File file = new File(fileName);
+            File parentDir = file.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs(); // Create the directory if it doesn't exist
+            }
+            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(fileName))) {
+                out.writeObject(getInstance()); // Serialize the GameManager class
+                System.out.println("[GameManager]: Game saved successfully to " + fileName);
+            }
+        } catch (IOException e) {
+            System.err.println("[GameManager]: Error saving game - " + e.getMessage());
+        }
     }
 
-    public static void loadGame(String s) {
-        //TODO
+    // Method to load the game state from a file
+    public static void loadGame(String fileName) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(fileName))) {
+            GameManager loadedState = (GameManager) in.readObject();
+            restoreInstance(loadedState);
+            System.out.println("[GameManager]: Game loaded successfully from " + fileName);
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("[GameManager]: Error loading game - " + e.getMessage());
+        }
+    }
+
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject(); // Serialize non-static fields
+        // Serialize static fields manually
+        out.writeObject(hallManager);
+        out.writeObject(currentHall);
+        out.writeObject(closureHall);
+        out.writeObject(hero);
+        out.writeObject(heroManager);
+        out.writeObject(activeMonsters);
+        out.writeObject(monsterManager);
+        out.writeObject(itemManager);
+        out.writeObject(messageBox);
+        out.writeBoolean(revealActive);
+        out.writeBoolean(cloakActive);
+        out.writeBoolean(lureActive);
+        out.writeBoolean(wizardClosureActive);
+        out.writeDouble(lastWizardThreshold);
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject(); // Deserialize non-static fields
+        // Deserialize static fields manually
+        hallManager = (HallManager) in.readObject();
+        currentHall = (HallGrid) in.readObject();
+        closureHall = (HallGrid) in.readObject();
+        hero = (Hero) in.readObject();
+        heroManager = (HeroManager) in.readObject();
+        activeMonsters = (List<Monster>) in.readObject();
+        monsterManager = (MonsterManager) in.readObject();
+        itemManager = (ItemManager) in.readObject();
+        messageBox = (MessageBox) in.readObject();
+        revealActive = in.readBoolean();
+        cloakActive = in.readBoolean();
+        lureActive = in.readBoolean();
+        wizardClosureActive = in.readBoolean();
+        lastWizardThreshold = in.readDouble();
     }
 
 }
