@@ -24,9 +24,8 @@ public class TimeManager {
             if (GameManager.getHero().getRemainingTime() > 0) {
                 GameManager.getHero().decrementRemainingTime();
             } else {
-                String message = "Game Over! Time is Over";
-                GameManager.reset();
-                Window.addScreen(new GameOverScreen(message), "GameOverScreen", true);
+                GameManager.reset(true);
+                Window.addScreen(new GameOverScreen("Game Over! Time is up."), "GameOverScreen", true);
             }
         }
     }
@@ -35,9 +34,11 @@ public class TimeManager {
     public static void incrementMonsterSpawnTimer() {
         monsterSpawnTimer++;
     }
+
     public static boolean isMonsterSpawnTimerReady() {
         return monsterSpawnTimer >= (MONSTER_SPAWN / GAME_DELAY);
     }
+
     public static void resetMonsterSpawnTimer() {
         monsterSpawnTimer = 0;
     }
@@ -46,9 +47,11 @@ public class TimeManager {
     public static void incrementMonsterMovementTimer() {
         monsterMovementTimer++;
     }
+
     public static boolean isMonsterMovementReady() {
         return monsterMovementTimer >= (MONSTER_MOVEMENT_DELAY / GAME_DELAY);
     }
+
     public static void resetMonsterMovementTimer() {
         monsterMovementTimer = 0;
     }
@@ -57,9 +60,11 @@ public class TimeManager {
     public static void incrementEnchantmentSpawnTimer() {
         enchantmentSpawnTimer++;
     }
+
     public static boolean isEnchantmentSpawnTimerReady() {
         return enchantmentSpawnTimer >= (ENCHANTMENT_SPAWN / GAME_DELAY);
     }
+
     public static void resetEnchantmentSpawnTimer() {
         enchantmentSpawnTimer = 0;
     }
@@ -68,9 +73,11 @@ public class TimeManager {
     public static void incrementEnchantmentDurationTimer() {
         enchantmentDurationTimer++;
     }
+
     public static boolean isEnchantmentDurationTimerReady() {
         return enchantmentDurationTimer >= (ENCHANTMENT_DURATION / GAME_DELAY);
     }
+
     public static void resetEnchantmentDurationTimer() {
         enchantmentDurationTimer = 0;
     }
@@ -79,12 +86,15 @@ public class TimeManager {
     public static void incrementRevealTimer() {
         revealTimer++;
     }
+
     public static boolean isRevealTimerReady() {
         return revealTimer >= (REVEAL_ENCHANTMENT_DURATION / GAME_DELAY);
     }
+
     public static void resetRevealTimer() {
         revealTimer = 0;
     }
+
     public static int remainingRevealTimer() {
         if (!GameManager.isRevealActive()) {
             return 0;
@@ -98,12 +108,15 @@ public class TimeManager {
     public static void incrementCloakTimer() {
         cloakTimer++;
     }
+
     public static boolean isCloakTimerReady() {
-        return  cloakTimer >= (CLOAK_ENCHANTMENT_DURATION / GAME_DELAY);
+        return cloakTimer >= (CLOAK_ENCHANTMENT_DURATION / GAME_DELAY);
     }
+
     public static void resetCloakTimer() {
         cloakTimer = 0;
     }
+
     public static int remainingCloakTimer() {
         if (!GameManager.isCloakActive()) {
             return 0;
@@ -129,5 +142,4 @@ public class TimeManager {
         monsterMovementTimer = 0;
         frameCounter = 0;
     }
-
 }
