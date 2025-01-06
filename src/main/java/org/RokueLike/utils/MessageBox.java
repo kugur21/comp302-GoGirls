@@ -1,11 +1,16 @@
 package org.RokueLike.utils;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class MessageBox {
+public class MessageBox implements Serializable {
 
-    private static class Message {
+    private static class Message implements Serializable {
+        @Serial
+        private static final long serialVersionUID = 1L; // Serialization identifier
+
         private final String content;
         private int timeRemaining;
 
@@ -26,6 +31,9 @@ public class MessageBox {
             this.timeRemaining--;
         }
     }
+
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     private final Deque<Message> messageQueue;
 

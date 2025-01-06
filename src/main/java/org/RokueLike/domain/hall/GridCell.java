@@ -1,6 +1,10 @@
 package org.RokueLike.domain.hall;
 
-public class GridCell {
+import java.io.Serial;
+import java.io.Serializable;
+public class GridCell implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     private final String name; // Name of the cell (e.g., wall, floor, etc.)
 
@@ -33,5 +37,4 @@ public class GridCell {
     public void setPositionY(int positionY) {
         this.positionY = positionY;
     }
-
 }

@@ -9,9 +9,13 @@ import org.RokueLike.ui.Window;
 import org.RokueLike.ui.screen.GameOverScreen;
 
 import javax.swing.*;
+import java.io.Serial;
+import java.io.Serializable;
 import static org.RokueLike.utils.Constants.*;
 
-public class HeroManager {
+public class HeroManager implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L; // Serialization identifier
 
     private final Hero hero; // The hero instance
     private final HallGrid hallGrid; // The current hall grid
@@ -39,7 +43,7 @@ public class HeroManager {
                     HallGrid nextHall = hallManager.getCurrentHall();
                     GameManager.updateCurrentHall(nextHall); // Progress to the next hall
                 } else {
-                    GameManager.reset(); // Victory scenario
+                    GameManager.reset(true); // Victory scenario
                     Window.addScreen(new GameOverScreen("Congratulations, you WON!"), "GameOverScreen", true);
                 }
             }
@@ -58,7 +62,7 @@ public class HeroManager {
             if (safeLocation != null) {
                 hero.setPosition(safeLocation[0], safeLocation[1]);
             } else {
-                GameManager.reset(); // Game over if no safe location is found
+                GameManager.reset(true); // Game over if no safe location is found
                 Window.addScreen(new GameOverScreen("Game Over! Could not find safe location for hero"), "GameOverScreen", true);
                 return;
             }
@@ -77,5 +81,4 @@ public class HeroManager {
     public boolean isAdjacentTo(int x, int y) {
         return (Math.abs(hero.getPositionX() - x) <= 1 && Math.abs(hero.getPositionY() - y) <= 1);
     }
-
 }

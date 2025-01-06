@@ -14,10 +14,12 @@ public class PlayModeScreen extends JPanel {
     private final PlayModeRenderer renderer; // Renderer for play mode visuals
     private final Rectangle pauseButtonBounds;
     private final Rectangle exitButtonBounds;
+    private final String saveFileName;
 
-    public PlayModeScreen() {
+    public PlayModeScreen(String fileName) {
+        this.saveFileName = fileName;
         // Initialize the GameManager for game mode logic
-        GameManager.init();
+        GameManager.init(saveFileName);
 
         this.renderer = new PlayModeRenderer();
         this.setFocusable(true);
@@ -34,7 +36,14 @@ public class PlayModeScreen extends JPanel {
 
     // Returns to the LaunchScreen and resets the game state.
     public void returnToLaunchScreen() {
-        GameManager.reset();
+        String fileName = "src/main/resources/saves/";
+        if (saveFileName.endsWith(".dat")) {
+            fileName += saveFileName;
+        } else {
+            fileName += saveFileName + ".dat";
+        }
+        GameManager.saveGame(fileName);
+        GameManager.reset(false);
         Window.addScreen(new LaunchScreen(), "LaunchScreen", true);
     }
 

@@ -9,11 +9,11 @@ public class Hero extends EntityCell {
     private int lives; // Current number of lives
     private int remainingTime; // Remaining time for the hero
     private final Inventory inventory; // Hero's inventory for enchantments
-    private boolean immune = false; // Immunity status of the hero
+    private transient boolean immune = false; // Immunity status of the hero
 
 
-    //// INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.
-    //// MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
+    /// / INFORMATION EXPERT INSTANCE - The Hero class handles responsibilities related to hero-specific data.
+    /// / MODEL-VIEW SEPARATION PRINCIPLE - Domain classes (Hero, Monster, BuildManager, etc.) handle the core game logic and data manipulation independently of the UI
 
     public Hero(int x, int y) {
         super("hero", x, y);
@@ -86,5 +86,4 @@ public class Hero extends EntityCell {
     public boolean isAlive() {
         return lives > 0 && remainingTime > 0;
     }
-
 }
