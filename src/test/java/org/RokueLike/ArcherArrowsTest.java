@@ -16,6 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/// Tests for updateArcherArrows method in MonsterManager
 public class ArcherArrowsTest {
 
     private MonsterManager monsterManager;

@@ -12,6 +12,7 @@ import org.mockito.MockitoAnnotations;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/// Tests for applyReveal method in ItemManager
 public class RevealEnchantmentTest {
 
     private ItemManager itemManager;

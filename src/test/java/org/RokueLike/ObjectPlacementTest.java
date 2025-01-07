@@ -8,7 +8,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// BuildManager modified
+/// Tests for placeObjectManually method in BuildManager
 public class ObjectPlacementTest {
 
     @BeforeEach

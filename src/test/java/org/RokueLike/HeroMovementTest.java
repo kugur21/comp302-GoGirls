@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Mockito.*;
 
-// HeroManager modified
+/// Tests for moveHero method in HeroManager
 public class HeroMovementTest {
 
     private HeroManager heroManager;

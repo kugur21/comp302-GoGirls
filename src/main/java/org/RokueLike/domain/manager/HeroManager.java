@@ -41,14 +41,23 @@ public class HeroManager implements Serializable {
             Door door = (Door) cellInFront;
             if (door.isOpen()) {
                 if (hallManager.moveToNextHall()) {
-                    HallGrid nextHall = hallManager.getCurrentHall();
-                    GameManager.updateCurrentHall(nextHall); // Progress to the next hall
+                    handleHallTransition(hallManager.getCurrentHall());
                 } else {
-                    GameManager.reset(true); // Victory scenario
-                    Window.addScreen(new GameOverScreen("Congratulations, you WON!"), "GameOverScreen", true);
+                    handleGameWin();
                 }
             }
         }
+    }
+
+    // Progress to the next hall
+    public void handleHallTransition(HallGrid nextHall) {
+        GameManager.updateCurrentHall(nextHall);
+    }
+
+    // Victory scenario
+    public void handleGameWin() {
+        GameManager.reset(true);
+        Window.addScreen(new GameOverScreen("Congratulations, you WON!"), "GameOverScreen", true);
     }
 
     // Respawns the hero at a safe location or ends the game if no safe location is found.

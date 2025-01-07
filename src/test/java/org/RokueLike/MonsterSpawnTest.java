@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-// MonsterManager and HallGrid modified
+/// Tests for spawnMonster method in MonsterManager
 public class MonsterSpawnTest {
 
     private MonsterManager monsterManager;

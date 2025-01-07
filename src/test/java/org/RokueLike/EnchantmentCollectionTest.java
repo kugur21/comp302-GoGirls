@@ -13,6 +13,7 @@ import static org.RokueLike.utils.Constants.*;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+/// Tests for collectEnchantment method in ItemManager
 public class EnchantmentCollectionTest {
 
     private ItemManager itemManager;
