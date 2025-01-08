@@ -43,4 +43,23 @@ public class RevealEnchantmentTest {
         verify(mockHero).useEnchantment(Enchantment.EnchantmentType.REVEAL);
         assertEquals("Rune already found. You can move to the next hall.", result);
     }
+
+    @Test
+    public void testApplyRevealSuccess() {
+        // Setup: Hero has the Reveal enchantment and the rune region exists
+        when(mockHero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)).thenReturn(true);
+        doNothing().when(mockHero).useEnchantment(Enchantment.EnchantmentType.REVEAL);
+        int[][] mockRegion = new int[][]{{1, 1}, {2, 2}};
+        when(mockHallGrid.findRuneRegion(4)).thenReturn(mockRegion);
+
+        // Act
+        String result = itemManager.applyReveal();
+
+        // Assert
+        verify(mockHero).useEnchantment(Enchantment.EnchantmentType.REVEAL);
+        verify(mockHallGrid).findRuneRegion(4);
+        verify(mockHallGrid, never()).removeEnchantment(); // Ensure no unintended effects
+        assertEquals("Revealed rune region!", result);
+    }
+
 }
