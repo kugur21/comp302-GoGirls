@@ -91,4 +91,29 @@ public class HeroMovementTest {
         verify(heroManagerSpy).handleHallTransition(nextHallGrid);
     }
 
+    @Test
+    public void testMoveHeroToOpenDoorVictory() {
+        // Spy on HeroManager to mock the handleGameWin behavior
+        HeroManager heroManagerSpy = spy(heroManager);
+
+        // Mock the door cell
+        Door doorCell = mock(Door.class);
+        when(doorCell.getName()).thenReturn("door");
+        when(mockHallGrid.getCellInFront(mockHero, 0, 1)).thenReturn(doorCell);
+        when(doorCell.isOpen()).thenReturn(true);
+
+        // Mock game ending
+        when(mockHallManager.moveToNextHall()).thenReturn(false);
+
+        // Do nothing for handleGameWin
+        doNothing().when(heroManagerSpy).handleGameWin();
+
+        // Act: Move hero
+        heroManagerSpy.moveHero(mockHallManager, 0, 1);
+
+        // Assert: Verify interactions
+        verify(mockHallManager).moveToNextHall();
+        verify(heroManagerSpy).handleGameWin();
+    }
+
 }
