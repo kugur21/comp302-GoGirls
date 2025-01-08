@@ -72,6 +72,21 @@ public class ArcherArrowsTest {
         verify(mockArrow).deactivate();
     }
 
+    @Test
+    public void testInactiveArrowRemoved() {
+        // Add a mock inactive arrow
+        Arrow mockArrow = mock(Arrow.class);
+        when(mockArrow.isActive()).thenReturn(false);
+        activeArrows.add(mockArrow);
+
+        // Act
+        monsterManager.updateArcherArrows();
+
+        // Assert
+        verify(mockArrow, never()).deactivate();
+        assertFalse(activeArrows.contains(mockArrow));
+    }
+
 
 }
 
