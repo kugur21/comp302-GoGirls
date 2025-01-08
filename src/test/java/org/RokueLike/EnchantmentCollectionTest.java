@@ -43,4 +43,17 @@ public class EnchantmentCollectionTest {
         assertEquals("Collected Extra Time! Gained 5 extra seconds.", result);
     }
 
+    @Test
+    public void testCollectCloakOfProtectionEnchantment() {
+        Enchantment cloak = mock(Enchantment.class);
+        when(cloak.getEnchantmentType()).thenReturn(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
+        when(mockHallGrid.getCurrentEnchantment()).thenReturn(cloak);
+
+        String result = itemManager.collectEnchantment();
+
+        verify(mockHero).addToInventory(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
+        verify(mockHallGrid).removeEnchantment();
+        assertEquals("Collected Cloak of Protection!", result);
+    }
+
 }
