@@ -44,6 +44,19 @@ public class EnchantmentCollectionTest {
     }
 
     @Test
+    public void testCollectExtraLifeEnchantment() {
+        Enchantment extraLife = mock(Enchantment.class);
+        when(extraLife.getEnchantmentType()).thenReturn(Enchantment.EnchantmentType.EXTRA_LIFE);
+        when(mockHallGrid.getCurrentEnchantment()).thenReturn(extraLife);
+
+        String result = itemManager.collectEnchantment();
+
+        verify(mockHero).incrementLives();
+        verify(mockHallGrid).removeEnchantment();
+        assertEquals("Collected Extra Life! Gained an extra life.", result);
+    }
+
+    @Test
     public void testCollectCloakOfProtectionEnchantment() {
         Enchantment cloak = mock(Enchantment.class);
         when(cloak.getEnchantmentType()).thenReturn(Enchantment.EnchantmentType.CLOAK_OF_PROTECTION);
