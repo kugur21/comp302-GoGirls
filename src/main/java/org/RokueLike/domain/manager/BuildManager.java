@@ -95,7 +95,31 @@ public class BuildManager {
         }
         System.out.println("[BuildManager]: Randomly filled " + hallName + " to its object limit.");
     }
+    /**
+     * Requires:
+     * - hallName: A valid string representing the name of the hall. The hall must exist in the system's records.
+     * - x and y: Integers representing the grid coordinates of the desired position for the object.
+     *            Coordinates must be within the bounds of the hall's grid (1 ≤ x < GRID_WIDTH - 1, 1 ≤ y < GRID_HEIGHT - 1).
+     * - objectType: An integer representing the type of object to be placed. Must correspond to a valid object type supported by the system.
+     * Modifies:
+     * - Updates the specified cell in the grid (hall[y][x]) to place the object if all conditions are met.
+     * Effects:
+     * - Retrieves the hall grid corresponding to the hallName.
+     * - Checks if the hall is at full capacity using getHallObjectLimit and getObjectCount.
+     *   If the hall is full, a message is added to the messageBox and no further action is taken.
+     * - Validates the target position (x, y):
+     *   - Ensures it is within bounds.
+     *   - Ensures the cell is empty (contains ".").
+     *   - Ensures the cell is not directly in front of a door (checked by notInFrontOfDoor).
+     * - Places the object in the specified cell if all conditions are met, marking it as "o" + objectType.
+     * - If conditions are not met, logs an error message indicating an invalid position or a non-empty cell.
+     * Error Handling:
+     * - If hallName does not correspond to an existing hall, the function returns without making any changes.
+     * - If the hall is at full capacity, a message is displayed in the messageBox.
+     * - If the position is invalid or occupied, an error message is printed to the console: "[BuildManager]: Invalid position or cell not empty."
+     *
 
+     */
     // Manually places an object in a specified position.
     public static void placeObjectManually(String hallName, int x, int y, int objectType) {
         String[][] hall = getHall(hallName);
