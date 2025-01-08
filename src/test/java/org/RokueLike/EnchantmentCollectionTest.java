@@ -56,4 +56,18 @@ public class EnchantmentCollectionTest {
         assertEquals("Collected Cloak of Protection!", result);
     }
 
+    @Test
+    public void testCollectRevealEnchantment() {
+        Enchantment reveal = mock(Enchantment.class);
+        when(reveal.getEnchantmentType()).thenReturn(Enchantment.EnchantmentType.REVEAL);
+        when(mockHallGrid.getCurrentEnchantment()).thenReturn(reveal);
+
+        String result = itemManager.collectEnchantment();
+
+        verify(mockHero).addToInventory(Enchantment.EnchantmentType.REVEAL);
+        verify(mockHallGrid).removeEnchantment();
+        assertEquals("Collected Reveal Enchantment!", result);
+    }
+
+
 }
