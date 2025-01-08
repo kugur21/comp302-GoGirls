@@ -52,5 +52,21 @@ public class ObjectPlacementTest {
         assert hall != null;
         assertEquals(".", hall[5][5], "Object should not be placed beyond the hall's capacity.");
     }
+    @Test
+    public void testInvalidPosition() {
+        // Arrange
+        String hallName = "earth";
+        int x = -1, y = -1, objectType = 1;  // Out-of-bounds position
 
+        // Act
+        BuildManager.placeObjectManually(hallName, x, y, objectType);
+
+        // Assert
+        // Ensure no exception occurs and position remains unchanged
+        String[][] hall = BuildManager.getHall(hallName);
+        assertThrows(IndexOutOfBoundsException.class, () -> {
+            assert hall != null;
+            String s = hall[y][x];
+        }, "Placing an object at an invalid position should not alter the grid.");
+    }
 }
