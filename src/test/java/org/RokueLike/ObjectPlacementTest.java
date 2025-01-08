@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /// Tests for placeObjectManually method in BuildManager
 public class ObjectPlacementTest {
-    // SERBAY - placeObjectManually in BuildManager
+// SERBAY - placeObjectManually in BuildManager
 
     @BeforeEach
     public void setUp() {
@@ -32,6 +32,7 @@ public class ObjectPlacementTest {
         assert hall != null;
         assertEquals("o1", hall[y][x], "Object should be successfully placed in the hall.");
     }
+
     @Test
     public void testPlacementExceedsCapacity() {
         // Arrange
@@ -52,6 +53,7 @@ public class ObjectPlacementTest {
         assert hall != null;
         assertEquals(".", hall[5][5], "Object should not be placed beyond the hall's capacity.");
     }
+
     @Test
     public void testInvalidPosition() {
         // Arrange
@@ -69,4 +71,24 @@ public class ObjectPlacementTest {
             String s = hall[y][x];
         }, "Placing an object at an invalid position should not alter the grid.");
     }
+
+    @Test
+    public void testBlockedByDoor() {
+        // Arrange
+        String hallName = "earth";
+        int objectType = 1;
+        String[][] hall = BuildManager.getHall(hallName);
+        assert hall != null;
+        int[] coordinates = BuildManager.findInFrontOfDoorLocation(hall);
+
+        // Act
+        assert coordinates != null;
+        int x = coordinates[0];
+        int y = coordinates[1];
+        BuildManager.placeObjectManually(hallName, x, y, objectType);
+
+        // Assert
+        assertEquals(".", hall[y][x], "Object should not replace a door.");
+    }
 }
+
