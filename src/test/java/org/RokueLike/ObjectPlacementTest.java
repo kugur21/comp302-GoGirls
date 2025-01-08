@@ -32,6 +32,25 @@ public class ObjectPlacementTest {
         assert hall != null;
         assertEquals("o1", hall[y][x], "Object should be successfully placed in the hall.");
     }
+    @Test
+    public void testPlacementExceedsCapacity() {
+        // Arrange
+        String hallName = "earth";
+        int objectType = 1;
 
+        // Simulate the hall reaching capacity
+        int limit = BuildManager.getHallObjectLimit(hallName);
+        for (int i = 1; i <= limit; i++) {
+            BuildManager.placeObjectManually(hallName, i, 1, objectType);
+        }
+
+        // Act
+        BuildManager.placeObjectManually(hallName, 5, 5, objectType);  // Attempt to place an additional object
+
+        // Assert
+        String[][] hall = BuildManager.getHall(hallName);
+        assert hall != null;
+        assertEquals(".", hall[5][5], "Object should not be placed beyond the hall's capacity.");
+    }
 
 }
