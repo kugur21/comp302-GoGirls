@@ -46,7 +46,36 @@ public class ItemManager implements Serializable {
         }
     }
 
-    // Collects the current enchantment and applies its effect to the hero.
+    /**
+     * Requires:
+     * - The `hallGrid` object must be properly initialized and contain a valid enchantment
+     *   at the hero's current position.
+     * - The `hero` object must be initialized and capable of handling updates to remaining time,
+     *   inventory, and lives.
+     * - `currentEnchantment` retrieved from `hallGrid.getCurrentEnchantment()` must not be null.
+     * - Enchantment types must be one of the recognized types defined in the `EnchantmentType` enumeration:
+     *   EXTRA_TIME, EXTRA_LIFE, CLOAK_OF_PROTECTION, REVEAL, LURING_GEM.
+     * Modifies:
+     * - The `hero` object:
+     *   - May increase the hero's remaining time.
+     *   - May increment the hero's life count.
+     *   - May add an enchantment type to the hero's inventory.
+     * - The `hallGrid` object:
+     *   - Removes the current enchantment from the hero's current position.
+     * Effects:
+     * - If the enchantment type is EXTRA_TIME:
+     *   - Adds the predefined `EXTRA_TIME` to the hero's remaining time.
+     *   - Removes the enchantment from the hall grid.
+     *   - Returns a message indicating the extra time was collected.
+     * - If the enchantment type is EXTRA_LIFE:
+     *   - Increments the hero's lives by one.
+     *   - Removes the enchantment from the hall grid.
+     *   - Returns a message indicating the extra life was collected.
+     * - For all other enchantment types:
+     *   - Adds the enchantment type to the hero's inventory.
+     *   - Removes the enchantment from the hall grid.
+     *   - Returns a specific message based on the enchantment type, or a default message if unrecognized.
+     */
     public String collectEnchantment() {
         Enchantment currentEnchantment = hallGrid.getCurrentEnchantment();
 
