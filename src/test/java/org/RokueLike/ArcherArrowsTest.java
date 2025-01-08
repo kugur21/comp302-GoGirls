@@ -86,6 +86,21 @@ public class ArcherArrowsTest {
         verify(mockArrow, never()).deactivate();
         assertFalse(activeArrows.contains(mockArrow));
     }
+    @Test
+    public void testArrowMovesCorrectly() {
+        // Arrange: Create a mock arrow and set its initial position
+        Arrow mockArrow = mock(Arrow.class);
+        when(mockArrow.isActive()).thenReturn(true);
+        when(mockArrow.getX()).thenReturn(5);
+        when(mockArrow.getY()).thenReturn(5);
+        activeArrows.add(mockArrow);
+
+        // Act: Call the method that should move the arrow
+        monsterManager.updateArcherArrows();
+
+        // Assert: Verify that the move method was called
+        verify(mockArrow).move();
+    }
 
 
 }
