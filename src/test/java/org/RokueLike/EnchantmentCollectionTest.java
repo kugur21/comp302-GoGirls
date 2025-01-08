@@ -82,5 +82,18 @@ public class EnchantmentCollectionTest {
         assertEquals("Collected Reveal Enchantment!", result);
     }
 
+    @Test
+    public void testCollectLuringGemEnchantment() {
+        Enchantment lure = mock(Enchantment.class);
+        when(lure.getEnchantmentType()).thenReturn(Enchantment.EnchantmentType.LURING_GEM);
+        when(mockHallGrid.getCurrentEnchantment()).thenReturn(lure);
+
+        String result = itemManager.collectEnchantment();
+
+        verify(mockHero).addToInventory(Enchantment.EnchantmentType.LURING_GEM);
+        verify(mockHallGrid).removeEnchantment();
+        assertEquals("Collected Luring Gem!", result);
+    }
+
 
 }
