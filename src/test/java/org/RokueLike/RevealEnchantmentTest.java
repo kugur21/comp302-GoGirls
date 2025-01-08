@@ -64,7 +64,7 @@ public class RevealEnchantmentTest {
 
     @Test
     public void testApplyRevealWithoutEnchantment() {
-        // Setup: Hero does not have the Reveal enchantment
+        // Setup: This test is about the Hero not having the Reveal enchantment
         when(mockHero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)).thenReturn(false);
 
         // Act
