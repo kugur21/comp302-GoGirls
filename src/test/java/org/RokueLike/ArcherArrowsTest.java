@@ -49,5 +49,29 @@ public class ArcherArrowsTest {
         verify(monsterManager, never()).killHero();
         assertTrue(activeArrows.isEmpty());
     }
+    @Test
+    public void testArrowHitsHero() {
+        // Add a mock arrow in the path of the hero
+        Arrow mockArrow = mock(Arrow.class);
+        when(mockArrow.isActive()).thenReturn(true);
+        when(mockArrow.getX()).thenReturn(5);
+        when(mockArrow.getY()).thenReturn(5);
+        activeArrows.add(mockArrow);
+
+        when(mockHero.getPositionX()).thenReturn(5);
+        when(mockHero.getPositionY()).thenReturn(5);
+
+        // Mock killHero to do nothing during this test
+        doNothing().when(monsterManager).killHero();
+
+        // Act
+        monsterManager.updateArcherArrows();
+
+        // Assert
+        verify(monsterManager).killHero();
+        verify(mockArrow).deactivate();
+    }
+
 
 }
+
