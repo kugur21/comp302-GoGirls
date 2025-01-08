@@ -47,4 +47,20 @@ public class HeroMovementTest {
         verify(mockHero).setPosition(anyInt(), anyInt());
     }
 
+    @Test
+    public void testMoveHeroToClosedDoor() {
+        // Setup: Hero encounters a closed door
+        Door doorCell = mock(Door.class);
+        when(doorCell.getName()).thenReturn("door");
+        when(mockHallGrid.getCellInFront(mockHero, 0, 1)).thenReturn(doorCell);
+        when(doorCell.isOpen()).thenReturn(false);
+
+        // Act: Move hero
+        heroManager.moveHero(mockHallManager, 0, 1);
+
+        // Assert: Verify no hall transition or hero movement
+        verify(mockHallManager, never()).moveToNextHall();
+        verify(mockHero, never()).setPosition(anyInt(), anyInt());
+    }
+
 }
