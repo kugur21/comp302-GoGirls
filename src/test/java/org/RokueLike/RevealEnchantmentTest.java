@@ -62,4 +62,17 @@ public class RevealEnchantmentTest {
         assertEquals("Revealed rune region!", result);
     }
 
+    @Test
+    public void testApplyRevealWithoutEnchantment() {
+        // Setup: Hero does not have the Reveal enchantment
+        when(mockHero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)).thenReturn(false);
+
+        // Act
+        String result = itemManager.applyReveal();
+
+        // Assert
+        verify(mockHero, never()).useEnchantment(any());
+        verifyNoInteractions(mockHallGrid);
+        assertEquals("Hero does not have a Reveal Enchantment.", result);
+    }
 }
