@@ -198,4 +198,31 @@ public class BuildManager {
                 (y >= GRID_HEIGHT - 1 || !"d".equals(hall[y + 1][x])); // Below door
     }
 
+    // Finds the first valid location in front of any door in the given hall.
+    public static int[] findInFrontOfDoorLocation(String[][] hall) {
+        for (int y = 0; y < hall.length; y++) {
+            for (int x = 0; x < hall[y].length; x++) {
+                if ("d".equals(hall[y][x])) { // Found a door
+                    // Check above the door
+                    if (y > 0 && hall[y - 1][x].equals(".")) {
+                        return new int[]{x, y - 1};
+                    }
+                    // Check below the door
+                    if (y < hall.length - 1 && hall[y + 1][x].equals(".")) {
+                        return new int[]{x, y + 1};
+                    }
+                    // Check to the left of the door
+                    if (x > 0 && hall[y][x - 1].equals(".")) {
+                        return new int[]{x - 1, y};
+                    }
+                    // Check to the right of the door
+                    if (x < hall[y].length - 1 && hall[y][x + 1].equals(".")) {
+                        return new int[]{x + 1, y};
+                    }
+                }
+            }
+        }
+        return null; // No valid location in front of a door
+    }
+
 }

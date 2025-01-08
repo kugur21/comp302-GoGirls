@@ -195,11 +195,10 @@ public class MonsterManager implements Serializable {
     }
 
     // Generates a random monster at a specified position.
-    private Monster generateRandomMonster(int x, int y) {
+    public Monster generateRandomMonster(int x, int y) {
         Monster.MonsterType[] monsterTypes = Monster.MonsterType.values();
         Monster.MonsterType randomType = monsterTypes[new Random().nextInt(monsterTypes.length)];
         return new Monster(randomType, x, y);
-        //return new Monster(Monster.MonsterType.WIZARD, x, y);
     }
 
     // Gets offsets for a specific direction.
@@ -214,7 +213,7 @@ public class MonsterManager implements Serializable {
     }
 
     // Reduces the hero's lives and checks for game over conditions.
-    private void killHero() {
+    public void killHero() {
         hero.decrementLives();
         if (!hero.isAlive()) {
             GameManager.reset(true);
