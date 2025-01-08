@@ -80,7 +80,18 @@ public class ItemManager implements Serializable {
         };
     }
 
-    // Applies the Reveal enchantment, revealing the rune's region.
+    /**
+     * Requires:
+     * - The hero must possess the REVEAL enchantment (checked using hero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)).
+     * - The runeRegion must not be null if a reveal effect is to be applied.
+     * Modifies:
+     * - May modify the visibility or state of certain elements within the runeRegion or associated entities.
+     * - May alter the hero's inventory if the enchantment is consumed or updated.
+     *
+     * Effects:
+     * - Applies the REVEAL enchantment to uncover hidden elements or provide information about the runeRegion.
+     * - Returns a string describing the result of the operation, such as success or failure messages.
+     */
     public String applyReveal() {
         if (hero.hasEnchantment(Enchantment.EnchantmentType.REVEAL)) {
             hero.useEnchantment(Enchantment.EnchantmentType.REVEAL);
