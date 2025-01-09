@@ -45,19 +45,18 @@ public class MonsterManager implements Serializable {
     /**
      * Spawns a monster in the hall grid if conditions are met.
      *
-     * Preconditions:
-     * - `spawn` must be `true`. If `false`, no monster is spawned.
-     * - A random safe cell must be available in the hall grid.
+     * Requires:
+     * - The `spawn` parameter must be `true`. If `false`, no monster will be spawned.
+     * - A random safe cell must exist within the hall grid for placement.
      *
-     * Steps:
-     * 1. Find a random safe cell in the grid. If none exists, do nothing.
-     * 2. Create a new monster at the selected location.
-     * 3. If the monster is a wizard, initialize its special behavior.
-     * 4. Add the monster to the hall grid.
+     * Modifies:
+     * - The state of the hall grid, by adding a new monster.
+     * - The monster, by initializing its properties (e.g., position, type-specific behavior).
      *
-     * Postconditions:
-     * - A monster is added to a safe, random location if conditions are met.
-     * - Special behavior is triggered for wizards.
+     * Effect:
+     * - A new monster is created and placed in a safe, random location within the hall grid.
+     * - If the monster is a Wizard, its special behavior is initialized.
+     * - If no safe cell is available, no changes are made to the hall grid.
      */
     public void spawnMonster() {
         if (!spawn) {
