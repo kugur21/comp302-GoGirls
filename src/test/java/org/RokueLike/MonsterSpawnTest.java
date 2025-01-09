@@ -38,4 +38,13 @@ public class MonsterSpawnTest {
 
         verify(mockHallGrid, never()).addMonster(any(Monster.class));
     }
+
+    @Test
+    public void testSpawnMonsterNoSafeLocation() {
+        when(mockHallGrid.findRandomSafeCell()).thenReturn(null);
+
+        monsterManager.spawnMonster();
+
+        verify(mockHallGrid, never()).addMonster(any(Monster.class));
+    }
 }
