@@ -47,4 +47,27 @@ public class MonsterSpawnTest {
 
         verify(mockHallGrid, never()).addMonster(any(Monster.class));
     }
+
+    @Test
+    public void testSuccessfulMonsterSpawn() {
+        when(mockHallGrid.findRandomSafeCell()).thenReturn(new int[]{2, 3});
+
+        monsterManager.spawnMonster();
+
+        verify(mockHallGrid).addMonster(any(Monster.class));
+    }
+
+    @Test
+    public void testWizardMonsterBehavior() {
+        monsterManager = spy(new MonsterManager(new ArrayList<>(), mockHallGrid, mockHero, true));
+
+        when(mockHallGrid.findRandomSafeCell()).thenReturn(new int[]{4, 5});
+
+        Monster wizard = new Monster(Monster.MonsterType.WIZARD, 4, 5);
+        doReturn(wizard).when(monsterManager).generateRandomMonster(4, 5);
+
+        monsterManager.spawnMonster();
+
+        assertNotNull(wizard.getBehaviour());
+    }
 }
