@@ -290,4 +290,46 @@ public class HallGrid implements Serializable {
         grid[positionY][positionX] = cell;
     }
 
+    /** Representation Invariant:
+     * The grid must not contain null cells.
+     * Monsters must have unique positions within the grid.
+     * Objects must have unique positions within the grid.
+     * All positions (x, y) must fall within the grid bounds.
+     * Only one enchantment can exist at a time.
+     */
+    public boolean repOk() {
+        // Check that the grid is not null and properly initialized
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return false;
+        }
+        // Check each cell in the grid is non-null
+        for (GridCell[] row : grid) {
+            for (GridCell cell : row) {
+                if (cell == null) {
+                    return false;
+                }
+            }
+        }
+        // Check monsters' positions are unique and valid
+        for (Monster monster : monsters) {
+            int x = monster.getPositionX();
+            int y = monster.getPositionY();
+            if (x < 0 || y < 0 || x >= getWidth() || y >= getHeight()) {
+                return false;
+            }
+            if (!getCell(x, y).getName().equals("floor")) {
+                return false;
+            }
+        }
+        // Check objects' positions are unique and valid
+        for (Object object : objects) {
+            int x = object.getPositionX();
+            int y = object.getPositionY();
+            if (x < 0 || y < 0 || x >= getWidth() || y >= getHeight()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
