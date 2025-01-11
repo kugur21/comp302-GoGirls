@@ -12,6 +12,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/* Overview:
+  The HallGrid class represents a grid-based map of a hall in the game, containing walls, floors, doors, monsters, and objects.
+  It manages the placement of these elements, handles operations like opening doors, finding runes, and relocating runes, and supports gameplay actions like checking for safe locations.
+ */
+
+/** Abstract Function:
+ * AF(HallGrid) = A 2D grid "grid" of cells where each cell is one of:
+ *     - wall: impassable area
+ *     - floor: walkable area
+ *     - door: entry/exit point, which can be opened
+ *     - object: an interactable object, possibly containing a rune
+ *   and the grid is associated with:
+ *     - startX, startY: hero's starting coordinates
+ *     - monsters: list of monsters present in the grid
+ *     - currentEnchantment: active enchantment in the hall
+ */
+
 public class HallGrid implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L; // Serialization identifier
@@ -272,4 +289,47 @@ public class HallGrid implements Serializable {
     public void setCell(int positionX, int positionY, GridCell cell) {
         grid[positionY][positionX] = cell;
     }
+
+    /** Representation Invariant:
+     * The grid must not contain null cells.
+     * Monsters must have unique positions within the grid.
+     * Objects must have unique positions within the grid.
+     * All positions (x, y) must fall within the grid bounds.
+     * Only one enchantment can exist at a time.
+     */
+    public boolean repOk() {
+        // Check that the grid is not null and properly initialized
+        if (grid == null || grid.length == 0 || grid[0].length == 0) {
+            return false;
+        }
+        // Check each cell in the grid is non-null
+        for (GridCell[] row : grid) {
+            for (GridCell cell : row) {
+                if (cell == null) {
+                    return false;
+                }
+            }
+        }
+        // Check monsters' positions are unique and valid
+        for (Monster monster : monsters) {
+            int x = monster.getPositionX();
+            int y = monster.getPositionY();
+            if (x < 0 || y < 0 || x >= getWidth() || y >= getHeight()) {
+                return false;
+            }
+            if (!getCell(x, y).getName().equals("floor")) {
+                return false;
+            }
+        }
+        // Check objects' positions are unique and valid
+        for (Object object : objects) {
+            int x = object.getPositionX();
+            int y = object.getPositionY();
+            if (x < 0 || y < 0 || x >= getWidth() || y >= getHeight()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }
