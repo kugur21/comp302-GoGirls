@@ -25,8 +25,18 @@ public class HeroManager implements Serializable {
         this.hallGrid = hallGrid;
     }
 
-    // Moves the hero in the specified direction if the move is valid.
-    // Handles interactions with floors and doors.
+    /**
+     * Requires:
+     * - A valid instance of `HallManager` to manage the grid and hall details.
+     * - `directionX` and `directionY` are integers representing the relative movement
+     *   direction; they must correspond to valid offsets within the grid's bounds.
+     * Modifies:
+     * - Updates the position of the `hero` object if the conditions for movement are met.
+     * Effects:
+     * - Determines the cell in front of the hero based on the provided direction.
+     * - If the cell is a "floor" and deemed safe, the hero's position is updated.
+     * - No changes occur if the cell is not traversable or the direction is invalid.
+     */
     public void moveHero(HallManager hallManager, int directionX, int directionY) {
         GridCell cellInFront = hallGrid.getCellInFront(hero, directionX, directionY);
 
