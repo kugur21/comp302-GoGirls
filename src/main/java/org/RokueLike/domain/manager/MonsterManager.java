@@ -42,7 +42,22 @@ public class MonsterManager implements Serializable {
         this.spawn = spawn;
     }
 
-    // Spawns a random monster at a safe location in the hall.
+    /**
+     * Spawns a monster in the hall grid if conditions are met.
+     *
+     * Requires:
+     * - The `spawn` parameter must be `true`. If `false`, no monster will be spawned.
+     * - A random safe cell must exist within the hall grid for placement.
+     *
+     * Modifies:
+     * - The state of the hall grid, by adding a new monster.
+     * - The monster, by initializing its properties (e.g., position, type-specific behavior).
+     *
+     * Effect:
+     * - A new monster is created and placed in a safe, random location within the hall grid.
+     * - If the monster is a Wizard, its special behavior is initialized.
+     * - If no safe cell is available, no changes are made to the hall grid.
+     */
     public void spawnMonster() {
         if (!spawn) {
             return;
